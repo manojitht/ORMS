@@ -1,0 +1,70 @@
+from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+
+# Create your models here.
+
+class MyManagerAccount(BaseUserManager): #the MyManagerAccount extracts from the BaseUserManager class
+    def create_user(self, peoplesoft_id, first_name, last_name, email, password=None):
+        if not peoplesoft_id:
+            raise ValueError('User should have a peoplesoft id')
+
+        if not email:
+            raise ValueError('User should have a email address')
+
+        user = self.model(
+            peoplesoft_id = peoplesoft_id,
+            first_name = first_name,
+            last_name = last_name,
+            email = self.normalize_email(email), #the normalize email makes the caps letter into small letter
+        )
+
+        user.set_password(password)
+        user.save(using=self._db) #saving details on database
+        return user
+
+    def create_superuser(self, peoplesoft_id, first_name, last_name, email, password):
+        user = self.create_user(
+            peoplesoft_id = peoplesoft_id,
+            first_name = first_name,
+            last_name = last_name,
+            email = self.normalize_email(email),
+            password = password,
+        )
+        user.is_superadmin = True
+        user.is_active = True
+        user.is_manager = True
+        user.is_it_admin = True
+        user.is_staff = True
+        user.save(using=self._db) #saving details on database
+        return user
+
+class Account(AbstractBaseUser):
+    peoplesoft_id = models.CharField(max_length=8, unique=True)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100,unique=True)
+    job_role = models.CharField(max_length=100)
+    contact = models.CharField(max_length=50)
+
+    #must have fields
+    date_joined = models.DateTimeField(auto_now_add=True)
+    last_login = models.DateTimeField(auto_now_add=True)
+    is_superadmin = models.BooleanField(default=False)
+    is_it_admin = models.BooleanField(default=False)
+    is_manager = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+
+    USERNAME_FIELD = 'peoplesoft_id'
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
+
+    objects = MyManagerAccount()
+
+    def __str__(self):
+        return self.peoplesoft_id
+
+    def has_perm(self, perm, obj=None):
+        return self.is_superadmin    
+
+    def has_module_perms(self, add_label):
+        return True
