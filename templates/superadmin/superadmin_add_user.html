@@ -1,0 +1,122 @@
+{% extends 'base_superadmin.html' %}
+{% load static %}
+
+{% block content %}
+
+
+
+    <section class="home-main">
+        <div class="full-myteam-container" id="blur">
+            <div class="head-container">
+                <h1>Add Users</h1>
+                <input class="create-request-button" type="button" onclick="toggle_blur()" value="Click on to add new user">
+            </div>
+           
+                <div class="container">
+                    <table id="team_requests" class="display" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>PeopleSoft Id</th>
+                                <th>Employee name</th>
+                                <th>Email</th>
+                                <th>User type</th>
+                                <th>Department</th>
+                                <th>Team</th>
+                                <th>Is Active</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><a href="#">45102017</a></td>
+                                <td>Manojith T</td>
+                                <td>thiyageswarakumar.manojith@hsbc.com.lk</td>
+                                <td>Manager</td>
+                                <td>Accounts Opening Related Services - UK</td>
+                                <td>AORS team - Night shift</td>
+                                <td>Yes</td>
+                                <td><input class="team-request-view-button" type="button" value="View user"></td>
+                            </tr>
+                            <tr>
+                                <td><a href="#">45102018</a></td>
+                                <td>Steve Jobs</td>
+                                <td>steve.jobs@hsbc.com.lk</td>
+                                <td>IT Administrator</td>
+                                <td>IT Infrastructure Delivery</td>
+                                <td>IT Resources provider</td>
+                                <td>Yes</td>
+                                <td><input class="team-request-view-button" type="button" value="View user"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> 
+            <div id="request_popup">
+                <h2>Add New User</h2>
+                <form action="{% url 'superadmin_add_user' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="text" class="r-p-textbox" name="peoplesoft_id" placeholder="Employee PS ID.." required>
+                    <input type="text" class="r-p-textbox" name="first_name" placeholder="Firstname" required>
+                    <input type="text" class="r-p-textbox" name="last_name" placeholder="Lastname" required>
+                    <input type="email" class="r-p-textbox" name="email" placeholder="Email" required>
+                        <select name="department">
+                            <option selected>--Choose department--</option>
+                            <option>Bank account opening UK - Night</option>
+                            <option>Bank account opening UK - Morning</option>
+                            <option>KYC Operations</option>
+                            <option>Banking Operations</option>
+                            <option>Financial crime investigation</option>
+                            <option>Global Publishing Services</option>
+                        </select>
+                        <select name="team">
+                            <option selected>--Choose team--</option>
+                            <option>Bank account opening UK - Night</option>
+                            <option>Bank account opening UK - Morning</option>
+                            <option>KYC Operations</option>
+                            <option>Banking Operations</option>
+                            <option>Financial crime investigation</option>
+                            <option>Global Publishing Services</option>
+                        </select>
+                        <select name="role">
+                            <option selected>--Choose user role--</option>
+                            <option>IT Administrator</option>
+                            <option>Manager</option>
+                            <option>Superadmin</option>
+                        </select>
+                    <input type="hidden" class="r-p-textbox" name="password" value="">
+                  <!-- <select name="request-type">
+                    <option selected>--Choose user preference--</option>
+                    <option>IT Administrator</option>
+                    <option>Manager Operations</option>
+                    <option>Superadmin</option>
+                  </select> -->
+                  <!-- <h4>Select User Preference:</h4>
+                  <div class="checkbox-container">
+                    <label class="checkbox-element">Manager
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                      </label>
+                      <label class="checkbox-element">IT Administrator
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                      </label>
+                      <label class="checkbox-element">Superadmin
+                        <input type="checkbox">
+                        <span class="checkmark"></span>
+                      </label>
+                  </div> -->
+                <!-- <textarea id="rp-textarea" name="rp-other-textarea" placeholder="Describe request or issue here..." rows="4" cols="50"></textarea> -->
+                <input class="create-request-button" type="submit" value="Create new user">
+                <input class="close-request-button" type="button" onclick="toggle_blur()" value="Cancel">
+                <!-- <h4 class="alert-message-success">User successfully created!</h4> -->
+                <!-- <h4 class="alert-message-unsuccess">Sorry validation error occurred! please check again.</h4> -->
+            </form>
+            </div>
+        </div>     
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="{% static 'script.js' %}"></script>
+
+{% endblock %}

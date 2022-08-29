@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORMS | Login page</title>
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+</head>
+<body>
+    <section>
+        <div class="image-box">
+            <!-- <img src="images/wfh-setup.jpg"> -->
+            <img src="{% static 'images/wfh-setup.jpg' %}">
+        </div>
+        <div class="login-box">
+            <div class="login-form">
+                <h2>ORMS Login</h2>
+                <form action="{% url 'login' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="input-box">
+                        <span>People Soft Id:</span>
+                        <input type="number" name="peoplesoft_id" class="form-login" required>
+                    </div>
+                    <div class="input-box">
+                        <span>Password:</span>
+                        <input type="password" name="password" class="form-login" required>
+                    </div>
+                    <div class="remember">
+                        <label><input type="checkbox" name=""> Remember me</label>
+                    </div>
+                    <div class="input-box">
+                        <input type="submit" value="Log in" name="">
+                    </div>
+                    <div class="input-box">
+                        <p>Forgot my password? <a href="#">Reset password</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -42,8 +42,6 @@ section .image-box img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-top-right-radius: 75px;
-    border-bottom-right-radius: 75px;
 }
 
 section .login-box {
@@ -104,7 +102,7 @@ section .login-box .login-form .input-box input {
     border-radius: 30px;
 }
 
-section .login-box .login-form .input-box input[type=button] {
+section .login-box .login-form .input-box input[type=submit] {
     background: rgb(46, 46, 46);
     color: #fff;
     outline: none;
@@ -113,7 +111,7 @@ section .login-box .login-form .input-box input[type=button] {
     cursor: pointer;
 }
 
-section .login-box .login-form .input-box input[type=button]:hover {
+section .login-box .login-form .input-box input[type=submit]:hover {
     background: rgb(73, 73, 73);
 }
 
@@ -160,6 +158,115 @@ section .login-box .login-form .input-box p a {
     
 }
 
+/* ORMS superadmin register page */
+
+section .register-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    height: 100%;
+}
+
+section .register-box .register-form {
+    width: 70%;
+    padding: 20px;
+    border-radius: 15px;
+    transition: 1s;
+}
+
+section .register-box .register-form:hover{
+    background: rgba(255, 255, 255, 0.87);
+    box-shadow: 10px 10px 10px 10px rgb(218, 217, 217);
+}
+
+section .register-box .register-form h2 {
+    color: rgb(117, 116, 116);
+    font-weight: 400;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #695CFE;
+    display: inline-block;
+    letter-spacing: 1px;
+}
+
+section .register-box .register-form .input-box {
+    margin-bottom: 15px;
+}
+
+section .register-box .register-form .input-box span {
+    font-size: 16px;
+    margin-bottom: 5px;
+    display: inline-block;
+    color: rgb(66, 65, 65);
+    font-weight: 300;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+section .register-box .register-form .input-box input {
+    width: 100%;
+    padding: 10px 20px;
+    outline: none;
+    font-weight: 400;
+    border: 1px solid rgb(150, 150, 150);
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: #000;
+    background: transparent;
+    border-radius: 10px;
+}
+
+section .register-box .register-form .input-box input[type=submit] {
+    background: rgb(46, 46, 46);
+    color: #fff;
+    outline: none;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+section .register-box .register-form .register-box input[type=submit]:hover {
+    background: rgb(73, 73, 73);
+}
+
+section .register-box .register-form .input-box p {
+    color: rgb(95, 95, 95);
+}
+
+section .register-box .register-form .input-box p a {
+    color: #695CFE;
+}
+
+@media (max-width: 768px){
+    section .image-box {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    section .register-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    section .register-box .register-form {
+        width: 70%;
+        padding: 40px;
+        background: rgba(255, 255, 255, 0.87);
+        margin: 50px;
+        border-radius: 15px;
+    }
+    
+}
+
 /* ORMS Home page style */
 
 :root {
@@ -194,7 +301,8 @@ section .login-box .login-form .input-box p a {
 }
 
 .home-sidebar.close {
-    width: 88px;
+    /* width: 88px; */
+    width: 250px;
 }
 
 .home-sidebar .text {
@@ -206,9 +314,9 @@ section .login-box .login-form .input-box p a {
     opacity: 1;
 }
 
-.home-sidebar.close .text {
+/* .home-sidebar.close .text {
     opacity: 0;
-}
+} */
 
 .home-sidebar .image {
     min-width: 60px;
@@ -272,7 +380,7 @@ header .image-logo .header-text {
     position: absolute;
     top: 50%;
     right: -25px;
-    transform: translateY(-50%) rotate(180deg);
+    /* transform: translateY(-50%) rotate(180deg); */
     height: 25px;
     width: 25px;
     background: var(--primary-color);
@@ -285,12 +393,16 @@ header .image-logo .header-text {
     transition: var(--tran-03);
 }
 
-.home-sidebar.close header .toggle {
+/* .home-sidebar.close header .toggle {
     transform: translateY(-50%);
-}
+} */
 
 .home-sidebar .menu {
     margin-top: 35px;
+}
+
+.home-sidebar .bottom-content{
+    margin-bottom: 25px;
 }
 
 .home-sidebar .search-box {
@@ -356,10 +468,10 @@ header .image-logo .header-text {
     padding: 8px 40px;
 }
 
-.home-sidebar.close ~ .home-main {
+/* .home-sidebar.close ~ .home-main {
     left: 88px;
     width: calc(100% - 88px);
-}
+} */
 
 /* Add team member styling */
 
@@ -638,6 +750,7 @@ form .atm-button input:hover {
     border: none;
     border-radius: 5px;
     font-weight: 300;
+    margin-top: 10px;
     transition: 1s;
 }
 
@@ -653,6 +766,7 @@ form .atm-button input:hover {
     border: none;
     border-radius: 5px;
     font-weight: 300;
+    margin-top: 10px;
     transition: 1s;
     float: right;
 }
@@ -723,7 +837,6 @@ form .atm-button input:hover {
     font-size: 15px;
     transition: all 0.5s ease;
     margin-top: 10px;
-    margin-bottom: 5px;
 }
 
 /* Analytics page section */
@@ -1141,3 +1254,38 @@ form .atm-button input:hover {
 .department-card-button:hover {
     background-color: #c71919;
 }
+
+/* ORMS Superadmin Add User page creation styling */
+
+#request_popup h4 {
+    font-weight: 400;
+    margin-top: 15px;
+}
+
+.checkbox-container {
+    width: 100%;
+}
+
+.checkbox-element {
+    margin-left: 35px;
+    font-weight: 300;
+}
+
+.alert-message-success {
+    text-align: center;
+    font-weight: 400;
+    background-color: #51a749;
+    border-radius: 5px;
+    color: #fff;
+    padding: 5px;
+}
+
+.alert-message-unsuccess {
+    text-align: center;
+    font-weight: 400;
+    background-color: #d62109;
+    border-radius: 5px;
+    color: #fff;
+    padding: 5px;
+}
+

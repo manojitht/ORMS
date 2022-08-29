@@ -1,0 +1,60 @@
+{% extends 'base_superadmin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1>Add New Department</h1>
+            <input class="create-request-button" type="button" onclick="toggle_blur()" value="Click on to add new department">
+        </div>
+       
+            <div class="container">
+                <table id="team_requests" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Department Id</th>
+                            <th>Department name</th>
+                            <th>Created On</th>
+                            <th>Is Active</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="#">DEPT0001</a></td>
+                            <td>Global Publishing Services</td>
+                            <td>28/08/2022</td>
+                            <td>Yes</td>
+                            <td><input class="team-request-view-button" type="button" value="View department"></td>
+                        </tr>
+                        <tr>
+                            <td><a href="#">DEPT0002</a></td>
+                            <td>Account Opening Related Services - UK</td>
+                            <td>27/08/2022</td>
+                            <td>Yes</td>
+                            <td><input class="team-request-view-button" type="button" value="View department"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div> 
+        <div id="request_popup">
+            <h2>Add New Department</h2>
+            <input type="text" class="r-p-textbox" placeholder="Department ID.." value="" required>
+            <input type="text" class="r-p-textbox" placeholder="Department name" required>
+            <!-- <textarea id="rp-textarea" name="rp-other-textarea" placeholder="Describe request or issue here..." rows="4" cols="50"></textarea> -->
+            <input class="create-request-button" type="button" onclick="toggle_blur()" value="Create Department">
+            <input class="close-request-button" type="button" onclick="toggle_blur()" value="Cancel">
+            <!-- <h4 class="alert-message-success">Department successfully created!</h4> -->
+            <!-- <h4 class="alert-message-unsuccess">Sorry validation error occurred! please check again.</h4> -->
+        </div>
+    </div>     
+</section>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="{% static 'script.js' %}"></script>
+
+{% endblock %}

@@ -1,11 +1,12 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ORMS | Home page</title>
+    <title>ORMS | IT Administrator</title>
     <link rel="stylesheet" href="{% static 'main.css' %}">
     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
 </head>
@@ -14,12 +15,12 @@
         <header>
             <div class="image-logo">
                 <span class="image">
-                    <img src="{% static 'images//ORMS-logos/ORMS-1 (1).png' %}" alt="ORMS logo">
+                    <img src="{% static 'images//ORMS-logos/ORMS-1 (1).png' %}" alt="ORMS-logos Logo">
                 </span>
 
                 <div class="text header-text">
                     <span class="name">T Manojith</span>
-                    <span class="profession">AM Operations</span>
+                    <span class="profession">IT Administrator</span>
                 </div>
             </div>
             <!-- box icons website -->
@@ -28,31 +29,33 @@
 
         <div class="menu-bar">
             <div class="menu">
-                <li class="search-box">                        
+                <li class="search-box">
+                        <!-- <i class='bx bx-search-alt icon' ></i>
+                        <input type="search" placeholder="Search here"> -->
                 </li>
                 <ul class="menu-links">
                     <li class="nav-link">
                         <a href="#">
-                            <i class='bx bx-home-circle icon' ></i>
-                            <span class="text nav-text">My Team</span>
+                            <i class='bx bx-line-chart icon' ></i>
+                            <span class="text nav-text">Admin Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="add_t_member.html">
+                        <a href="#">
                             <i class='bx bx-add-to-queue icon' ></i>
-                            <span class="text nav-text">Add Team Member</span>
+                            <span class="text nav-text">Departments</span>
                         </a>
                     </li>
                     <li class="nav-link">
                         <a href="#">
-                            <i class='bx bx-receipt icon' ></i>
-                            <span class="text nav-text">My Requests</span>
+                            <i class='bx bx-devices icon' ></i>
+                            <span class="text nav-text">Manage Device</span>
                         </a>
                     </li>
                     <li class="nav-link">
                         <a href="#">
-                            <i class='bx bx-pie-chart-alt icon' ></i>
-                            <span class="text nav-text">Analytics</span>
+                            <i class='bx bx-columns icon' ></i>
+                            <span class="text nav-text">View Requests</span>
                         </a>
                     </li>
                     <li class="nav-link">
@@ -83,11 +86,7 @@
 
     {% block content %}
     {% endblock %}
-
+    
     <script src="{% static 'script.js' %}"></script>
 </body>
 </html>
-
-///
-
-
