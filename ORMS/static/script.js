@@ -2,7 +2,6 @@ const home_body = document.querySelector(".home-body"),
       sidebar = document.querySelector(".home-sidebar"),
       toggle = document.querySelector(".toggle"),
       search_button = document.querySelector(".search-box");
-
       toggle.addEventListener("click", () => {
           sidebar.classList.toggle("close")
       });
@@ -14,6 +13,10 @@ const home_body = document.querySelector(".home-body"),
     $(document).ready(function () {
       $('#team_requests').DataTable();
      });
+
+     $(document).ready(function(){
+      $("#message-alerts").fadeOut(3000)
+    });
 
     function toggle_blur(){
       var blur = document.getElementById('blur');

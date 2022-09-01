@@ -1273,23 +1273,146 @@ form .atm-button input:hover {
 
 .alert-message-success {
     text-align: center;
-    font-weight: 400;
-    background-color: #51a749;
+    font-weight: 200;
+    background-color: #84ee7a;
     border-radius: 5px;
-    color: #fff;
+    color: rgb(23, 156, 63);
     padding: 5px;
+    margin-top: 15px;
+    transition: 1.5s;
 }
 
 .alert-message-unsuccess {
     text-align: center;
-    font-weight: 400;
-    background-color: #d62109;
+    font-weight: 200;
+    background-color: #e67667;
     border-radius: 5px;
-    color: #fff;
+    color: rgb(177, 29, 29);
     padding: 5px;
+    margin-top: 15px;
+    transition: 1.5s;
+}
+
+.alert-message-info {
+    text-align: center;
+    font-weight: 200;
+    background-color: #ebc95a;
+    border-radius: 5px;
+    color: rgb(177, 146, 11);
+    padding: 5px;
+    margin-top: 15px;
+    transition: 1.5s;
 }
 
 .hidden-password {
     font-weight: 100;
     color: rgb(225, 225, 226);
+}
+
+/* ORMS Superadmin Add User page creation styling */
+
+.add_new_user {
+    background: #fff;
+    width: auto;
+    height: auto;
+    margin: auto;
+    justify-content: center;
+    padding: 35px;
+    border-radius: 10px;
+}
+
+.add_new_user h1{
+    font-size: 35px;
+    font-weight: 400;
+    color: #000;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.anu-input-box {
+    margin-top: 5px;
+}
+
+.anu-input-box .details_anu {
+    font-weight: 400;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.anu-input-box input {
+    height: 45px;
+    width: 500px;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid rgb(124, 122, 122);
+    padding-left: 15px;
+    font-size: 15px;
+    transition: all 0.5s ease;
+}
+
+.anu-input-box select {
+    height: 45px;
+    width: 500px;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid rgb(124, 122, 122);
+    padding-left: 15px;
+    font-size: 15px;
+    transition: all 0.5s ease;
+}
+
+.anu-input-box input[type=submit] {
+    height: 45px;
+    width: 40%;
+    border-radius: 5px;
+    border: 1px solid #4686e6;
+    font-size: 15px;
+    background: #4686e6;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.anu-input-box input[type=button] {
+    height: 45px;
+    width: 40%;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid #eb920c;
+    font-size: 15px;
+    background: #eb920c;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 10px;
+    float: right;
+}
+
+.anu-input-box input[type=submit]:hover {
+    background: #5a94eb;
+    border: 1px solid #5a94eb;
+    color: #fff;
+}
+
+.anu-input-box input[type=button]:hover {
+    border: 1px solid #f19d1e;
+    background: #f19d1e;
+    color: #fff;
+}
+
+.navigator-btn {
+    padding: 10px;
+    cursor: pointer;
+    background-color: rgb(226, 85, 29);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-weight: 300;
+    margin-top: 10px;
+    transition: 1s;
+    text-decoration: none;
+}
+
+.navigator-btn:hover {
+    background-color: rgb(185, 72, 28);
+    color: #fff;
 }

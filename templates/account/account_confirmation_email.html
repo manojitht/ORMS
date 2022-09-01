@@ -1,0 +1,36 @@
+{% autoescape off %}
+
+Hi {{user.first_name}} {{user.last_name}},
+
+Welcome to the ORMS software platform "Where it keeps your asset details safe & secure."
+
+You've been created and assigned for the role of {{user.role}}.
+
+Department & Team details:
+
+Your Department  : {{user.department}}
+Your Team       : {{user.team}}
+
+On below we have given the user credentials to access the ORMS software:
+
+Your PeopleSoft ID  : {{user.peoplesoft_id}}
+Your Password       : {{user.password}}
+
+
+Important note and steps:
+
+Here are the steps to follow,
+
+Step 1: Please click on the provided link below to activate and confirm your activation status with us!
+
+http://{{domain}}{% url 'activate' uidb64=uid token=token %}
+
+Step 2: Login to your account with default user credentials.
+
+Step 3: Once you login to the system, go to "My Profile" page and update your password and user profile (Note: it's mandatory!)
+
+If this email isn't familiar or feeling that's not you, requesting you to ignore this.
+
+Have a great day!
+
+{% endautoescape %}

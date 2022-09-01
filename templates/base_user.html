@@ -13,14 +13,20 @@
     <nav class="home-sidebar close">
         <header>
             <div class="image-logo">
-                <span class="image">
-                    <img src="{% static 'images//ORMS-logos/ORMS-1 (1).png' %}" alt="ORMS logo">
-                </span>
+                {% if user.is_authenticated %}
+                    <span class="image">
+                        <img src="{% static 'images//ORMS-logos/ORMS-1 (1).png' %}" alt="ORMS logo">
+                    </span>
 
-                <div class="text header-text">
-                    <span class="name">T Manojith</span>
-                    <span class="profession">AM Operations</span>
-                </div>
+                    <div class="text header-text">
+                        
+                        <span class="name">{{ user.first_name }}</span>
+                        <span class="profession">{{ user.role }}</span>
+                        
+                    </div>
+                {% else %}
+                    
+                {% endif %}
             </div>
             <!-- box icons website -->
             <i class='bx bx-chevron-right toggle'></i>
@@ -38,7 +44,7 @@
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="add_t_member.html">
+                        <a href="#">
                             <i class='bx bx-add-to-queue icon' ></i>
                             <span class="text nav-text">Add Team Member</span>
                         </a>
@@ -88,6 +94,5 @@
 </body>
 </html>
 
-///
 
 

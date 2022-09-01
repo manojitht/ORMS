@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 # from department.models import Department
@@ -43,6 +44,7 @@ class MyManagerAccount(BaseUserManager): #the MyManagerAccount extracts from the
             role = role,
         )
         user.is_manager = True
+        user.is_active = False
         user.set_password(password)
         user.save(using=self._db) #saving details on database
         return user
@@ -64,6 +66,7 @@ class MyManagerAccount(BaseUserManager): #the MyManagerAccount extracts from the
             role = role,
         )
         user.is_it_admin = True
+        user.is_active = False
         user.set_password(password)
         user.save(using=self._db) #saving details on database
         return user
@@ -80,7 +83,6 @@ class MyManagerAccount(BaseUserManager): #the MyManagerAccount extracts from the
             role = role,
         )
         user.is_superadmin = True
-        user.is_active = True
         user.is_staff = True
         user.save(using=self._db) #saving details on database
         return user
@@ -98,8 +100,8 @@ class Account(AbstractBaseUser):
 
 
     #must have fields
-    date_joined = models.DateTimeField(auto_now_add=True)
-    last_login = models.DateTimeField(auto_now_add=True)
+    date_joined = models.DateTimeField(default=datetime.now)
+    last_login = models.DateTimeField(default=datetime.now)
     is_superadmin = models.BooleanField('Is Superadmin',default=False)
     is_it_admin = models.BooleanField('Is IT Admin',default=False)
     is_manager = models.BooleanField('Is Manager',default=False)

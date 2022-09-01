@@ -9,7 +9,7 @@
         <div class="full-myteam-container" id="blur">
             <div class="head-container">
                 <h1>Add Users</h1>
-                <input class="create-request-button" type="button" onclick="toggle_blur()" value="Click on to add new user">
+                <a class="navigator-btn" href="{% url 'add_user_page' %}">Add new user</a>
             </div>
            
                 <div class="container">
@@ -51,7 +51,7 @@
                     </table>
                 </div>
             </div> 
-            <div id="request_popup">
+            <!-- <div id="request_popup">
                 <h2>Add New User</h2>
                 <form action="{% url 'superadmin_add_user' %}" method="POST">
                     {% csrf_token %}
@@ -83,7 +83,7 @@
                             <option>Manager</option>
                             <option>Superadmin</option>
                         </select>
-                    <input type="hidden" class="r-p-textbox" name="password" value="">
+                    <input type="hidden" class="r-p-textbox" name="password" value=""> -->
                   <!-- <select name="request-type">
                     <option selected>--Choose user preference--</option>
                     <option>IT Administrator</option>
@@ -106,12 +106,13 @@
                       </label>
                   </div> -->
                 <!-- <textarea id="rp-textarea" name="rp-other-textarea" placeholder="Describe request or issue here..." rows="4" cols="50"></textarea> -->
-                <input class="create-request-button" type="submit" value="Create new user">
+                <!-- <input class="create-request-button" type="submit" value="Create new user">
                 <input class="close-request-button" type="button" onclick="toggle_blur()" value="Cancel">
+                {% include 'message_alert.html' %} -->
                 <!-- <h4 class="alert-message-success">User successfully created!</h4> -->
                 <!-- <h4 class="alert-message-unsuccess">Sorry validation error occurred! please check again.</h4> -->
-            </form>
-            </div>
+            <!-- </form>
+            </div> -->
         </div>     
     </section>
 

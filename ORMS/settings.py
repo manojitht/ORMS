@@ -135,5 +135,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #Messages ('https://docs.djangoproject.com/en/4.1/ref/contrib/messages/')
 from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
-    messages.ERROR: 'danger',
+    messages.SUCCESS: 'message-success',
+    messages.INFO: 'message-info',
+    messages.ERROR: 'message-unsuccess',
+    messages.WARNING: 'message-warning', # need to style
+    messages.DEBUG: 'message-debug', #need to style
 }
+
+# #SMTP gmail email configuration
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'orms.services.info@gmail.com'
+EMAIL_HOST_PASSWORD = 'oaadieacoqcdkwbn'
+EMAIL_PORT = 587
+

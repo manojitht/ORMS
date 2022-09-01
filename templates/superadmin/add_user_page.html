@@ -1,0 +1,74 @@
+{% extends 'base_superadmin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+        
+    <div class="add_new_user">
+        <h1>Add New User</h1>
+         <form action="{% url 'add_user_page' %}" method="POST">
+            {% csrf_token %}
+             <div class="anu-input-box">
+                 <span class="details_anu">PeopleSoft ID: </span>
+                 <input type="text" name="peoplesoft_id" placeholder="Enter PS ID" required>
+             </div>
+             <div class="anu-input-box">
+                 <span class="details_anu">Firstname: </span>
+                 <input type="text" name="first_name" placeholder="Enter Firstname.." required>
+             </div>
+             <div class="anu-input-box">
+                 <span class="details_anu">Lastname: </span>
+                 <input type="text" name="last_name" placeholder="Enter Lastname.." required>
+             </div>
+             <div class="anu-input-box">
+                 <span class="details_anu">Email: </span>
+                 <input type="email" name="email" placeholder="Enter Email.." required>
+             </div>
+             <div class="anu-input-box">
+                 <span class="details_anu">Department: </span>
+                 <select name="department">
+                     <option selected>--Choose department--</option>
+                     <option>Bank account opening UK - Night</option>
+                     <option>Bank account opening UK - Morning</option>
+                     <option>KYC Operations</option>
+                     <option>Banking Operations</option>
+                     <option>Financial crime investigation</option>
+                     <option>Global Publishing Services</option>
+                   </select>
+                 <!-- <input type="text" placeholder="Enter Department.." required> -->
+             </div>
+             <div class="anu-input-box">
+                 <span class="details_anu">Team: </span>
+                 <select name="team">
+                     <option selected>--Choose team--</option>
+                     <option>Bank account opening UK - Night</option>
+                     <option>Bank account opening UK - Morning</option>
+                     <option>KYC Operations</option>
+                     <option>Banking Operations</option>
+                     <option>Financial crime investigation</option>
+                     <option>Global Publishing Services</option>
+                   </select>
+                 <!-- <input type="text" placeholder="Enter Department.." required> -->
+             </div>
+             <div class="anu-input-box">
+                 <span class="details_anu">Role: </span>
+                 <select name="role">
+                     <option selected>--Select role--</option>
+                     <option>IT Administrator</option>
+                     <option>Manager</option>
+                     <option>Superadmin</option>
+                   </select>
+                 <!-- <input type="text" placeholder="Enter Department.." required> -->
+             </div>
+             <div class="anu-input-box">
+                 <input class="anu-submit-btn" type="submit" value="Create User">
+                 <input class="anu-submit-btn" type="button" value="Back to page">
+             </div>
+             {% include 'message_alert.html' %}
+         </form>
+    </div>
+</section>
+
+
+{% endblock %}

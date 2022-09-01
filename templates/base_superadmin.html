@@ -13,14 +13,20 @@
     <nav class="home-sidebar close">
         <header>
             <div class="image-logo">
-                <span class="image">
-                    <img src="{% static 'images//ORMS-logos/ORMS-1 (1).png' %}" alt="ORMS Logo">
-                </span>
+                {% if user.is_authenticated %}
+                    <span class="image">
+                        <img src="{% static 'images//ORMS-logos/ORMS-1 (1).png' %}" alt="ORMS logo">
+                    </span>
 
-                <div class="text header-text">
-                    <span class="name">T Manojith</span>
-                    <span class="profession">Superadmin</span>
-                </div>
+                    <div class="text header-text">
+                        
+                        <span class="name">{{ user.first_name }}</span>
+                        <span class="profession">{{ user.role }}</span>
+                        
+                    </div>
+                {% else %}
+                    
+                {% endif %}
             </div>
             <!-- box icons website -->
             <i class='bx bx-chevron-right toggle'></i>
@@ -84,6 +90,6 @@
     {% block content %}
     {% endblock %}
 
-    <script src="script.js"></script>
+    <script src="{% static 'script.js' %}"></script>
 </body>
 </html>
