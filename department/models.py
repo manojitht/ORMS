@@ -11,7 +11,7 @@ class Department(models.Model):
     department_head = models.CharField(max_length=150)
     created_by = models.CharField(max_length=150)
     created_on = models.DateField(auto_now_add=True)
-    is_active = models.models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = 'department'

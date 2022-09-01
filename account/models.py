@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 # from department.models import Department
@@ -101,7 +102,7 @@ class Account(AbstractBaseUser):
 
     #must have fields
     date_joined = models.DateTimeField(default=datetime.now)
-    last_login = models.DateTimeField(default=datetime.now)
+    last_login = models.DateTimeField(auto_now_add=True)
     is_superadmin = models.BooleanField('Is Superadmin',default=False)
     is_it_admin = models.BooleanField('Is IT Admin',default=False)
     is_manager = models.BooleanField('Is Manager',default=False)

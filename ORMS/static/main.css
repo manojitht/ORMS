@@ -617,7 +617,7 @@ form .atm-button input:hover {
 
 .home-main .head-container {
     width: 100%;
-    height: 15%;
+    height: auto;
     text-align: center;
 }
 
@@ -1273,35 +1273,41 @@ form .atm-button input:hover {
 
 .alert-message-success {
     text-align: center;
-    font-weight: 200;
-    background-color: #84ee7a;
+    font-weight: 400;
+    font-size: 15px;
+    background-color: #65ac5e;
     border-radius: 5px;
-    color: rgb(23, 156, 63);
+    color: rgb(19, 83, 38);
     padding: 5px;
     margin-top: 15px;
     transition: 1.5s;
+    width: 100%;
 }
 
 .alert-message-unsuccess {
     text-align: center;
-    font-weight: 200;
-    background-color: #e67667;
+    font-weight: 400;
+    font-size: 15px;
+    background-color: #f3a7a1;
     border-radius: 5px;
-    color: rgb(177, 29, 29);
+    color: rgb(228, 62, 56);
     padding: 5px;
     margin-top: 15px;
     transition: 1.5s;
+    width: 100%;
 }
 
 .alert-message-info {
     text-align: center;
-    font-weight: 200;
-    background-color: #ebc95a;
+    font-weight: 400;
+    font-size: 15px;
+    background-color: #ece363;
     border-radius: 5px;
-    color: rgb(177, 146, 11);
+    color: rgb(139, 120, 11);
     padding: 5px;
     margin-top: 15px;
     transition: 1.5s;
+    width: 100%;
 }
 
 .hidden-password {
