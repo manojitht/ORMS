@@ -7,77 +7,54 @@
         <div class="head-container">
             <h1>Add Teams</h1>
             <input class="create-request-button" type="button" onclick="toggle_blur()" value="Click on to add new team">
+            {% include 'message_alert.html' %}
         </div>
        
             <div class="container">
                 <table id="team_requests" class="display" style="width:100%">
                     <thead>
                         <tr>
-                            <th>Team Id</th>
-                            <th>Team name</th>
+                            <th>Team head</th>
                             <th>Department oriented</th>
+                            <th>Team name</th>
                             <th>Create on</th>
+                            <th>Created by</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for team in teams %}
                         <tr>
-                            <td><a href="#">TE00112</a></td>
-                            <td>AORS Team UK - Night Shift</td>
-                            <td>Account Opening Related Services - UK</td>
-                            <td>28/08/2022</td>                              
+                            <td>{{ team.team_head }}</td>
+                            <td>{{ team.department }}</td>
+                            <td>{{ team.team_name }}</td>
+                            <td>{{ team.created_date }}</td>
+                            <td>{{ team.created_by }}</td>                              
                             <td><input class="team-request-view-button" type="button" value="View team"></td>
                         </tr>
-                        <tr>
-                            <td><a href="#">TE00112</a></td>
-                            <td>AORS Team UK - Night Shift</td>
-                            <td>Account Opening Related Services - UK</td>
-                            <td>28/08/2022</td>                              
-                            <td><input class="team-request-view-button" type="button" value="View team"></td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div> 
         <div id="request_popup">
-            <h2>Add New Team</h2>
-            <input type="text" class="r-p-textbox" placeholder="Team ID.." value="" required>
-            <input type="text" class="r-p-textbox" placeholder="Team name.." required>
-            <select name="department">
-                <option selected>--Choose department oriented with--</option>
-                <option>Bank account opening UK - Night</option>
-                <option>Bank account opening UK - Morning</option>
-                <option>KYC Operations</option>
-                <option>Banking Operations</option>
-                <option>Financial crime investigation</option>
-                <option>Global Publishing Services</option>
-              </select>
-              <!-- <select name="request-type">
-                <option selected>--Choose user preference--</option>
-                <option>IT Administrator</option>
-                <option>Manager Operations</option>
-                <option>Superadmin</option>
-              </select> -->
-              <!-- <h4>Select User Preference:</h4>
-              <div class="checkbox-container">
-                <label class="checkbox-element">Manager
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                  </label>
-                  <label class="checkbox-element">IT Administrator
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                  </label>
-                  <label class="checkbox-element">Superadmin
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                  </label>
-              </div> -->
-            <!-- <textarea id="rp-textarea" name="rp-other-textarea" placeholder="Describe request or issue here..." rows="4" cols="50"></textarea> -->
-            <input class="create-request-button" type="button" onclick="toggle_blur()" value="Create new team">
-            <input class="close-request-button" type="button" onclick="toggle_blur()" value="Cancel">
-            <!-- <h4 class="alert-message-success">Team successfully created!</h4> -->
-            <!-- <h4 class="alert-message-unsuccess">Sorry validation error occurred! please check again.</h4> -->
+            <form action="{% url 'superadmin_add_team' %}" method="POST">
+                {% csrf_token %}
+                <h2>Add New Team</h2>
+                <input type="text" class="r-p-textbox" name="team_name" placeholder="Team name.." required>
+                <input type="text" class="r-p-textbox" name="team_head" placeholder="Team head.." required>
+                <select name="department">
+                    <option selected>--Choose department oriented with--</option>
+                    {% for department in department_names %}
+                    <option>{{ department.department_name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
+                <input class="create-request-button" type="submit" onclick="toggle_blur()" value="Create new team">
+                <input class="close-request-button" type="reset" onclick="toggle_blur()" value="Cancel">
+                <!-- <h4 class="alert-message-success">Team successfully created!</h4> -->
+                <!-- <h4 class="alert-message-unsuccess">Sorry validation error occurred! please check again.</h4> -->
+            </form>
         </div>
     </div>     
 </section>

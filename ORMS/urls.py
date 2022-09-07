@@ -22,4 +22,5 @@ urlpatterns = [
     #path('', views.home, name='home'),
     path('', include('account.urls')),
     path('', include('department.urls')),
+    path('', include('team.urls')),
 ]

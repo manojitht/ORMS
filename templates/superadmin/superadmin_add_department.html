@@ -6,7 +6,7 @@
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
-            <h1>Add New Department</h1>
+            <h1>Add Department</h1>
             <input class="create-request-button" type="button" onclick="toggle_blur()" value="Click on to add new department">
             {% include 'message_alert.html' %}
         </div>
@@ -15,46 +15,67 @@
                 <table id="team_requests" class="display" style="width:100%">
                     <thead>
                         <tr>
-                            <th>Cost Code</th>
+                            <th>ID</th>
                             <th>Department Name</th>
+                            <th>Department Head</th>
                             <th>Created On</th>
-                            <th>Is Active</th>
-                            <th>Action</th>
+                            <th>Created By</th>
+                            <th>Edit</th>
+                            <!-- <th>Delete</th> -->
                         </tr>
                     </thead>
                     <tbody>
+                        {% for department in departments %}
                         <tr>
-                            <td><a href="#">DEPT0001</a></td>
-                            <td>Global Publishing Services</td>
-                            <td>28/08/2022</td>
-                            <td>Yes</td>
-                            <td><input class="team-request-view-button" type="button" value="View department"></td>
+                            <td><a href="#">{{ department.id }}</a></td>
+                            <td>{{ department.department_name }}</td>
+                            <td>{{ department.department_head }}</td>
+                            <td>{{ department.created_on }}</td>
+                            <td>{{ department.created_by }}</td>
+                            <td><a href="{% url 'edit_department' department.id %}" onclick="toggle_blur()">Edit</a> <a href="{% url 'delete_department' department.id %}">Delete</a></td>
+                            <!-- <td><input style="margin: 2px; width: 60%; background-color: rgb(209, 189, 9); color: black; border-radius: 15px;" class="team-request-view-button" type="button" value="Edit"> <input style="margin: 2px; width: 60%; background-color: rgb(179, 19, 19); border-radius: 15px;" class="team-request-view-button" type="button" value="Delete"></td> -->
+                            <!-- <td><input class="team-request-view-button" type="button" value="Delete"></td> -->
                         </tr>
-                        <tr>
-                            <td><a href="#">DEPT0002</a></td>
-                            <td>Account Opening Related Services - UK</td>
-                            <td>27/08/2022</td>
-                            <td>Yes</td>
-                            <td><input class="team-request-view-button" type="button" value="View department"></td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div> 
         <div id="request_popup">
-            <form action="{% url 'superadmin_add_department' %}" method="POST">
-                {% csrf_token %}
-                <h2>Add New Department</h2>
-                <input type="text" class="r-p-textbox" name="cost_code" placeholder="Cost Code.." value="" required>
-                <input type="text" class="r-p-textbox" name="department_name" placeholder="Department name" required>
-                <input type="text" class="r-p-textbox" name="department_head" placeholder="Department head" required>
-                <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
-                <!-- <textarea id="rp-textarea" name="rp-other-textarea" placeholder="Describe request or issue here..." rows="4" cols="50"></textarea> -->
-                <input class="create-request-button" type="submit" value="Create Department">
-                <input class="close-request-button" type="button" onclick="toggle_blur()" value="Cancel">
-                <!-- <h4 class="alert-message-success">Department successfully created!</h4> -->
-                <!-- <h4 class="alert-message-unsuccess">Sorry validation error occurred! please check again.</h4> -->
-            </form>
+
+            {% if selected_dep %}
+                <form action="#" method="POST">
+                    {% csrf_token %}
+                    <h2>Add New Department</h2> 
+                    <input type="text" class="r-p-textbox" name="cost_code" placeholder="Cost Code.." value="" required>
+                    <input type="text" class="r-p-textbox" name="department_name" placeholder="Department name" required>
+                    <input type="text" class="r-p-textbox" name="department_head" placeholder="Department head" required>
+                    <input type="hidden" class="r-p-textbox" name="created_by" value="">
+                    <!-- <textarea id="rp-textarea" name="rp-other-textarea" placeholder="Describe request or issue here..." rows="4" cols="50"></textarea> -->
+                    <input class="create-request-button" type="submit" value="Save Department">
+                    <input class="close-request-button" type="reset" onclick="toggle_blur()" value="Cancel">
+                    <!-- <h4 class="alert-message-success">Department successfully created!</h4> -->
+                    <!-- <h4 class="alert-message-unsuccess">Sorry validation error occurred! please check again.</h4> -->
+                </form>
+            {% else %}
+                <form action="{% url 'superadmin_add_department' %}" method="POST">
+                    {% csrf_token %}
+                    <h2>Add New Department</h2>
+                    <input type="text" class="r-p-textbox" name="cost_code" placeholder="Cost Code.." value="" required>
+                    <input type="text" class="r-p-textbox" name="department_name" placeholder="Department name" required>
+                    <input type="text" class="r-p-textbox" name="department_head" placeholder="Department head" required>
+                    <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
+                    <!-- <textarea id="rp-textarea" name="rp-other-textarea" placeholder="Describe request or issue here..." rows="4" cols="50"></textarea> -->
+                    <input class="create-request-button" type="submit" value="Save Department">
+                    <input class="close-request-button" type="reset" onclick="toggle_blur()" value="Cancel">
+                    <!-- <h4 class="alert-message-success">Department successfully created!</h4> -->
+                    <!-- <h4 class="alert-message-unsuccess">Sorry validation error occurred! please check again.</h4> -->
+                </form>
+            {% endif %}
+
+
+
+
         </div>
     </div>     
 </section>

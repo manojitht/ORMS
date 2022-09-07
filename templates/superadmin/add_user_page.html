@@ -29,12 +29,9 @@
                  <span class="details_anu">Department: </span>
                  <select name="department">
                      <option selected>--Choose department--</option>
-                     <option>Bank account opening UK - Night</option>
-                     <option>Bank account opening UK - Morning</option>
-                     <option>KYC Operations</option>
-                     <option>Banking Operations</option>
-                     <option>Financial crime investigation</option>
-                     <option>Global Publishing Services</option>
+                     {% for department in department_names %}
+                     <option>{{ department.department_name }}</option>
+                     {% endfor %}
                    </select>
                  <!-- <input type="text" placeholder="Enter Department.." required> -->
              </div>
@@ -42,12 +39,9 @@
                  <span class="details_anu">Team: </span>
                  <select name="team">
                      <option selected>--Choose team--</option>
-                     <option>Bank account opening UK - Night</option>
-                     <option>Bank account opening UK - Morning</option>
-                     <option>KYC Operations</option>
-                     <option>Banking Operations</option>
-                     <option>Financial crime investigation</option>
-                     <option>Global Publishing Services</option>
+                     {% for team in team_names %}
+                     <option value="{{ team.team_name }}">{{ team.team_name }}</option>
+                     {% endfor %}
                    </select>
                  <!-- <input type="text" placeholder="Enter Department.." required> -->
              </div>

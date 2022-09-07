@@ -18,35 +18,23 @@
                             <tr>
                                 <th>PeopleSoft Id</th>
                                 <th>Employee name</th>
-                                <th>Email</th>
-                                <th>User type</th>
                                 <th>Department</th>
                                 <th>Team</th>
-                                <th>Is Active</th>
+                                <th>User type</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {% for user in users %}
                             <tr>
-                                <td><a href="#">45102017</a></td>
-                                <td>Manojith T</td>
-                                <td>thiyageswarakumar.manojith@hsbc.com.lk</td>
-                                <td>Manager</td>
-                                <td>Accounts Opening Related Services - UK</td>
-                                <td>AORS team - Night shift</td>
-                                <td>Yes</td>
+                                <td>{{ user.peoplesoft_id }}</td>
+                                <td>{{ user.first_name }} {{ user.last_name }}</td>
+                                <td>{{ user.department }}</td>
+                                <td>{{ user.team }}</td>
+                                <td>{{ user.role }}</td>
                                 <td><input class="team-request-view-button" type="button" value="View user"></td>
                             </tr>
-                            <tr>
-                                <td><a href="#">45102018</a></td>
-                                <td>Steve Jobs</td>
-                                <td>steve.jobs@hsbc.com.lk</td>
-                                <td>IT Administrator</td>
-                                <td>IT Infrastructure Delivery</td>
-                                <td>IT Resources provider</td>
-                                <td>Yes</td>
-                                <td><input class="team-request-view-button" type="button" value="View user"></td>
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>

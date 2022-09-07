@@ -657,7 +657,7 @@ form .atm-button input:hover {
     border-radius: 20px;
     position: relative;
     width: 350px;
-    height: 430px;
+    height: auto;
     margin: 10px;
     transition: 1s;
 }

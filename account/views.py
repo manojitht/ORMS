@@ -1,13 +1,16 @@
 # from email import message as message_alert
 from base64 import urlsafe_b64decode
 from email.message import EmailMessage
-import django
+from genericpath import exists
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from .forms import LoginUsers
 from django.contrib.auth import authenticate, login as permit_user
 from .models import Account
-from django.contrib import messages as message_alert
+from django.contrib import messages as message_alert, auth
+from django.contrib.auth.decorators import login_required
+from department.models import Department
+from team.models import Team
 
 #generating random password
 import random
@@ -75,6 +78,15 @@ def superadmin_portal(request):
     # return render(request, 'account/login.html')
 
 def add_user_page(request):
+
+    department_names = Department.objects.all().filter(is_active=True)
+    team_names = Team.objects.all().filter(is_active=True)
+
+    context = {
+        'department_names': department_names,
+        'team_names': team_names,
+    }
+    
     if request.method == 'POST':
         peoplesoft_id = request.POST['peoplesoft_id']
         first_name = request.POST['first_name']
@@ -83,10 +95,14 @@ def add_user_page(request):
         department = request.POST['department']
         team = request.POST['team']
         role = request.POST['role']
+        
         #password = request.POST['password']
         if Account.objects.filter(peoplesoft_id=peoplesoft_id).exists():
             message_alert.info(request, peoplesoft_id + ', is already exists as an user!')
             #print(peoplesoft_id + ', is already exists as an user!')
+            return redirect('add_user_page')
+        elif Account.objects.filter(email=email).exists():
+            message_alert.info(request, 'Given email was already taken!')
             return redirect('add_user_page')
         else:
             if Account.objects.filter(email=email).exists():
@@ -156,11 +172,22 @@ def add_user_page(request):
                     #return render(request, 'superadmin/add_user_page.html')
     else:
         pass
-    return render(request, 'superadmin/add_user_page.html')
+    return render(request, 'superadmin/add_user_page.html', context)
 
 
 def superadmin_add_user(request):
-    return render(request, 'superadmin/superadmin_add_user.html')
+
+    users = Account.objects.all()
+    department_names = Department.objects.all().filter(is_active=True)
+    team_names = Team.objects.all().filter(is_active=True)
+
+    context = {
+        'users': users,
+        'department_names': department_names,
+        'team_names': team_names,
+    }
+
+    return render(request, 'superadmin/superadmin_add_user.html', context)
         
 def it_admin_portal(request):
     return render(request, 'it_admin/manage_devices.html')
@@ -184,5 +211,8 @@ def activate(request, uidb64, token):
         message_alert.error(request, 'OOPS!, it seems invalid link.')
         return redirect('login')
 
+@login_required(login_url= 'login')
 def logout(request):
-    return
+    auth.logout(request)
+    message_alert.success(request, 'Logged out successfully!')
+    return redirect('login')
