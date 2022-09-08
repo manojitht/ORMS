@@ -8,7 +8,7 @@ class Team(models.Model):
     team_name = models.CharField(max_length=200, unique=True)
     team_head = models.CharField(max_length=200)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    #department = models.CharField(max_length=200)
+    team_description = models.TextField(max_length=255, blank=True)
     created_by = models.CharField(max_length=200)
     created_date = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)

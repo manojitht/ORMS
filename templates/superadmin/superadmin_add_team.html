@@ -6,7 +6,7 @@
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
             <h1>Add Teams</h1>
-            <input class="create-request-button" type="button" onclick="toggle_blur()" value="Click on to add new team">
+            <a class="navigator-btn" href="{% url 'superadmin_add_team' %}">Add New Team</a>
             {% include 'message_alert.html' %}
         </div>
        
@@ -36,27 +36,7 @@
                     </tbody>
                 </table>
             </div>
-        </div> 
-        <div id="request_popup">
-            <form action="{% url 'superadmin_add_team' %}" method="POST">
-                {% csrf_token %}
-                <h2>Add New Team</h2>
-                <input type="text" class="r-p-textbox" name="team_name" placeholder="Team name.." required>
-                <input type="text" class="r-p-textbox" name="team_head" placeholder="Team head.." required>
-                <select name="department">
-                    <option selected>--Choose department oriented with--</option>
-                    {% for department in department_names %}
-                    <option>{{ department.department_name }}</option>
-                    {% endfor %}
-                </select>
-                <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
-                <input class="create-request-button" type="submit" onclick="toggle_blur()" value="Create new team">
-                <input class="close-request-button" type="reset" onclick="toggle_blur()" value="Cancel">
-                <!-- <h4 class="alert-message-success">Team successfully created!</h4> -->
-                <!-- <h4 class="alert-message-unsuccess">Sorry validation error occurred! please check again.</h4> -->
-            </form>
-        </div>
-    </div>     
+    </div>      
 </section>
 
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>

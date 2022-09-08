@@ -1,0 +1,42 @@
+{% extends 'base_superadmin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+    <div class="add-new-department-form">
+        <h1>Add New Team Form:</h1>
+         <form action="{% url 'superadmin_add_team' %}" method="POST">
+            {% csrf_token %}
+             <div class="and-input-box">
+                 <span class="details_anu">Team Name: </span>
+                 <input type="text" name="team_name" placeholder="Enter Team name.." required>
+             </div>
+             <div class="and-input-box">
+                 <span class="details_anu">Team Head: </span>
+                 <input type="text" name="team_head" placeholder="Enter Team head.." required>
+             </div>
+             <div class="and-input-box">
+                <span class="details_anu">Department Oriented: </span>
+                <select name="department">
+                    <option selected>--Choose department--</option>
+                    {% for department in department_names %}
+                    <option>{{ department.department_name }}</option>
+                    {% endfor %}
+                  </select>
+            </div>
+             <div class="and-input-box">
+                 <span class="details_anu">Team Description: (Max: 250 words) </span>
+                 <textarea id="and-textarea" name="team_description" rows="4" cols="50" placeholder="Enter Team description here.." required></textarea>
+             </div>
+             <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
+             <div class="and-input-box">
+                 <input class="and-submit-btn" type="submit" value="Create Team">
+                 <a href="{% url 'superadmin_list_team' %}" class="and-back-btn">Back to team page</a>
+             </div>
+             {% include 'message_alert.html' %}
+         </form>
+    </div>      
+</section>
+
+{% endblock %}

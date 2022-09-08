@@ -14,11 +14,12 @@ def superadmin_add_team(request):
         'teams': teams,
         'department_names': department_names,
     }
-
+    
     if request.method == 'POST':
         team_name = request.POST['team_name']
         team_head = request.POST['team_head']
         department = request.POST['department']
+        team_description = request.POST['team_description']
         created_by = request.POST['created_by']
 
         if Team.objects.filter(team_name=team_name).exists():
@@ -26,9 +27,19 @@ def superadmin_add_team(request):
         elif department == '--Choose department oriented with--':
             message_alert.info(request, 'Please choose a department to create a team!')
         else:
-            team = Team(team_name=team_name, team_head=team_head, department=Department.objects.get(department_name=department), created_by=created_by)
+            team = Team(team_name=team_name, team_head=team_head, department=Department.objects.get(department_name=department), team_description=team_description, created_by=created_by)
             message_alert.success(request, team_name + ' is created successfully!')
             team.save()
     else:
         pass
+    return render(request, 'superadmin/add_team_page.html', context)
+
+def superadmin_list_team(request):
+    teams = Team.objects.all().filter(is_active=True)
+    department_names = Department.objects.all().filter(is_active=True)
+
+    context = {
+        'teams': teams,
+        'department_names': department_names,
+    }
     return render(request, 'superadmin/superadmin_add_team.html', context)

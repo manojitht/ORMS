@@ -7,10 +7,10 @@
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
             <h1>Add Department</h1>
-            <input class="create-request-button" type="button" onclick="toggle_blur()" value="Click on to add new department">
+            <a class="navigator-btn" href="{% url 'add_new_department' %}">Add New Department</a>
+            <!-- <input class="create-request-button" type="button" onclick="toggle_blur()" value="Click on to add new department"> -->
             {% include 'message_alert.html' %}
         </div>
-       
             <div class="container">
                 <table id="team_requests" class="display" style="width:100%">
                     <thead>
@@ -41,45 +41,8 @@
                 </table>
             </div>
         </div> 
-        <div id="request_popup">
-
-            {% if selected_dep %}
-                <form action="#" method="POST">
-                    {% csrf_token %}
-                    <h2>Add New Department</h2> 
-                    <input type="text" class="r-p-textbox" name="cost_code" placeholder="Cost Code.." value="" required>
-                    <input type="text" class="r-p-textbox" name="department_name" placeholder="Department name" required>
-                    <input type="text" class="r-p-textbox" name="department_head" placeholder="Department head" required>
-                    <input type="hidden" class="r-p-textbox" name="created_by" value="">
-                    <!-- <textarea id="rp-textarea" name="rp-other-textarea" placeholder="Describe request or issue here..." rows="4" cols="50"></textarea> -->
-                    <input class="create-request-button" type="submit" value="Save Department">
-                    <input class="close-request-button" type="reset" onclick="toggle_blur()" value="Cancel">
-                    <!-- <h4 class="alert-message-success">Department successfully created!</h4> -->
-                    <!-- <h4 class="alert-message-unsuccess">Sorry validation error occurred! please check again.</h4> -->
-                </form>
-            {% else %}
-                <form action="{% url 'superadmin_add_department' %}" method="POST">
-                    {% csrf_token %}
-                    <h2>Add New Department</h2>
-                    <input type="text" class="r-p-textbox" name="cost_code" placeholder="Cost Code.." value="" required>
-                    <input type="text" class="r-p-textbox" name="department_name" placeholder="Department name" required>
-                    <input type="text" class="r-p-textbox" name="department_head" placeholder="Department head" required>
-                    <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
-                    <!-- <textarea id="rp-textarea" name="rp-other-textarea" placeholder="Describe request or issue here..." rows="4" cols="50"></textarea> -->
-                    <input class="create-request-button" type="submit" value="Save Department">
-                    <input class="close-request-button" type="reset" onclick="toggle_blur()" value="Cancel">
-                    <!-- <h4 class="alert-message-success">Department successfully created!</h4> -->
-                    <!-- <h4 class="alert-message-unsuccess">Sorry validation error occurred! please check again.</h4> -->
-                </form>
-            {% endif %}
-
-
-
-
-        </div>
     </div>     
 </section>
-
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 <script src="{% static 'script.js' %}"></script>
