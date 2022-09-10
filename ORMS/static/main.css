@@ -1576,3 +1576,217 @@ form .atm-button input:hover {
     opacity: 1;
     transition: 0.5s;
 }
+
+
+.warning-btn-delete {
+    padding: 10px;
+    cursor: pointer;
+    background-color: rgb(226, 85, 29);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-weight: 300;
+    margin-top: 10px;
+    transition: 1s;
+    float: left;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.warning-btn-cancel {
+    padding: 10px;
+    cursor: pointer;
+    background-color: rgb(29, 98, 226);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-weight: 300;
+    margin-top: 10px;
+    transition: 1s;
+    float: right;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+/* department card tile styleing in department listings page */
+
+.department-card-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    overflow-y: scroll;
+}
+
+
+.department-card-tile {
+    background-color: #ffffff;
+    margin-top: 25px;
+    width: 90%;
+    justify-content: center;
+    border-radius: 15px;
+    padding: 10px;
+    position: relative;
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 60px 40px -7px;
+}
+
+.department-card-tile h1 {
+    font-weight: 400;
+    font-size: 18px;
+}
+
+.department-card-tile h2 {
+    color: #fff;
+}
+
+.department-card-tile h1 span {
+    font-weight: 600;
+}
+
+.txt-diff-dep {
+    font-weight: 400;
+    color: #4175c2;
+    font-size: 25px;
+}
+
+.txt-diff-dep i {
+    font-weight: 400;
+    color: #4175c2;
+    font-size: 35px;
+}
+
+.department-card-tile table, tr {
+   padding: 15px;
+}
+
+.department-tile-btn-edit {
+    height: 45px;
+    width: 195px;
+    border-radius: 5px;
+    border: 1px solid #e9a512;
+    font-size: 15px;
+    background: #e9a512;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    padding: 11px;
+    float: left;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.5s ease;
+}
+
+.department-tile-btn-edit:hover {
+    border: 1px solid #ca9115;
+    background: #ca9115;
+}
+
+.department-tile-btn-view {
+    height: 45px;
+    width: 195px;
+    border-radius: 5px;
+    border: 1px solid #1474e2;
+    font-size: 15px;
+    background: #1474e2;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    padding: 11px;
+    float: left;
+    margin-left: 10px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.5s ease;
+}
+
+.department-tile-btn-view:hover {
+    border: 1px solid #1a68c0;
+    background: #1a68c0;
+}
+
+.department-tile-btn-delete {
+    height: 45px;
+    width: 195px;
+    border-radius: 5px;
+    border: 1px solid #c70505;
+    font-size: 15px;
+    background: #c70505;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    padding: 11px;
+    float: right;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.5s ease;
+}
+
+.department-tile-btn-delete:hover {
+    border: 1px solid #9c0f0f;
+    background: #9c0f0f;
+}
+
+/* search bar and sort by feature */
+
+.search-bar-container {
+    width: 100%;
+    height: 65px;
+    margin-top: 25px;
+    /* justify-content: center;
+    align-items: center;
+    display: flex; */
+}
+
+.search-input-box-dt {
+    height: 45px;
+    width: 350px;
+    padding-left: 15px;
+    outline: none;
+    border: 1px solid #695CFE;
+    background-color: rgb(255, 255, 255);
+}
+
+.select-input-box-dt {
+    height: 44px;
+    width: 170px;
+    padding-left: 15px;
+    outline: none;
+    border: 1px solid #695CFE;
+    background-color: rgb(255, 255, 255);
+    margin-left: 5%;
+}
+
+.search-input-btn-dt {
+    height: 45px;
+    width: 105px;
+    background-color: #695CFE;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    transition: 0.7s;
+}
+
+.search-input-btn-dt:hover {
+    background-color: #867cfa;
+}
+
+.add-team-btn {
+    height: 45px;
+    width: auto;
+    border: 1px solid #2c7a30;
+    font-size: 15px;
+    background: #2c7a30;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    padding: 11px;
+    float: right;
+    text-decoration: none;
+    transition: all 0.5s ease;
+    margin-right: 5%;
+    border-radius: 5px;
+}
+
+.add-team-btn:hover {
+    border: 1px solid #275f29;
+    background: #275f29;
+}

@@ -25,3 +25,11 @@ const home_body = document.querySelector(".home-body"),
       var request_popup = document.getElementById('request_popup');
       request_popup.classList.toggle('active');
   }
+
+  function toggle_warning_blur(){
+    var blur = document.getElementById('blur');
+    blur.classList.toggle('active');
+  
+    var warning_popup = document.getElementById('warning_popup');
+    warning_popup.classList.toggle('active');
+}

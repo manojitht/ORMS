@@ -3,46 +3,65 @@
 
 {% block content %}
 
+
+
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
-            <h1>Add Department</h1>
-            <a class="navigator-btn" href="{% url 'add_new_department' %}">Add New Department</a>
-            <!-- <input class="create-request-button" type="button" onclick="toggle_blur()" value="Click on to add new department"> -->
+            <h1>Department Management</h1>
             {% include 'message_alert.html' %}
         </div>
-            <div class="container">
-                <table id="team_requests" class="display" style="width:100%">
-                    <thead>
+        <div class="search-bar-container">
+            <form>
+                <select name="search_by" class="select-input-box-dt">
+                    <option selected>Department name</option>
+                    <option>Department head</option>
+                    <option>Updated by</option>
+                </select>
+                <input type="search" class="search-input-box-dt" placeholder="Search by preference here..">
+                <input type="submit" class="search-input-btn-dt" value="Search">
+                <a href="{% url 'add_new_department' %}" class="add-team-btn">Department <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
+            </form>
+        </div>
+        <div class="department-card-container">
+            {% for department in departments %}
+                <div class="department-card-tile">
+                    <table style="width: 100%;">
                         <tr>
-                            <th>ID</th>
-                            <th>Department Name</th>
-                            <th>Department Head</th>
-                            <th>Created On</th>
-                            <th>Created By</th>
-                            <th>Edit</th>
-                            <!-- <th>Delete</th> -->
+                            <td><h1><span class="txt-diff-dep"><i class='bx bxs-building' ></i>{{ department.department_name }}</span></h1></td>
+                            <td><h1><span>Department Head:</span><br> {{ department.department_head }}</h1></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for department in departments %}
                         <tr>
-                            <td><a href="#">{{ department.id }}</a></td>
-                            <td>{{ department.department_name }}</td>
-                            <td>{{ department.department_head }}</td>
-                            <td>{{ department.created_on }}</td>
-                            <td>{{ department.created_by }}</td>
-                            <td><a href="{% url 'edit_department' department.id %}" onclick="toggle_blur()">Edit</a> <a href="{% url 'delete_department' department.id %}">Delete</a></td>
-                            <!-- <td><input style="margin: 2px; width: 60%; background-color: rgb(209, 189, 9); color: black; border-radius: 15px;" class="team-request-view-button" type="button" value="Edit"> <input style="margin: 2px; width: 60%; background-color: rgb(179, 19, 19); border-radius: 15px;" class="team-request-view-button" type="button" value="Delete"></td> -->
-                            <!-- <td><input class="team-request-view-button" type="button" value="Delete"></td> -->
+                            <td><h1><span>Lastly Updated By:</span><br> {{ department.created_by }}</h1></td>
+                            <td><h1><span>Created On:</span> {{ department.created_on }}</h1></td>
                         </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                        <tr>
+                            <td colspan="2"><h1><span>Description:</span><br> {{ department.department_description }}</h1></td>
+                        </tr>
+                            <td><h2>.</h2></td>
+                            <td><h2>.</h2></td>
+                        <tr>
+                            <td style="text-align: center;"><a href="{% url 'edit_department' department.id %}" class="department-tile-btn-edit">Update Department</a><a href="#" class="department-tile-btn-view">View Teams</a></td>
+                            <td style="text-align: center;"><a href="{% url 'delete_department' department.id %}" class="department-tile-btn-delete">Delete Department</a></td>
+                        </tr>
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
         </div> 
-    </div>     
+        <!-- <div id="warning_popup">
+            onclick="toggle_warning_blur()"
+            <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
+            <h3>Are you sure want to delete the entire department!</h3>
+            <a href="#" class="warning-btn-delete" onclick="toggle_warning_blur()">Yes, delete</a>
+            <a href="#" class="warning-btn-cancel" onclick="toggle_warning_blur()">No, cancel</a>
+        </div>     -->
 </section>
+
+
+<!-- 
+------------------------------------------------------------------------- -->
+
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 <script src="{% static 'script.js' %}"></script>

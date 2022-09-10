@@ -5,6 +5,40 @@
 
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1>Add Department</h1>
+            {% include 'message_alert.html' %}
+        </div>
+
+        {% if selected_dep %}
+
+        <div class="add-new-department-form">
+            <h1>Update Department Form:</h1>
+            <form action="{% url 'update_department' selected_dep.id %}" method="POST">
+                {% csrf_token %}
+                <div class="and-input-box">
+                    <span class="details_anu">Department Name: </span>
+                    <input type="text" name="department_name" placeholder="Enter Department name.." value="{{selected_dep.department_name}}" required>
+                </div>
+                <div class="and-input-box">
+                    <span class="details_anu">Department Head: </span>
+                    <input type="text" name="department_head" placeholder="Enter Department head.." value="{{selected_dep.department_head}}" required>
+                </div>
+                <div class="and-input-box">
+                    <span class="details_anu">Department Description: (Max: 250 words) </span>
+                    <textarea id="and-textarea" name="department_description" rows="4" cols="50" placeholder="Enter Department description here.." required>{{selected_dep.department_description}}</textarea>
+                </div>
+                <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
+                <div class="and-input-box">
+                    <input class="and-submit-btn" type="submit" value="Save changes">
+                    <a href="{% url 'superadmin_list_department' %}" class="and-back-btn">Back to department page</a>
+                </div>
+            </form>
+        </div>
+
+
+        {% else %}
+
         <div class="add-new-department-form">
             <h1>Add New Department Form:</h1>
             <form action="{% url 'add_new_department' %}" method="POST">
@@ -26,9 +60,11 @@
                     <input class="and-submit-btn" type="submit" value="Create Department">
                     <a href="{% url 'superadmin_list_department' %}" class="and-back-btn">Back to department page</a>
                 </div>
-                {% include 'message_alert.html' %}
             </form>
         </div>
+
+        {% endif %}
+
     </div>
     <!-- <div id="warning_popup">
         <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
