@@ -172,7 +172,7 @@ def add_user_page(request):
                     #return render(request, 'superadmin/add_user_page.html')
     else:
         pass
-    return render(request, 'superadmin/add_user_page.html', context)
+    return render(request, 'superadmin/add_user_form.html', context)
 
 
 def superadmin_add_user(request):
@@ -187,7 +187,7 @@ def superadmin_add_user(request):
         'team_names': team_names,
     }
 
-    return render(request, 'superadmin/superadmin_add_user.html', context)
+    return render(request, 'superadmin/display_user_page.html', context)
         
 def it_admin_portal(request):
     return render(request, 'it_admin/manage_devices.html')
@@ -214,5 +214,5 @@ def activate(request, uidb64, token):
 @login_required(login_url= 'login')
 def logout(request):
     auth.logout(request)
-    message_alert.success(request, 'Logged out successfully!')
+    message_alert.success(request, 'User logged out successfully!')
     return redirect('login')

@@ -1,0 +1,76 @@
+{% extends 'base_superadmin.html' %}
+{% load static %}
+
+{% block content %}
+
+
+
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1>Department Index</h1>
+        </div>
+        <div class="search-bar-container">
+            <form action="{% url 'superadmin_department_date_sort' %}" method="POST">
+                {% csrf_token %}
+                From: <input type="date" style="width: 140px;" name="from_dep" class="search-input-box-dt">
+                To: <input type="date" style="width: 140px;" name="to_dep" class="search-input-box-dt">
+                <input type="submit" class="search-input-btn-dt" value="Sort">
+                <a href="{% url 'add_new_department' %}" style="margin-right: 0%;" class="add-team-btn">Department <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
+                <a href="#" style="margin-right: 15px; background-color: rgb(24, 24, 24);" class="add-team-btn">Print report <i class='bx bx-printer'></i></a>
+            </form>
+        </div>
+       
+            <div class="container">
+                <table id="team_requests" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Department Name</th>
+                            <th>Department Head</th>
+                            <th>Updated By</th>
+                            <th>Created On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% if get_result %}
+
+                        {% for department in get_result %}
+                        <tr>
+                            <td>{{ department.id }}</td>
+                            <td>{{ department.department_name }}</td>
+                            <td>{{ department.department_head }}</td>
+                            <td>{{ department.created_by }}</td>
+                            <td>{{ department.created_on }}</td>
+                        </tr>
+                        {% endfor %}
+
+                        {% else %}
+
+                        {% for department in departments_table %}
+                        <tr>
+                            <td>{{ department.id }}</td>
+                            <td>{{ department.department_name }}</td>
+                            <td>{{ department.department_head }}</td>
+                            <td>{{ department.created_by }}</td>
+                            <td>{{ department.created_on }}</td>
+                        </tr>
+                        {% endfor %}
+
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div> 
+    </div>     
+</section>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="{% static 'script.js' %}"></script>
+
+{% endblock %}

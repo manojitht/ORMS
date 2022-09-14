@@ -31,7 +31,7 @@
                 <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
                 <div class="and-input-box">
                     <input class="and-submit-btn" type="submit" value="Save changes">
-                    <a href="{% url 'superadmin_list_department' %}" class="and-back-btn">Back to department page</a>
+                    <a href="{% url 'display_departments' %}" class="and-back-btn">Back to department page</a>
                 </div>
             </form>
         </div>
@@ -58,7 +58,7 @@
                 <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
                 <div class="and-input-box">
                     <input class="and-submit-btn" type="submit" value="Create Department">
-                    <a href="{% url 'superadmin_list_department' %}" class="and-back-btn">Back to department page</a>
+                    <a href="{% url 'display_departments' %}" class="and-back-btn">Back to department page</a>
                 </div>
             </form>
         </div>

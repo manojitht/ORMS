@@ -709,6 +709,7 @@ form .atm-button input:hover {
 }
 
 /* my requests section styling */
+/* my requests section styling */
 
 #team_requests tr:nth-child(even){background-color: #f2f2f2;}
 
@@ -717,29 +718,59 @@ form .atm-button input:hover {
 #team_requests th {
   padding-top: 12px;
   padding-bottom: 12px;
-  text-align: center;
-  background-color: #706ee4;
-  color: white;
-  font-weight: 400;
+  text-align: left;
+  background-color: #797979;
+  color: rgb(255, 255, 255);
+  font-weight: 500;
+  font-size: 13px;
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  border-left: 0.5px solid #000;
+  /* border-right: 0.1px solid #000; */
 }
 
 #team_requests tr {
-    text-align: center;
-    font-weight: 300;
+    text-align: left;
+    font-weight: 400;
+    font-size: 13px;
 }
 
 .team-request-view-button {
-    padding: 7px;
-    background-color: rgb(86, 156, 92);
+    padding: 5px;
+    background-color: rgb(224, 175, 11);
+    color: rgb(39, 39, 39);
+    border: none;
+    font-weight: 300;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.7s;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-left: 5px;
+    width: 65px;
+}
+
+.team-request-delete-button {
+    padding: 5px;
+    background-color: rgb(211, 19, 6);
     color: #fff;
     border: none;
     font-weight: 300;
+    font-size: 13px;
     cursor: pointer;
     transition: 0.7s;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-left: 5px;
+    width: 65px;
+}
+
+.team-request-delete-button:hover {
+    background-color: rgb(179, 25, 14);
 }
 
 .team-request-view-button:hover {
-    background-color: rgb(68, 124, 72);
+    background-color: rgb(192, 150, 14);
 }
 
 .create-request-button {

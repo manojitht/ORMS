@@ -7,20 +7,36 @@
 
     <section class="home-main">
         <div class="full-myteam-container" id="blur">
-            <div class="head-container">
+            <!-- <div class="head-container">
                 <h1>Add Users</h1>
                 <a class="navigator-btn" href="{% url 'add_user_page' %}">Add new user</a>
+            </div> -->
+
+            <div class="head-container">
+                <h1>User Management</h1>
+                <!-- <h4 class="alert-message-success">User successfully created!</h4> -->
+            </div>
+            <div class="search-bar-container">
+                <form>
+                    From: <input type="date" style="width: 140px;" class="search-input-box-dt">
+                    To: <input type="date" style="width: 140px;" class="search-input-box-dt">
+                    <input type="submit" class="search-input-btn-dt" value="Search">
+                    <a href="{% url 'add_user_page' %}" style="margin-right: 0%;" class="add-team-btn">User <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
+                    <a href="#" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">Print report <i class='bx bx-printer'></i></a>
+                </form>
             </div>
            
                 <div class="container">
                     <table id="team_requests" class="display" style="width:100%">
                         <thead>
                             <tr>
-                                <th>PeopleSoft Id</th>
-                                <th>Employee name</th>
+                                <th>PS Id</th>
+                                <th>Emp Name</th>
+                                <th>Email</th>
                                 <th>Department</th>
                                 <th>Team</th>
-                                <th>User type</th>
+                                <th>Role</th>
+                                <th>Created On</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -29,10 +45,12 @@
                             <tr>
                                 <td>{{ user.peoplesoft_id }}</td>
                                 <td>{{ user.first_name }} {{ user.last_name }}</td>
+                                <td>{{ user.email }}</td>
                                 <td>{{ user.department }}</td>
                                 <td>{{ user.team }}</td>
                                 <td>{{ user.role }}</td>
-                                <td><input class="team-request-view-button" type="button" value="View user"></td>
+                                <td>{{ user.date_joined }}</td>
+                                <td><input class="team-request-view-button" type="button" value="Edit"><input class="team-request-delete-button" type="button" value="Delete"></td>
                             </tr>
                             {% endfor %}
                         </tbody>

@@ -1,0 +1,79 @@
+{% extends 'base_superadmin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            {% if name %}
+            <h1>{{ name }}</h1>
+            {% else %}
+            {% endif %}
+            <!-- {% include 'message_alert.html' %} -->
+        </div>
+        <div class="search-bar-container">
+            <form>
+                <h2 style="color: rgb(26, 26, 26); font-weight: 400; margin-left: 5%; float: left;">Total count of teams: {{ team_count }}</h2>
+                <!-- <input style="margin-left: 5%;" type="input" class="search-input-box-dt" name="keyword" placeholder="Search by preference here.." required>
+                <input type="submit" class="search-input-btn-dt" value="Search"> -->
+                <a href="{% url 'superadmin_add_team' %}" class="add-team-btn">Team <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
+                <a href="{% url 'superadmin_team_table' %}" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">View <i class='bx bx-table' ></i></a>
+            </form>
+        </div>
+        <div class="department-card-container">
+
+            {% if department_view_teams %}
+
+            {% for teams in department_view_teams %}
+                
+                <div class="department-card-tile">
+                    <table style="width: 100%;">
+                        <tr>
+                        <td><h1><span class="txt-diff-dep"><i class='bx bxs-building' ></i>{{ teams.team_name }}</span></h1></td>
+                        <td><h1><span>Team Head:</span><br> {{ teams.team_head }}</h1></td>
+                        </tr>
+                        <tr>
+                        <td><h1><span>Department Oriented To:</span><br>{{ teams.department }}</h1></td>
+                        <td><h1><span>Created On:</span> {{ teams.created_date }}</h1></td>
+                        </tr>
+                        <tr>
+                        <td><h1><span>Lastly Updated By:</span><br> {{ teams.created_by }}</h1></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><h1><span>Description:</span><br> {{ teams.team_description }}</h1></td>
+                        </tr>
+                            <td><h2>.</h2></td>
+                            <td><h2>.</h2></td>
+                        <tr>
+                        <td style="text-align: center;"><a href="{% url 'edit_team' teams.id %}" class="department-tile-btn-edit">Update Team</a></td>
+                        <td style="text-align: center;"><a href="{% url 'delete_team' teams.id %}" class="department-tile-btn-delete">Delete Team</a></td>
+                        </tr>
+                    </table>
+                </div>
+
+            {% endfor %}
+
+            {% else %}
+
+            <h2>No Teams on this department!</h2>
+
+            {% endif %}
+                
+        </div>
+        </div> 
+        <!-- <div id="warning_popup">
+            <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
+            <h3>Are you sure want to delete the entire team!</h3>
+            <input class="create-request-button" type="button" onclick="toggle_warning_blur()" value="Yes, delete">
+            <input class="close-request-button" type="button" onclick="toggle_warning_blur()" value="No, cancel">
+        </div> -->
+    </div>     
+</section>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="{% static 'script.js' %}"></script>
+
+{% endblock %}

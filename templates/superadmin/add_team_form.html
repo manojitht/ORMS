@@ -1,0 +1,90 @@
+{% extends 'base_superadmin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1>Add Team</h1>
+            {% include 'message_alert.html' %}
+        </div>
+
+        {% if selected_tem %}
+
+        <div class="add-new-department-form">
+            <h1>Update Team Form:</h1>
+             <form action="{% url 'update_team' selected_tem.id %}" method="POST">
+                {% csrf_token %}
+                 <div class="and-input-box">
+                     <span class="details_anu">Team Name: </span>
+                     <input type="text" name="team_name" placeholder="Enter Team name.." value="{{selected_tem.team_name}}" required>
+                 </div>
+                 <div class="and-input-box">
+                     <span class="details_anu">Team Head: </span>
+                     <input type="text" name="team_head" placeholder="Enter Team head.." value="{{selected_tem.team_head}}" required>
+                 </div>
+                 <div class="and-input-box">
+                    <span class="details_anu">Department Oriented: </span>
+                    <select name="department">
+                        <option selected>{{selected_tem.department}}</option>
+                        {% for department in department_names %}
+                        <option>{{ department.department_name }}</option>
+                        {% endfor %}
+                      </select>
+                </div>
+                 <div class="and-input-box">
+                     <span class="details_anu">Team Description: (Max: 250 words) </span>
+                     <textarea id="and-textarea" name="team_description" rows="4" cols="50" placeholder="Enter Team description here.." required>{{selected_tem.team_description}}</textarea>
+                 </div>
+                 <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
+                 <div class="and-input-box">
+                     <input class="and-submit-btn" type="submit" value="Save Changes">
+                     <a onclick="history.back()" class="and-back-btn">Back to team page</a>
+                 </div>
+             </form>
+        </div>
+
+        {% else %}
+
+
+        <div class="add-new-department-form">
+            <h1>Add New Team Form:</h1>
+             <form action="{% url 'superadmin_add_team' %}" method="POST">
+                {% csrf_token %}
+                 <div class="and-input-box">
+                     <span class="details_anu">Team Name: </span>
+                     <input type="text" name="team_name" placeholder="Enter Team name.." required>
+                 </div>
+                 <div class="and-input-box">
+                     <span class="details_anu">Team Head: </span>
+                     <input type="text" name="team_head" placeholder="Enter Team head.." required>
+                 </div>
+                 <div class="and-input-box">
+                    <span class="details_anu">Department Oriented: </span>
+                    <select name="department">
+                        <option selected>--Choose department--</option>
+                        {% for department in department_names %}
+                        <option>{{ department.department_name }}</option>
+                        {% endfor %}
+                      </select>
+                </div>
+                 <div class="and-input-box">
+                     <span class="details_anu">Team Description: (Max: 250 words) </span>
+                     <textarea id="and-textarea" name="team_description" rows="4" cols="50" placeholder="Enter Team description here.." required></textarea>
+                 </div>
+                 <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
+                 <div class="and-input-box">
+                     <input class="and-submit-btn" type="submit" value="Create Team">
+                     <a onclick="history.back()" class="and-back-btn">Back to team page</a>
+                 </div>
+             </form>
+        </div>
+
+        {% endif %}
+
+    </div>      
+</section>
+
+{% endblock %}
