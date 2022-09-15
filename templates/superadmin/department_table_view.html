@@ -9,6 +9,7 @@
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
             <h1>Department Index</h1>
+            {% include 'message_alert.html' %}
         </div>
         <div class="search-bar-container">
             <form action="{% url 'superadmin_department_date_sort' %}" method="POST">

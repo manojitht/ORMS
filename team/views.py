@@ -70,7 +70,8 @@ def update_team(request, temid):
 
 def delete_team(request, temid):
     deleting_tem = Team.objects.get(id=temid)
-    deleting_tem.delete()
+    deleting_tem.is_active = False
+    deleting_tem.save()
     message_alert.success(request, 'Team deleted successfully!')
     return redirect(display_departments)
 

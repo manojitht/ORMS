@@ -140,7 +140,7 @@ MESSAGE_TAGS = {
     messages.INFO: 'message-info',
     messages.ERROR: 'message-unsuccess',
     messages.WARNING: 'message-warning', # need to style
-    messages.DEBUG: 'message-debug', #need to style
+    messages.DEBUG: 'message-debug', # need to style
 }
 
 

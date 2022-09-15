@@ -12,7 +12,7 @@ def notes_page(request):
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def display_departments(request):
-    departments = Department.objects.all().order_by('department_name')
+    departments = Department.objects.all().filter(is_active=True).order_by('department_name')
     context = { 'departments': departments, }
     return render(request, 'superadmin/display_department_page.html', context)
     # naming convention finished.
@@ -40,7 +40,9 @@ def add_new_department(request):
 
 def delete_department(request, depid):
     deleting_dep = Department.objects.get(id=depid)
-    deleting_dep.delete()
+    #deleting_dep.delete()
+    deleting_dep.is_active = False
+    deleting_dep.save()
     message_alert.success(request, 'Department deleted successfully!')
     return redirect(display_departments)
     # naming convention finished.
@@ -90,9 +92,16 @@ def superadmin_department_table(request):
 
 def superadmin_department_date_sort(request):
     if request.method == 'POST':
-        from_date = request.POST.get('from_date')
-        to_date = request.POST.get('to_date')
-        get_result = Department.objects.raw('select id,department_name,department_head,department_description,created_by,created_on from departments where created_on between "'+from_date+'" and "'+to_date+'"')
+        #from_date = request.POST.get('from_date')
+        #from_date = request.POST.get('to_date')
+        #get_result = Department.objects.raw('select id,department_name,department_head,department_description,created_by,created_on from departments where created_on between "'+from_date+'" and "'+to_date+'"')
+        from_date = request.POST['from_dep']
+        to_date = request.POST['to_dep']
+        if from_date != '' and to_date != '':
+            get_result =  Department.objects.filter(created_on__gte=from_date, created_on__lte=to_date)
+        else:
+            message_alert.info(request, 'Please select the date fields properly!')
+
     context = { 'get_result': get_result, }
     return render(request, 'superadmin/department_table_view.html', context)
     # naming convention finished.
@@ -104,7 +113,7 @@ def department_view_teams(request, depid):
     name = Department.objects.get(department_name=get_department.department_name)
     # department_name = depname.replace('-', ' ')
     # corrected_name = department_name.title()
-    department_view_teams = Team.objects.all().filter(department=name)
+    department_view_teams = Team.objects.all().filter(department=name, is_active=True)
     team_count = department_view_teams.count()
     context = { 'department_view_teams': department_view_teams, 'name': name, 'team_count': team_count, }
     return render(request, 'superadmin/display_team_page.html', context)
