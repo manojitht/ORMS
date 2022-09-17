@@ -10,7 +10,7 @@ class Team(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     team_description = models.TextField(max_length=255, blank=True)
     created_by = models.CharField(max_length=200)
-    created_date = models.DateTimeField(auto_now_add=True)
+    created_date = models.DateField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:

@@ -83,3 +83,13 @@ def superadmin_team_table(request):
     return render(request, 'superadmin/team_table_view.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def superadmin_team_date_sort(request):
+    if request.method == 'POST':
+        from_date = request.POST['from_tem']
+        to_date = request.POST['to_tem']
+        get_result =  Team.objects.filter(created_date__gte=from_date, created_date__lte=to_date)
+    context = { 'get_result': get_result, }
+    return render(request, 'superadmin/team_table_view.html', context)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

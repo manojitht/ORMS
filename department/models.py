@@ -4,7 +4,6 @@ from django.db import models
 from datetime import datetime, date
 
 # Create your models here.
-
 class Department(models.Model):
     department_name = models.CharField(max_length=150, unique=True)
     department_head = models.CharField(max_length=150)

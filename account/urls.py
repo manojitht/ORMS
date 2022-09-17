@@ -12,5 +12,6 @@ urlpatterns = [
     path('add_user_page', views.add_user_page, name='add_user_page'),
     path('it_admin_portal', views.it_admin_portal, name='it_admin_portal'),
     path('manager_portal', views.manager_portal, name='manager_portal'),
+    path('superadmin_users_date_sort/', views.superadmin_users_date_sort, name='superadmin_users_date_sort'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
 ]

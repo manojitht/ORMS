@@ -11,7 +11,8 @@
             <h1>Teams Index</h1>
         </div>
         <div class="search-bar-container">
-            <form>
+            <form action="{% url 'superadmin_team_date_sort' %}" method="POST">
+                {% csrf_token %}
                 From: <input type="date" style="width: 140px;" name="from_tem" class="search-input-box-dt">
                 To: <input type="date" style="width: 140px;" name="to_tem" class="search-input-box-dt">
                 <input type="submit" class="search-input-btn-dt" value="Sort">
@@ -33,25 +34,40 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for team in teams_table %}
-                        <tr>
-                            <td>{{ team.id }}</td>
-                            <td>{{ team.team_name }}</td>
-                            <td>{{ team.team_head }}</td>
-                            <td>{{ team.department }}</td>
-                            <td>{{ team.created_by }}</td>
-                            <td>{{ team.created_date }}</td>
-                        </tr>
-                        {% endfor %}
+
+                        {% if get_result %}
+
+                            {% for team in get_result %}
+                                <tr>
+                                    <td>{{ team.id }}</td>
+                                    <td>{{ team.team_name }}</td>
+                                    <td>{{ team.team_head }}</td>
+                                    <td>{{ team.department }}</td>
+                                    <td>{{ team.created_by }}</td>
+                                    <td>{{ team.created_date }}</td>
+                                </tr>
+                            {% endfor %}
+
+                        {% else %}
+
+                            {% for team in teams_table %}
+                                <tr>
+                                    <td>{{ team.id }}</td>
+                                    <td>{{ team.team_name }}</td>
+                                    <td>{{ team.team_head }}</td>
+                                    <td>{{ team.department }}</td>
+                                    <td>{{ team.created_by }}</td>
+                                    <td>{{ team.created_date }}</td>
+                                </tr>
+                            {% endfor %}
+
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
         </div> 
     </div>     
 </section>
-
-
-
 
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>

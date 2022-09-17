@@ -13,8 +13,8 @@ from department.models import Department
 from team.models import Team
 
 #generating random password
-import random
 import string
+import secrets
 
 #sending mail library
 from django.contrib.sites.shortcuts import get_current_site
@@ -95,6 +95,9 @@ def add_user_page(request):
         department = request.POST['department']
         team = request.POST['team']
         role = request.POST['role']
+        characters = string.ascii_letters + string.digits
+        password_generated = ''.join(secrets.choice(characters) for i in range(10))
+
         
         #password = request.POST['password']
         if Account.objects.filter(peoplesoft_id=peoplesoft_id).exists():
@@ -110,7 +113,7 @@ def add_user_page(request):
                 return redirect('add_user_page')
             else:
                 if role == 'Superadmin':
-                    user  = Account.objects.create_superuser(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=department, team=team, role=role, password='password@123')
+                    user  = Account.objects.create_superuser(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(department_name=department), team=Team.objects.get(team_name=team), role=role, ini_pas=password_generated, password=password_generated)
                     #Send email to user
                     try: 
                         current_site = get_current_site(request)
@@ -122,7 +125,6 @@ def add_user_page(request):
                             'token': default_token_generator.make_token(user),
                         })
                         to_email = email
-                        password_generated = 'password@123'
                         send_email = EmailMessage(mail_head_subject, message, to=[to_email])
                         send_email.send()
                         user.save();
@@ -134,7 +136,7 @@ def add_user_page(request):
                     return redirect('add_user_page')
                     #return render(request, 'superadmin/add_user_page.html')
                 elif role == 'Manager':
-                    user  = Account.objects.create_manager(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=department, team=team, role=role, password='password@123')
+                    user  = Account.objects.create_manager(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(department_name=department), team=Team.objects.get(team_name=team), role=role, ini_pas=password_generated, password=password_generated)
                     try: 
                         current_site = get_current_site(request)
                         mail_head_subject = 'ORMS account creation'
@@ -157,7 +159,7 @@ def add_user_page(request):
                     return redirect('add_user_page')
                     #return render(request, 'superadmin/add_user_page.html')
                 elif role == 'IT Administrator':
-                    user  = Account.objects.create_IT_admin(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=department, team=team, role=role, password='password@123')
+                    user  = Account.objects.create_IT_admin(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(department_name=department), team=Team.objects.get(team_name=team), role=role, ini_pas=password_generated, password=password_generated)
                     try: 
                         current_site = get_current_site(request)
                         mail_head_subject = 'ORMS account creation'
@@ -168,7 +170,6 @@ def add_user_page(request):
                             'token': default_token_generator.make_token(user),
                         })
                         to_email = email
-                        password_generated = 'password@123'
                         send_email = EmailMessage(mail_head_subject, message, to=[to_email])
                         send_email.send()
                         user.save();
@@ -218,6 +219,14 @@ def activate(request, uidb64, token):
     else:
         message_alert.error(request, 'OOPS!, it seems invalid link.')
         return redirect('login')
+
+def superadmin_users_date_sort(request):
+    if request.method == 'POST':
+        from_date = request.POST['from_user']
+        to_date = request.POST['to_user']
+        get_result =  Account.objects.filter(date_joined__gte=from_date, date_joined__lte=to_date)
+    context = { 'get_result': get_result, }
+    return render(request, 'superadmin/display_user_page.html', context)
 
 @login_required(login_url= 'login')
 def logout(request):

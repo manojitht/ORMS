@@ -17,9 +17,10 @@
                 <!-- <h4 class="alert-message-success">User successfully created!</h4> -->
             </div>
             <div class="search-bar-container">
-                <form>
-                    From: <input type="date" style="width: 140px;" class="search-input-box-dt">
-                    To: <input type="date" style="width: 140px;" class="search-input-box-dt">
+                <form action="{% url 'superadmin_users_date_sort' %}" method="POST">
+                    {% csrf_token %}
+                    From: <input type="date" style="width: 140px;" name="from_user" class="search-input-box-dt">
+                    To: <input type="date" style="width: 140px;" name="to_user" class="search-input-box-dt">
                     <input type="submit" class="search-input-btn-dt" value="Search">
                     <a href="{% url 'add_user_page' %}" style="margin-right: 0%;" class="add-team-btn">User <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
                     <a href="#" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">Print report <i class='bx bx-printer'></i></a>
@@ -41,84 +42,42 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for user in users %}
-                            <tr>
-                                <td>{{ user.peoplesoft_id }}</td>
-                                <td>{{ user.first_name }} {{ user.last_name }}</td>
-                                <td>{{ user.email }}</td>
-                                <td>{{ user.department }}</td>
-                                <td>{{ user.team }}</td>
-                                <td>{{ user.role }}</td>
-                                <td>{{ user.date_joined }}</td>
-                                <td><input class="team-request-view-button" type="button" value="Edit"><input class="team-request-delete-button" type="button" value="Remove"></td>
-                            </tr>
-                            {% endfor %}
+
+                            {% if get_result %}
+
+                                {% for user in get_result %}
+                                    <tr>
+                                        <td>{{ user.peoplesoft_id }}</td>
+                                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+                                        <td>{{ user.email }}</td>
+                                        <td>{{ user.department }}</td>
+                                        <td>{{ user.team }}</td>
+                                        <td>{{ user.role }}</td>
+                                        <td>{{ user.date_joined }}</td>
+                                        <td><input class="team-request-view-button" type="button" value="Edit"><input class="team-request-delete-button" type="button" value="Remove"></td>
+                                    </tr>
+                                {% endfor %}
+
+                            {% else %}
+
+                                {% for user in users %}
+                                    <tr>
+                                        <td>{{ user.peoplesoft_id }}</td>
+                                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+                                        <td>{{ user.email }}</td>
+                                        <td>{{ user.department }}</td>
+                                        <td>{{ user.team }}</td>
+                                        <td>{{ user.role }}</td>
+                                        <td>{{ user.date_joined }}</td>
+                                        <td><input class="team-request-view-button" type="button" value="Edit"><input class="team-request-delete-button" type="button" value="Remove"></td>
+                                    </tr>
+                                {% endfor %}
+
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>
             </div> 
-            <!-- <div id="request_popup">
-                <h2>Add New User</h2>
-                <form action="{% url 'superadmin_add_user' %}" method="POST">
-                    {% csrf_token %}
-                    <input type="text" class="r-p-textbox" name="peoplesoft_id" placeholder="Employee PS ID.." required>
-                    <input type="text" class="r-p-textbox" name="first_name" placeholder="Firstname" required>
-                    <input type="text" class="r-p-textbox" name="last_name" placeholder="Lastname" required>
-                    <input type="email" class="r-p-textbox" name="email" placeholder="Email" required>
-                        <select name="department">
-                            <option selected>--Choose department--</option>
-                            <option>Bank account opening UK - Night</option>
-                            <option>Bank account opening UK - Morning</option>
-                            <option>KYC Operations</option>
-                            <option>Banking Operations</option>
-                            <option>Financial crime investigation</option>
-                            <option>Global Publishing Services</option>
-                        </select>
-                        <select name="team">
-                            <option selected>--Choose team--</option>
-                            <option>Bank account opening UK - Night</option>
-                            <option>Bank account opening UK - Morning</option>
-                            <option>KYC Operations</option>
-                            <option>Banking Operations</option>
-                            <option>Financial crime investigation</option>
-                            <option>Global Publishing Services</option>
-                        </select>
-                        <select name="role">
-                            <option selected>--Choose user role--</option>
-                            <option>IT Administrator</option>
-                            <option>Manager</option>
-                            <option>Superadmin</option>
-                        </select>
-                    <input type="hidden" class="r-p-textbox" name="password" value=""> -->
-                  <!-- <select name="request-type">
-                    <option selected>--Choose user preference--</option>
-                    <option>IT Administrator</option>
-                    <option>Manager Operations</option>
-                    <option>Superadmin</option>
-                  </select> -->
-                  <!-- <h4>Select User Preference:</h4>
-                  <div class="checkbox-container">
-                    <label class="checkbox-element">Manager
-                        <input type="checkbox">
-                        <span class="checkmark"></span>
-                      </label>
-                      <label class="checkbox-element">IT Administrator
-                        <input type="checkbox">
-                        <span class="checkmark"></span>
-                      </label>
-                      <label class="checkbox-element">Superadmin
-                        <input type="checkbox">
-                        <span class="checkmark"></span>
-                      </label>
-                  </div> -->
-                <!-- <textarea id="rp-textarea" name="rp-other-textarea" placeholder="Describe request or issue here..." rows="4" cols="50"></textarea> -->
-                <!-- <input class="create-request-button" type="submit" value="Create new user">
-                <input class="close-request-button" type="button" onclick="toggle_blur()" value="Cancel">
-                {% include 'message_alert.html' %} -->
-                <!-- <h4 class="alert-message-success">User successfully created!</h4> -->
-                <!-- <h4 class="alert-message-unsuccess">Sorry validation error occurred! please check again.</h4> -->
-            <!-- </form>
-            </div> -->
         </div>     
     </section>
 
