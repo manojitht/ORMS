@@ -1821,3 +1821,50 @@ form .atm-button input:hover {
     border: 1px solid #275f29;
     background: #275f29;
 }
+
+/* deletion history buttons */
+
+.float-deletion-btn1 {
+    height: 45px;
+    width: 100%;
+    border: 1px solid #d1b1ee;
+    font-size: 15px;
+    background: #d1b1ee;
+    color: #5d1e99;
+    cursor: pointer;
+    padding: 11px;
+    text-decoration: none;
+    transition: all 0.5s ease;
+    border-radius: 5px;
+    float: left;
+}
+
+.float-deletion-btn2 {
+    height: 45px;
+    width: 100%;
+    border: 1px solid #999ff1;
+    font-size: 15px;
+    background: #999ff1;
+    color: #2a33b9;
+    cursor: pointer;
+    padding: 11px;
+    text-decoration: none;
+    transition: all 0.5s ease;
+    border-radius: 5px;
+    float: left;
+}
+
+.float-deletion-btn3 {
+    height: 45px;
+    width: 100%;
+    border: 1px solid #eed08f;
+    font-size: 15px;
+    background: #eed08f;
+    color: #856011;
+    cursor: pointer;
+    padding: 11px;
+    text-decoration: none;
+    transition: all 0.5s ease;
+    border-radius: 5px;
+    float: left;
+}

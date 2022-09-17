@@ -29,8 +29,9 @@ def add_new_department(request):
             message_alert.info(request, 'Department is already exists!')
         else:
             department = Department(department_name=department_name, department_head=department_head, department_description=department_description, created_by=created_by)
-            message_alert.success(request, department_name + ' is created successfully!')
             department.save()
+            message_alert.success(request, department_name + ' is created successfully!')
+            return redirect(display_departments)
     else:
         pass
     return render(request, 'superadmin/add_department_form.html')
@@ -40,11 +41,34 @@ def add_new_department(request):
 
 def delete_department(request, depid):
     deleting_dep = Department.objects.get(id=depid)
+    deleting_dep_name = Department.objects.get(department_name=deleting_dep.department_name)
+    get_teams = Team.objects.filter(department=deleting_dep_name)
+    for diactivate_tem in get_teams:
+        diactivate_tem.is_active = False
+        diactivate_tem.save()
     #deleting_dep.delete()
     deleting_dep.is_active = False
     deleting_dep.save()
-    message_alert.success(request, 'Department deleted successfully!')
+
+    message_alert.success(request, 'Department removed successfully!')
     return redirect(display_departments)
+    # naming convention finished.
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def restore_department(request, depid):
+    restoring_dep = Department.objects.get(id=depid)
+    restoring_dep_name = Department.objects.get(department_name=restoring_dep.department_name)
+    get_teams = Team.objects.filter(department=restoring_dep_name)
+    for activate_tem in get_teams:
+        activate_tem.is_active = True
+        activate_tem.save()
+    #deleting_dep.delete()
+    restoring_dep.is_active = True
+    restoring_dep.save()
+
+    message_alert.success(request, 'Department restored successfully!')
+    return redirect(department_deletion_history)
     # naming convention finished.
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -83,7 +107,7 @@ def search_department(request):
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def superadmin_department_table(request):
-    departments_table = Department.objects.all().order_by('department_name')
+    departments_table = Department.objects.all().order_by('department_name').filter(is_active=True)
     context = { 'departments_table': departments_table, }
     return render(request, 'superadmin/department_table_view.html', context)
     # naming convention finished.
@@ -118,5 +142,12 @@ def department_view_teams(request, depid):
     context = { 'department_view_teams': department_view_teams, 'name': name, 'team_count': team_count, }
     return render(request, 'superadmin/display_team_page.html', context)
     # naming convention finished.
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def department_deletion_history(request):
+    departments = Department.objects.all().filter(is_active=False)
+    context = { 'departments': departments, }
+    return render(request, 'superadmin/department_deletion_history.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

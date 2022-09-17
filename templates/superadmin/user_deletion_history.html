@@ -1,0 +1,62 @@
+{% extends 'base_superadmin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1>Removal History</h1>
+            <!-- <h4 class="alert-message-success">User successfully created!</h4> -->
+        </div>
+        <div class="search-bar-container">
+            <table style="width: 100%; text-align: center;">
+                <tr>
+                    <td><a href="{% url 'users_deletion_history' %}" class="float-deletion-btn1">User Removal History</a></td>
+                    <td><a href="{% url 'department_deletion_history' %}" class="float-deletion-btn2">Department Removal History</a></td>
+                    <td><a href="{% url 'team_deletion_history' %}" class="float-deletion-btn3">Team Removal History</a></td>
+                </tr>
+            </table>
+        </div>
+       
+            <div class="container">
+                <h1 style="text-align: center; font-weight: 400; margin-bottom: 15px;">User Removal History</h1>
+                <table id="team_requests" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>PS Id</th>
+                            <th>Emp Name</th>
+                            <th>Email</th>
+                            <th>User type</th>
+                            <th>Department</th>
+                            <th>Team</th>
+                            <th>Created On</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.peoplesoft_id }}</td>
+                                <td>{{ user.first_name }} {{ user.last_name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.department }}</td>
+                                <td>{{ user.team }}</td>
+                                <td>{{ user.role }}</td>
+                                <td>{{ user.date_joined }}</td>
+                                <td><input class="team-request-view-button" type="button" value="Restore"><br><input class="team-request-delete-button" type="button" value="Delete"></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>                    
+            </div>
+        </div> 
+    </div>     
+</section>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="{% static 'script.js' %}"></script>
+
+{% endblock %}

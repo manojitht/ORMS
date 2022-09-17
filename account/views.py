@@ -228,6 +228,11 @@ def superadmin_users_date_sort(request):
     context = { 'get_result': get_result, }
     return render(request, 'superadmin/display_user_page.html', context)
 
+def users_deletion_history(request):
+    users = Account.objects.all().filter(is_active=False)
+    context = { 'users': users, }
+    return render(request, 'superadmin/user_deletion_history.html', context)
+
 @login_required(login_url= 'login')
 def logout(request):
     auth.logout(request)

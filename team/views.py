@@ -28,8 +28,9 @@ def superadmin_add_team(request):
             message_alert.info(request, 'Please choose a department to create a team!')
         else:
             team = Team(team_name=team_name, team_head=team_head, department=Department.objects.get(department_name=department), team_description=team_description, created_by=created_by)
-            message_alert.success(request, team_name + ' is created successfully!')
             team.save()
+            message_alert.success(request, team_name + ' is created successfully!')
+            return redirect(display_departments)
     else:
         pass
     return render(request, 'superadmin/add_team_form.html', context)
@@ -78,7 +79,7 @@ def delete_team(request, temid):
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def superadmin_team_table(request):
-    teams_table = Team.objects.all().order_by('team_name')
+    teams_table = Team.objects.all().order_by('team_name').filter(is_active=True)
     context = { 'teams_table': teams_table, }
     return render(request, 'superadmin/team_table_view.html', context)
 
@@ -91,5 +92,12 @@ def superadmin_team_date_sort(request):
         get_result =  Team.objects.filter(created_date__gte=from_date, created_date__lte=to_date)
     context = { 'get_result': get_result, }
     return render(request, 'superadmin/team_table_view.html', context)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def team_deletion_history(request):
+    teams = Team.objects.all().filter(is_active=False)
+    context = { 'teams': teams, }
+    return render(request, 'superadmin/team_deletion_history.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

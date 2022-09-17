@@ -10,6 +10,7 @@ urlpatterns = [
     path('delete_team/<int:temid>/', views.delete_team, name='delete_team'),
     path('superadmin_team_table/', views.superadmin_team_table, name='superadmin_team_table'),
     path('superadmin_team_date_sort/', views.superadmin_team_date_sort, name='superadmin_team_date_sort'),
+    path('team_deletion_history/', views.team_deletion_history, name='team_deletion_history'),
     #path('back_to_team_view/<int:temid>/', views.back_to_team_view, name='back_to_team_view'),
     #path('superadmin_list_by_team', views.superadmin_list_by_team, name='superadmin_list_by_team'),
     #path('edit_department/<int:depid>/', views.edit_department, name='edit_department'),
