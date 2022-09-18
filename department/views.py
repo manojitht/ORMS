@@ -73,6 +73,14 @@ def restore_department(request, depid):
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+def permanent_delete_department(request, depid):
+    restoring_dep = Department.objects.get(id=depid)
+    restoring_dep.delete()
+    message_alert.success(request, 'Department deleted successfully!')
+    return redirect(department_deletion_history)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def edit_department(request, depid):
     selected_dep = Department.objects.get(id=depid)
     dep_list = Department.objects.all()
@@ -107,7 +115,7 @@ def search_department(request):
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def superadmin_department_table(request):
-    departments_table = Department.objects.all().order_by('department_name').filter(is_active=True)
+    departments_table = Department.objects.all().order_by('department_name')
     context = { 'departments_table': departments_table, }
     return render(request, 'superadmin/department_table_view.html', context)
     # naming convention finished.

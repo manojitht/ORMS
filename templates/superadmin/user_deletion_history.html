@@ -7,7 +7,7 @@
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
             <h1>Removal History</h1>
-            <!-- <h4 class="alert-message-success">User successfully created!</h4> -->
+            {% include 'message_alert.html' %}
         </div>
         <div class="search-bar-container">
             <table style="width: 100%; text-align: center;">
@@ -44,7 +44,7 @@
                                 <td>{{ user.team }}</td>
                                 <td>{{ user.role }}</td>
                                 <td>{{ user.date_joined }}</td>
-                                <td><input class="team-request-view-button" type="button" value="Restore"><br><input class="team-request-delete-button" type="button" value="Delete"></td>
+                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'restore_user' user.id %}">Restore User</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'permanent_delete_user' user.id %}">Delete User</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>

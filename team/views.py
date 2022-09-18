@@ -73,13 +73,30 @@ def delete_team(request, temid):
     deleting_tem = Team.objects.get(id=temid)
     deleting_tem.is_active = False
     deleting_tem.save()
-    message_alert.success(request, 'Team deleted successfully!')
+    message_alert.success(request, 'Team removed successfully!')
     return redirect(display_departments)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+def restore_team(request, temid):
+    restoring_tem = Team.objects.get(id=temid)
+    restoring_tem.is_active = True
+    restoring_tem.save()
+    message_alert.success(request, 'Team restored successfully!')
+    return redirect(team_deletion_history)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def permanent_delete_team(request, temid):
+    restoring_tem = Team.objects.get(id=temid)
+    restoring_tem.delete()
+    message_alert.success(request, 'Team deleted successfully!')
+    return redirect(team_deletion_history)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def superadmin_team_table(request):
-    teams_table = Team.objects.all().order_by('team_name').filter(is_active=True)
+    teams_table = Team.objects.all().order_by('team_name')
     context = { 'teams_table': teams_table, }
     return render(request, 'superadmin/team_table_view.html', context)
 

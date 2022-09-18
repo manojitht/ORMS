@@ -4,6 +4,67 @@
 {% block content %}
 
 <section class="home-main">
+
+
+    {% if selected_user %}
+
+    <div class="add-new-department-form">
+        <h1>Update User: {{selected_user.peoplesoft_id}}</h1>
+         <form action="{% url 'update_user' selected_user.id %}" method="POST">
+            {% csrf_token %}
+             <div class="and-input-box">
+                 <span class="details_anu">PeopleSoft Id: (Note: In numerical format)</span>
+                 <input type="number" name="peoplesoft_id" placeholder="Enter peoplesoft ID.." value="{{selected_user.peoplesoft_id}}" required>
+             </div>
+             <div class="and-input-box">
+                 <span class="details_anu">Firstname: </span>
+                 <input type="text" name="first_name" placeholder="Enter Firstname.." value="{{selected_user.first_name}}" required>
+             </div>
+             <div class="and-input-box">
+                 <span class="details_anu">Lastname: </span>
+                 <input type="text" name="last_name" placeholder="Enter Lastname.." value="{{selected_user.last_name}}" required>
+             </div>
+             <div class="and-input-box">
+                 <span class="details_anu">Email Id: </span>
+                 <input type="email" name="email" placeholder="Enter Email Id.." value="{{selected_user.email}}" required>
+             </div>
+             <div class="and-input-box">
+                <span class="details_anu">Department Oriented: </span>
+                <select name="department">
+                    <option selected>{{selected_user.department}}</option>
+                    {% for department in department_names %}
+                     <option>{{ department.department_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+             <div class="and-input-box">
+                <span class="details_anu">Team Oriented: </span>
+                <select name="team">
+                    <option selected>{{selected_user.team}}</option>
+                    {% for team in team_names %}
+                     <option value="{{ team.team_name }}">{{ team.team_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+             <div class="and-input-box">
+                <span class="details_anu">Select User Role: </span>
+                <select name="role">
+                    <option selected>{{selected_user.role}}</option>
+                    <option>IT Administrator</option>
+                    <option>Manager</option>
+                    <option>Superadmin</option>
+                  </select>
+            </div>
+             <div class="and-input-box">
+                 <input class="and-submit-btn" type="submit" value="Update User">
+                 <a href="{% url 'superadmin_add_user' %}" class="and-back-btn">Back to users page</a>
+             </div>
+             {% include 'message_alert.html' %}
+         </form>
+    </div>
+
+    {% else %}
+
     <div class="add-new-department-form">
         <h1>Add New User Form:</h1>
          <form action="{% url 'add_user_page' %}" method="POST"">
@@ -30,7 +91,7 @@
                     <option selected>--Choose department--</option>
                     {% for department in department_names %}
                      <option>{{ department.department_name }}</option>
-                     {% endfor %}
+                    {% endfor %}
                   </select>
             </div>
              <div class="and-input-box">
@@ -39,7 +100,7 @@
                     <option selected>--Choose team--</option>
                     {% for team in team_names %}
                      <option value="{{ team.team_name }}">{{ team.team_name }}</option>
-                     {% endfor %}
+                    {% endfor %}
                   </select>
             </div>
              <div class="and-input-box">
@@ -58,6 +119,9 @@
              {% include 'message_alert.html' %}
          </form>
     </div>
+
+    {% endif %}
+
 </section>
 
 

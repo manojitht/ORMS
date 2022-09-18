@@ -7,7 +7,7 @@
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
             <h1>Removal History</h1>
-            <!-- <h4 class="alert-message-success">User successfully created!</h4> -->
+            {% include 'message_alert.html' %}
         </div>
         <div class="search-bar-container">
             <table style="width: 100%; text-align: center;">
@@ -23,7 +23,7 @@
         </div>
        
             <div class="container">
-                <h1 style="text-align: center; font-weight: 400; margin-bottom: 15px;">Department Removal History</h1>
+                <h1 style="text-align: center; font-weight: 400; margin-bottom: 15px;">Team Removal History</h1>
                 <table id="team_requests" class="display" style="width:100%">
                     <thead>
                         <tr>
@@ -45,7 +45,7 @@
                                 <td>{{ team.department }}</td>
                                 <td>{{ team.created_by }}</td>
                                 <td>{{ team.created_date }}</td>
-                                <td><input class="team-request-view-button" type="button" value="Restore"><br><input class="team-request-delete-button" type="button" value="Delete"></td>
+                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'restore_team' team.id %}">Restore</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'permanent_delete_team' team.id %}">Delete</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>

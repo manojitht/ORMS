@@ -31,6 +31,7 @@
                             <th>Department Oriented</th>
                             <th>Updated By</th>
                             <th>Created On</th>
+                            <th>Processing Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,6 +46,11 @@
                                     <td>{{ team.department }}</td>
                                     <td>{{ team.created_by }}</td>
                                     <td>{{ team.created_date }}</td>
+                                    {% if team.is_active %}
+                                        <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">On Process</td>
+                                    {% else %}
+                                        <td style="background: rgb(197, 75, 27); color: aliceblue; text-align: center;">Removed</td>
+                                    {% endif %}
                                 </tr>
                             {% endfor %}
 
@@ -58,6 +64,11 @@
                                     <td>{{ team.department }}</td>
                                     <td>{{ team.created_by }}</td>
                                     <td>{{ team.created_date }}</td>
+                                    {% if team.is_active %}
+                                        <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">On Process</td>
+                                    {% else %}
+                                        <td style="background: rgb(197, 75, 27); color: aliceblue; text-align: center;">Removed</td>
+                                    {% endif %}
                                 </tr>
                             {% endfor %}
 

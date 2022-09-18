@@ -24,23 +24,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMessage
 
-
-# Create your views here.
-# def register_superadmin(request):
-#     # if request.method == 'POST':
-
-#     #     #Get fromt form values (registration superadmin)
-#     #     peoplesoft_id = request.POST['peoplesoft_id']
-#     #     firstname = request.POST['firstname']
-#     #     lastname = request.POST['lastname']
-#     #     email = request.POST['email']
-#     #     password = request.POST['password1']
-#     #     confirm_password = request.POST['password2']
-
-#     #     if password == confirm_password:
-       
-#     # return render(request, 'account/register_superadmin.html')
-#     pass
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def login(request):
     form = LoginUsers(request.POST or None)
@@ -71,11 +55,12 @@ def login(request):
             message = 'Error validating form'
     return render(request, 'account/login.html', {'form': form, 'message': message})
 
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def superadmin_portal(request):
     return render(request, 'superadmin/superadmin_home.html')
-    #return render(request, 'it_admin/manage_devices.html')
 
-    # return render(request, 'account/login.html')
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def add_user_page(request):
 
@@ -183,6 +168,7 @@ def add_user_page(request):
         pass
     return render(request, 'superadmin/add_user_form.html', context)
 
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def superadmin_add_user(request):
 
@@ -197,12 +183,18 @@ def superadmin_add_user(request):
     }
 
     return render(request, 'superadmin/display_user_page.html', context)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
 def it_admin_portal(request):
     return render(request, 'it_admin/manage_devices.html')
 
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def manager_portal(request):
     return render(request, 'manager/home.html')
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def activate(request, uidb64, token):
     try:
@@ -219,6 +211,55 @@ def activate(request, uidb64, token):
     else:
         message_alert.error(request, 'OOPS!, it seems invalid link.')
         return redirect('login')
+    
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def edit_user(request, uid):
+    selected_user = Account.objects.get(id=uid)
+    team_names = Team.objects.filter(is_active=True)
+    department_names = Department.objects.filter(is_active=True)
+    context = { 'selected_user': selected_user, 'team_names': team_names, 'department_names': department_names, }
+    return render(request, 'superadmin/add_user_form.html', context)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def update_user(request, uid):
+    update_user = Account.objects.get(id=uid)
+    update_user.peoplesoft_id = request.POST['peoplesoft_id']
+    update_user.first_name = request.POST['first_name']
+    update_user.last_name = request.POST['last_name']
+    update_user.email = request.POST['email']
+    get_department = request.POST['department']
+    update_user.department = Department.objects.get(department_name=get_department)
+    get_team = request.POST['team']
+    update_user.team = Team.objects.get(team_name=get_team)
+    update_user.role = request.POST['role']
+
+    if update_user.role == 'Superadmin':
+        update_user.is_superadmin = True
+        update_user.is_staff = True
+        update_user.is_manager = False
+        update_user.is_it_admin = False
+        update_user.save()
+        message_alert.success(request, 'User is updated successfully!')
+    elif update_user.role == 'Manager':
+        update_user.is_it_admin = False
+        update_user.is_superadmin = False
+        update_user.is_staff = False
+        update_user.is_manager = True
+        update_user.save()
+        message_alert.success(request, 'User is updated successfully!')
+    elif update_user.role == 'IT Administrator':
+        update_user.is_superadmin = False
+        update_user.is_staff = False
+        update_user.is_manager = False
+        update_user.is_it_admin = True
+        update_user.save()
+        message_alert.success(request, 'User is updated successfully!')
+
+    return redirect(superadmin_add_user)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def superadmin_users_date_sort(request):
     if request.method == 'POST':
@@ -228,13 +269,45 @@ def superadmin_users_date_sort(request):
     context = { 'get_result': get_result, }
     return render(request, 'superadmin/display_user_page.html', context)
 
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def users_deletion_history(request):
     users = Account.objects.all().filter(is_active=False)
     context = { 'users': users, }
     return render(request, 'superadmin/user_deletion_history.html', context)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def remove_user_access(request, uid):
+    remove_user = Account.objects.get(id=uid)
+    remove_user.is_active = False
+    remove_user.save()
+    message_alert.success(request, 'User access removed successfully!')
+    return redirect(superadmin_add_user)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def restore_user(request, uid):
+    restoring_user = Account.objects.get(id=uid)
+    restoring_user.is_active = True
+    restoring_user.save()
+    message_alert.success(request, 'User restored successfully!')
+    return redirect(users_deletion_history)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def permanent_delete_user(request, uid):
+    delete_user = Account.objects.get(id=uid)
+    delete_user.delete()
+    message_alert.success(request, 'User permanently deleted successfully!')
+    return redirect(users_deletion_history)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url= 'login')
 def logout(request):
     auth.logout(request)
     message_alert.success(request, 'User logged out successfully!')
     return redirect('login')
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
