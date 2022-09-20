@@ -77,3 +77,20 @@ def resource_deletion_history(request):
     return render(request, 'it_admin/resource_deletion_history.html', context)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def restore_device(request, resid):
+    restoring_device = Resource.objects.get(id=resid)
+    restoring_device.is_active = True
+    restoring_device.save()
+    message_alert.success(request, 'Device restored successfully!')
+    return redirect(resource_deletion_history)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def permanent_delete_device(request, resid):
+    delete_device = Resource.objects.get(id=resid)
+    delete_device.delete()
+    message_alert.success(request, 'Device permanently deleted successfully!')
+    return redirect(resource_deletion_history)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

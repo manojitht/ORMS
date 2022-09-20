@@ -12,7 +12,7 @@
         <div class="search-bar-container">
             <table style="width: 100%; text-align: center;">
                 <tr>
-                    <td><a href="#" class="float-deletion-btn1">Resource History</a></td>
+                    <td><a href="{% url 'resource_deletion_history' %}" class="float-deletion-btn1">Resource History</a></td>
                     <td><a href="#" class="float-deletion-btn3">Requests History</a></td>
                 </tr>
             </table>
@@ -39,7 +39,7 @@
                                 <td>{{ device.added_by }}</td>
                                 <td>{{ device.added_on }}</td>
                                 <td>{{ device.device_availability }}</td>
-                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="#">Restore Device</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="#">Delete Device</a></td>
+                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'restore_device' device.id %}">Restore Device</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'permanent_delete_device' device.id %}">Delete Device</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>

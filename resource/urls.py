@@ -9,4 +9,6 @@ urlpatterns = [
     path('update_resource/<int:resid>/', views.update_resource, name='update_resource'),
     path('delete_resource/<int:resid>/', views.delete_resource, name='delete_resource'),
     path('resource_deletion_history/', views.resource_deletion_history, name='resource_deletion_history'),
+    path('restore_device/<int:resid>/', views.restore_device, name='restore_device'),
+    path('permanent_delete_device/<int:resid>/', views.permanent_delete_device, name='permanent_delete_device'),
 ]
