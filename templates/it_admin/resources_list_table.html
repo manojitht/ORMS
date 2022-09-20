@@ -1,0 +1,68 @@
+{% extends 'base_it_admin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <!-- <div class="head-container">
+            <h1>Add Users</h1>
+            <a class="navigator-btn" href="{% url 'add_user_page' %}">Add new user</a>
+        </div> -->
+
+        <div class="head-container">
+            <h1>Resources Management</h1>
+            {% include 'message_alert.html' %}
+        </div>
+        <div class="search-bar-container">
+            <form>
+                From: <input type="date" style="width: 140px;" name="from_user" class="search-input-box-dt">
+                To: <input type="date" style="width: 140px;" name="to_user" class="search-input-box-dt">
+                <input type="submit" class="search-input-btn-dt" value="Search">
+                <a href="{% url 'add_resource_page' %}" style="margin-right: 0%;" class="add-team-btn">Add Device <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
+                <a href="#" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">Print report <i class='bx bx-printer'></i></a>
+            </form>
+        </div>
+       
+            <div class="container">
+                <table id="team_requests" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Asset Id</th>
+                            <th>Device Type</th>
+                            <th>Lastly Updated By</th>
+                            <th>Added On</th>
+                            <th>Availability</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for device in resources %}
+                        <tr>
+                            <td>{{ device.asset_id }}</td>
+                            <td>{{ device.device_type }}</td>
+                            <td>{{ device.added_by }}</td>
+                            <td>{{ device.added_on }}</td>
+                            {% if device.device_availability == 'Available' %}
+                                <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">Available</td>
+                            {% elif device.device_availability == 'Configuration' %}
+                                <td style="background: rgb(202, 142, 14); color: aliceblue; text-align: center;">Configuration</td>
+                            {% elif device.device_availability == 'Reserved' %}
+                                <td style="background: rgb(228, 51, 51); color: aliceblue; text-align: center;">Reserved</td>
+                            {% elif device.device_availability == 'Taken' %}
+                                <td style="background: rgb(55, 112, 185); color: aliceblue; text-align: center;">Taken</td>
+                            {% else %}
+                            {% endif %}
+                            <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'edit_resource' device.id %}">Edit Device</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'delete_resource' device.id %}">Remove Device</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div> 
+    </div>     
+</section>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+{% endblock %}

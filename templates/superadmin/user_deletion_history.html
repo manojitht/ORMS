@@ -44,7 +44,7 @@
                                 <td>{{ user.team }}</td>
                                 <td>{{ user.role }}</td>
                                 <td>{{ user.date_joined }}</td>
-                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'restore_user' user.id %}">Restore User</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'permanent_delete_user' user.id %}">Delete User</a></td>
+                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'restore_user' user.id %}">Revoke Access</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'permanent_delete_user' user.id %}">Delete User</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'department',
     'team',
     'account',
+    'resource',
 ]
 
 MIDDLEWARE = [

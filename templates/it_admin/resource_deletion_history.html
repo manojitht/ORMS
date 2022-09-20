@@ -1,0 +1,57 @@
+{% extends 'base_it_admin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1>History</h1>
+            {% include 'message_alert.html' %}
+        </div>
+        <div class="search-bar-container">
+            <table style="width: 100%; text-align: center;">
+                <tr>
+                    <td><a href="#" class="float-deletion-btn1">Resource History</a></td>
+                    <td><a href="#" class="float-deletion-btn3">Requests History</a></td>
+                </tr>
+            </table>
+        </div>
+       
+            <div class="container">
+                <h1 style="text-align: center; font-weight: 400; margin-bottom: 15px;">Resource Removal History</h1>
+                <table id="team_requests" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Asset Id</th>
+                            <th>Device Type</th>
+                            <th>Lastly Updated By</th>
+                            <th>Added On</th>
+                            <th>Availability</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for device in resources %}
+                            <tr>
+                                <td>{{ device.asset_id }}</td>
+                                <td>{{ device.device_type }}</td>
+                                <td>{{ device.added_by }}</td>
+                                <td>{{ device.added_on }}</td>
+                                <td>{{ device.device_availability }}</td>
+                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="#">Restore Device</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="#">Delete Device</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>                    
+            </div>
+        </div> 
+    </div>     
+</section>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="{% static 'script.js' %}"></script>
+
+{% endblock %}

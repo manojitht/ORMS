@@ -1,0 +1,98 @@
+{% extends 'base_it_admin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1>Add Device</h1>
+            {% include 'message_alert.html' %}
+        </div>
+        {% if selected_res %}
+            <div class="add-new-department-form">
+                <h1>Update Device: {{selected_res.asset_id}}</h1>
+                <form action="{% url 'update_resource' selected_res.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="and-input-box">
+                        <span class="details_anu">Asset Id: </span>
+                        <input type="text" name="asset_id" placeholder="Enter Asset Id.." value="{{selected_res.asset_id}}" required>
+                    </div>
+                    <div class="and-input-box">
+                        <span class="details_anu">Device Type: </span>
+                        <select name="device_type">
+                            <option selected>{{selected_res.device_type}}</option>
+                            <option>Desktop</option>
+                            <option>Laptop</option>
+                            <option>Monitor</option>
+                        </select>
+                    </div>
+                    <div class="and-input-box">
+                        <span class="details_anu">Device Availability: </span>
+                        <select name="device_availability">
+                            <option selected>{{selected_res.device_availability}}</option>
+                            <option>Available</option>
+                            <option>Configuration</option>
+                            <option>Reserved</option>
+                            <option>Taken</option>
+                        </select>
+                    </div>
+                    <div class="and-input-box">
+                        <span class="details_anu">Device Description: (Max: 250 words) </span>
+                        <textarea id="and-textarea" name="device_description" rows="4" cols="50" placeholder="Enter Device description here.." required>{{selected_res.device_description}}</textarea>
+                    </div>
+                    <input type="hidden" class="r-p-textbox" name="added_by" value="{{ user.first_name }} {{ user.last_name }}">
+                    <div class="and-input-box">
+                        <input class="and-submit-btn" type="submit" value="Save Changes">
+                        <a href="{% url 'resources_list_table' %}" class="and-back-btn">Back to resources page</a>
+                    </div>
+                </form>
+            </div>
+        {% else %}
+            <div class="add-new-department-form">
+                <h1>Add New Device Form:</h1>
+                <form action="{% url 'add_resource_page' %}" method="POST">
+                    {% csrf_token %}
+                    {% if generated_asset_id %}
+                    <div class="and-input-box">
+                        <span class="details_anu">Asset Id: </span>
+                        <input type="text" name="asset_id" placeholder="Enter Asset Id.." value="HDPL{{generated_asset_id}}" required>
+                    </div>
+                    {% else %}
+                    {% endif %}
+                    <div class="and-input-box">
+                        <span class="details_anu">Device Type: </span>
+                        <select name="device_type">
+                            <option selected>--Choose device type--</option>
+                            <option>Desktop</option>
+                            <option>Laptop</option>
+                            <option>Monitor</option>
+                        </select>
+                    </div>
+                    <div class="and-input-box">
+                        <span class="details_anu">Device Availability: </span>
+                        <select name="device_availability">
+                            <option selected>--Choose device availability--</option>
+                            <option>Available</option>
+                            <option>Configuration</option>
+                            <option>Reserved</option>
+                            <option>Taken</option>
+                        </select>
+                    </div>
+                    <div class="and-input-box">
+                        <span class="details_anu">Device Description: (Max: 250 words) </span>
+                        <textarea id="and-textarea" name="device_description" rows="4" cols="50" placeholder="Enter Device description here.." required></textarea>
+                    </div>
+                    <input type="hidden" class="r-p-textbox" name="added_by" value="{{ user.first_name }} {{ user.last_name }}">
+                    <div class="and-input-box">
+                        <input class="and-submit-btn" type="submit" value="Add Device">
+                        <a href="{% url 'resources_list_table' %}" class="and-back-btn">Back to resources page</a>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    </div>      
+</section>
+
+{% endblock %}

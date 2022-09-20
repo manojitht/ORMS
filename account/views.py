@@ -187,7 +187,7 @@ def superadmin_add_user(request):
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
 def it_admin_portal(request):
-    return render(request, 'it_admin/manage_devices.html')
+    return render(request, 'it_admin/it_administrator_dashboard.html')
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -291,7 +291,7 @@ def restore_user(request, uid):
     restoring_user = Account.objects.get(id=uid)
     restoring_user.is_active = True
     restoring_user.save()
-    message_alert.success(request, 'User restored successfully!')
+    message_alert.success(request, 'User access revoked successfully!')
     return redirect(users_deletion_history)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

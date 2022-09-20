@@ -58,7 +58,7 @@
                                         {% if user.is_active %}
                                         <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">Active</td>
                                         {% else %}
-                                        <td style="background: rgb(197, 75, 27); color: aliceblue; text-align: center;">Removed</td>
+                                        <td style="background: rgb(197, 75, 27); color: aliceblue; text-align: center;">In Active</td>
                                         {% endif %}
                                         <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'edit_user' user.id %}">Edit User</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'remove_user_access' user.id %}">Remove</a></td>
                                     </tr>

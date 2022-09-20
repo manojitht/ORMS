@@ -14,14 +14,20 @@
     <nav class="home-sidebar close">
         <header>
             <div class="image-logo">
-                <span class="image">
-                    <img src="{% static 'images//ORMS-logos/ORMS-1 (1).png' %}" alt="ORMS-logos Logo">
-                </span>
+                {% if user.is_authenticated %}
+                    <span class="image">
+                        <img src="{% static 'images//ORMS-logos/ORMS-1 (1).png' %}" alt="ORMS logo">
+                    </span>
 
-                <div class="text header-text">
-                    <span class="name">T Manojith</span>
-                    <span class="profession">IT Administrator</span>
-                </div>
+                    <div class="text header-text">
+                        
+                        <span class="name">{{ user.first_name }}</span>
+                        <span class="profession">{{ user.role }}</span>
+                        
+                    </div>
+                {% else %}
+                    
+                {% endif %}
             </div>
             <!-- box icons website -->
             <i class='bx bx-chevron-right toggle'></i>
@@ -41,21 +47,21 @@
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="#">
-                            <i class='bx bx-add-to-queue icon' ></i>
-                            <span class="text nav-text">Departments</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="#">
+                        <a href="{% url 'resources_list_table' %}">
                             <i class='bx bx-devices icon' ></i>
-                            <span class="text nav-text">Manage Device</span>
+                            <span class="text nav-text">Manage Devices</span>
                         </a>
                     </li>
                     <li class="nav-link">
                         <a href="#">
                             <i class='bx bx-columns icon' ></i>
                             <span class="text nav-text">View Requests</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="{% url 'resource_deletion_history' %}">
+                            <i class='bx bx-history icon'></i>
+                            <span class="text nav-text">History</span>
                         </a>
                     </li>
                     <li class="nav-link">
