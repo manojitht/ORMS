@@ -11,4 +11,5 @@ urlpatterns = [
     path('resource_deletion_history/', views.resource_deletion_history, name='resource_deletion_history'),
     path('restore_device/<int:resid>/', views.restore_device, name='restore_device'),
     path('permanent_delete_device/<int:resid>/', views.permanent_delete_device, name='permanent_delete_device'),
+    path('resources_date_sort/', views.resources_date_sort, name='resources_date_sort'),
 ]

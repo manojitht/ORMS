@@ -94,3 +94,13 @@ def permanent_delete_device(request, resid):
     return redirect(resource_deletion_history)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def resources_date_sort(request):
+    if request.method == 'POST':
+        from_date = request.POST['from_res']
+        to_date = request.POST['to_res']
+        get_result =  Resource.objects.filter(added_on__gte=from_date, added_on__lte=to_date)
+    context = { 'get_result': get_result, }
+    return render(request, 'it_admin/resources_list_table.html', context)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -15,9 +15,10 @@
             {% include 'message_alert.html' %}
         </div>
         <div class="search-bar-container">
-            <form>
-                From: <input type="date" style="width: 140px;" name="from_user" class="search-input-box-dt">
-                To: <input type="date" style="width: 140px;" name="to_user" class="search-input-box-dt">
+            <form action="{% url 'resources_date_sort' %}" method="POST">
+                {% csrf_token %}
+                From: <input type="date" style="width: 140px;" name="from_res" class="search-input-box-dt" required>
+                To: <input type="date" style="width: 140px;" name="to_res" class="search-input-box-dt" required>
                 <input type="submit" class="search-input-btn-dt" value="Search">
                 <a href="{% url 'add_resource_page' %}" style="margin-right: 0%;" class="add-team-btn">Add Device <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
                 <a href="#" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">Print report <i class='bx bx-printer'></i></a>
@@ -37,25 +38,52 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for device in resources %}
-                        <tr>
-                            <td>{{ device.asset_id }}</td>
-                            <td>{{ device.device_type }}</td>
-                            <td>{{ device.added_by }}</td>
-                            <td>{{ device.added_on }}</td>
-                            {% if device.device_availability == 'Available' %}
-                                <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">Available</td>
-                            {% elif device.device_availability == 'Configuration' %}
-                                <td style="background: rgb(202, 142, 14); color: aliceblue; text-align: center;">Configuration</td>
-                            {% elif device.device_availability == 'Reserved' %}
-                                <td style="background: rgb(228, 51, 51); color: aliceblue; text-align: center;">Reserved</td>
-                            {% elif device.device_availability == 'Taken' %}
-                                <td style="background: rgb(55, 112, 185); color: aliceblue; text-align: center;">Taken</td>
-                            {% else %}
-                            {% endif %}
-                            <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'edit_resource' device.id %}">Edit Device</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'delete_resource' device.id %}">Remove Device</a></td>
-                        </tr>
-                        {% endfor %}
+
+                        {% if get_result %}
+
+                            {% for device in get_result %}
+                            <tr>
+                                <td>{{ device.asset_id }}</td>
+                                <td>{{ device.device_type }}</td>
+                                <td>{{ device.added_by }}</td>
+                                <td>{{ device.added_on }}</td>
+                                {% if device.device_availability == 'Available' %}
+                                    <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">Available</td>
+                                {% elif device.device_availability == 'Configuration' %}
+                                    <td style="background: rgb(202, 142, 14); color: aliceblue; text-align: center;">Configuration</td>
+                                {% elif device.device_availability == 'Reserved' %}
+                                    <td style="background: rgb(228, 51, 51); color: aliceblue; text-align: center;">Reserved</td>
+                                {% elif device.device_availability == 'Taken' %}
+                                    <td style="background: rgb(55, 112, 185); color: aliceblue; text-align: center;">Taken</td>
+                                {% else %}
+                                {% endif %}
+                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'edit_resource' device.id %}">Edit Device</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'delete_resource' device.id %}">Remove Device</a></td>
+                            </tr>
+                            {% endfor %}
+
+                        {% else %}
+
+                            {% for device in resources %}
+                            <tr>
+                                <td>{{ device.asset_id }}</td>
+                                <td>{{ device.device_type }}</td>
+                                <td>{{ device.added_by }}</td>
+                                <td>{{ device.added_on }}</td>
+                                {% if device.device_availability == 'Available' %}
+                                    <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">Available</td>
+                                {% elif device.device_availability == 'Configuration' %}
+                                    <td style="background: rgb(202, 142, 14); color: aliceblue; text-align: center;">Configuration</td>
+                                {% elif device.device_availability == 'Reserved' %}
+                                    <td style="background: rgb(228, 51, 51); color: aliceblue; text-align: center;">Reserved</td>
+                                {% elif device.device_availability == 'Taken' %}
+                                    <td style="background: rgb(55, 112, 185); color: aliceblue; text-align: center;">Taken</td>
+                                {% else %}
+                                {% endif %}
+                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'edit_resource' device.id %}">Edit Device</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'delete_resource' device.id %}">Remove Device</a></td>
+                            </tr>
+                            {% endfor %}
+
+                        {% endif %}
                     </tbody>
                 </table>
             </div>
