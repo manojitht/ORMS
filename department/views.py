@@ -43,9 +43,9 @@ def delete_department(request, depid):
     deleting_dep = Department.objects.get(id=depid)
     deleting_dep_name = Department.objects.get(department_name=deleting_dep.department_name)
     get_teams = Team.objects.filter(department=deleting_dep_name)
-    for diactivate_tem in get_teams:
-        diactivate_tem.is_active = False
-        diactivate_tem.save()
+    for deactivate_tem in get_teams:
+        deactivate_tem.is_active = False
+        deactivate_tem.save()
     #deleting_dep.delete()
     deleting_dep.is_active = False
     deleting_dep.save()

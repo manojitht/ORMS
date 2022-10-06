@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ORMS | Home page</title>
+    <title>ORMS | Manager site</title>
     <link rel="stylesheet" href="{% static 'main.css' %}">
     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
 </head>
 <body class="home-body">
     <nav class="home-sidebar close">
@@ -38,13 +39,19 @@
                 </li>
                 <ul class="menu-links">
                     <li class="nav-link">
-                        <a href="#">
+                        <a href="{% url 'manager_dashboard' %}">
+                            <i class='bx bx-pie-chart-alt icon' ></i>
+                            <span class="text nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
+                        <a href="{% url 'view_team_members' user.id %}">
                             <i class='bx bx-home-circle icon' ></i>
                             <span class="text nav-text">My Team</span>
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="#">
+                        <a href="{% url 'add_member' %}">
                             <i class='bx bx-add-to-queue icon' ></i>
                             <span class="text nav-text">Add Team Member</span>
                         </a>
@@ -56,13 +63,7 @@
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="#">
-                            <i class='bx bx-pie-chart-alt icon' ></i>
-                            <span class="text nav-text">Analytics</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="#">
+                        <a href="{% url 'manager_notes_page' %}">
                             <i class='bx bx-note icon' ></i>
                             <span class="text nav-text">My Notes</span>
                         </a>

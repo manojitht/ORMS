@@ -66,6 +66,9 @@
         {% endif %}
 
     </div>
+    <div class="loader-wrapper">
+        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+    </div> 
     <!-- <div id="warning_popup">
         <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
         <h3>Are you sure want to delete the entire department!</h3>
@@ -73,5 +76,15 @@
         <input class="close-request-button" type="button" onclick="toggle_warning_blur()" value="No, cancel">
     </div> -->
 </section>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="{% static 'script.js' %}"></script>
+<script>
+    $(window).on("load",function(){
+      $(".loader-wrapper").fadeOut("slow");
+    });
+</script>
 
 {% endblock %}

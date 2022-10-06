@@ -1,0 +1,86 @@
+{% extends 'base_user.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1>Add Team Member</h1>
+            {% include 'message_alert.html' %}
+        </div>
+
+        <div style="margin-top: 2%;" class="add-new-department-form">
+            <h1 style="font-weight: 300;"><i style="color: #695CFE; font-size: 45px;" class='bx bxs-user-badge'></i>Add New Team Member Form:</h1>
+            <form action="{% url 'add_member' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <table style="width: 100%;">
+                    <tr>
+                        <td>
+                            <div style="width: 95%; float: left;" class="and-input-box">
+                                <span class="details_anu">PeopleSoft Id: </span>
+                                <input type="number" name="peoplesoft_id" placeholder="Enter Peoplesoft Id.." required>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="width: 95%; float: right;" class="and-input-box">
+                                <span class="details_anu">Fullname: </span>
+                                <input type="text" name="fullname" placeholder="Enter fullname.." required>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <table style="width: 100%;">
+                    <tr>
+                        <td>
+                            <div style="width: 95%; float: left;" class="and-input-box">
+                                <span class="details_anu">Position Role: </span>
+                                <input type="text" name="position" placeholder="Enter position role.." required>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="width: 95%; float: right;" class="and-input-box">
+                                <span class="details_anu">Email: </span>
+                                <input type="email" name="email" placeholder="Enter email.." required>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <table style="width: 100%;">
+                    <tr>
+                        <td>
+                            <div style="width: 95%; float: left;" class="and-input-box">
+                                <span class="details_anu">Contact: </span>
+                                <input type="number" name="contact" placeholder="Enter contact number.." required>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="width: 95%; float: right;" class="and-input-box">
+                                <span class="details_anu">Home Address: </span>
+                                <input type="text" name="home_address" placeholder="Enter home address.." required>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                                                
+                <!-- manager details -->
+                <input type="hidden" class="r-p-textbox" name="manager_peoplesoft_id" value="{{ user.peoplesoft_id }}">
+                <input type="hidden" class="r-p-textbox" name="manager_name" value="{{ user.first_name }} {{ user.last_name }}">
+                <input type="hidden" class="r-p-textbox" name="department" value="{{ user.department }}">
+                <input type="hidden" class="r-p-textbox" name="team" value="{{ user.team }}">
+                Select Team Member Profile Image: <input type="file" name="member_image" accept="image/*" required>                
+                <div class="and-input-box">
+                    <input class="and-submit-btn" type="submit" value="Create Profile">
+                    <a href="#" class="and-back-btn">Navigate To My Team</a>
+                </div>
+                <!-- <h4 class="alert-message-success">Profile created successfully!</h4> -->
+            </form>
+        </div>      
+    </div>      
+</section>
+
+
+{% endblock %}

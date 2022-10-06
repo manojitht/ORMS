@@ -47,9 +47,9 @@
                                     <td>{{ team.created_by }}</td>
                                     <td>{{ team.created_date }}</td>
                                     {% if team.is_active %}
-                                        <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">On Process</td>
+                                        <td><h3 style="background: rgb(60, 161, 29); color: aliceblue; text-align: center; font-weight: 300; font-size: 13px; border-radius: 15px;">On Process</h3></td>
                                     {% else %}
-                                        <td style="background: rgb(197, 75, 27); color: aliceblue; text-align: center;">Removed</td>
+                                        <td><h3 style="background: rgb(197, 75, 27); color: aliceblue; text-align: center; font-weight: 300; font-size: 13px; border-radius: 15px;">Removed</h3></td>
                                     {% endif %}
                                 </tr>
                             {% endfor %}
@@ -65,9 +65,9 @@
                                     <td>{{ team.created_by }}</td>
                                     <td>{{ team.created_date }}</td>
                                     {% if team.is_active %}
-                                        <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">On Process</td>
+                                        <td><h3 style="background: rgb(60, 161, 29); color: aliceblue; text-align: center; font-weight: 300; font-size: 13px; border-radius: 15px;">On Process</h3></td>
                                     {% else %}
-                                        <td style="background: rgb(197, 75, 27); color: aliceblue; text-align: center;">Removed</td>
+                                        <td><h3 style="background: rgb(197, 75, 27); color: aliceblue; text-align: center; font-weight: 300; font-size: 13px; border-radius: 15px;">Removed</h3></td>
                                     {% endif %}
                                 </tr>
                             {% endfor %}
@@ -77,11 +77,20 @@
                 </table>
             </div>
         </div> 
-    </div>     
+    </div>
+    <div class="loader-wrapper">
+        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+    </div>        
 </section>
 
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <script src="{% static 'script.js' %}"></script>
+<script>
+    $(window).on("load",function(){
+      $(".loader-wrapper").fadeOut("slow");
+    });
+</script>
 
 {% endblock %}

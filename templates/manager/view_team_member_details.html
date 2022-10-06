@@ -1,0 +1,50 @@
+{% extends 'base_user.html' %}
+{% load static %}
+
+{% block content %}
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1><i class="fa fa-id-card-o" aria-hidden="true"></i> Team Member Profile</h1>
+        </div>
+        <div class="department-card-container">
+            {% if get_member_id %}
+            <div class="team-member-info">
+                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> Team Member Information <a href="#"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></h1>
+                <img src="{{ get_member_id.member_image.url }}" alt="Team member img">
+                <table>
+                    <tr>
+                        <td><span>Name: </span> {{get_member_id.fullname}}</td>
+                        <td><span>Peoplesoft Id: </span> {{get_member_id.peoplesoft_id}}</td>
+                    </tr>
+                    <tr>
+                        <td><span>Position: </span> {{get_member_id.position}}</td>
+                        <td><span>Reporting To: </span> {{ user.first_name }} {{ user.last_name }}</td>
+                    </tr>
+                    <tr>
+                        <td><span><i class="fa fa-building" aria-hidden="true"></i> Department: </span> {{get_member_id.department}}</td>
+                        <td><span><i class="fa fa-users" aria-hidden="true"></i> Team: </span> {{get_member_id.team}}</td>
+                    </tr>
+                    <tr>
+                        <td><span><i class='bx bxs-envelope' ></i> Email: </span>  {{get_member_id.email}}</td>
+                        <td><span><i class='bx bxs-phone-call' ></i> Contact: </span> {{get_member_id.contact}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><span><i class="fa fa-home" aria-hidden="true"></i> Home Address:</span> {{get_member_id.home_address}}</td>
+                    </tr>
+                </table>
+            </div>
+            {% else %}
+            {% endif %}
+        </div>
+        </div> 
+        <div id="warning_popup">
+            <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
+            <h3>Are you sure want to delete the entire team!</h3>
+            <input class="create-request-button" type="button" onclick="toggle_warning_blur()" value="Yes, delete">
+            <input class="close-request-button" type="button" onclick="toggle_warning_blur()" value="No, cancel">
+        </div>
+    </div>     
+</section>
+
+{% endblock %}

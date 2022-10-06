@@ -1,0 +1,159 @@
+{% extends 'base_it_admin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1>Resource Listings</h1>
+            {% include 'message_alert.html' %}
+        </div>
+        <div class="search-bar-container">
+            <form>
+                <!-- <select name="search_by" class="select-input-box-dt">
+                    <option selected>Department name</option>
+                    <option>Department head</option>
+                    <option>Updated by</option>
+                </select> -->
+                <input style="margin-left: 2.5%;" type="search" class="search-input-box-dt" placeholder="Search by asset id name..">
+                <input type="submit" class="search-input-btn-dt" value="Search">
+                <input style="float: right;" type="button" class="add-team-btn" onclick="toggle_blur()" value="Add Device">
+                <a href="{% url 'resources_list_table' %}" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">View <i class='bx bx-table' ></i></a>
+            </form>
+        </div>
+        <div class="devices-card-container">
+            {% if get_result %}
+
+                {% for device in get_result %}
+                <div class="device-card-tile">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td>
+                                <img src="{{ device.device_image.url }}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h1 style="font-weight: 400; font-size: 15px; text-align: center;">{{ device.asset_id }}</h1>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h1 style="font-weight: 400; font-size: 15px; text-align: center;">Device Type: {{ device.device_type }}</h1>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {% if device.device_availability == 'Available' %}
+                                    <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(36, 151, 13);">Available</h1>
+                                {% elif device.device_availability == 'Configuration' %}
+                                    <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(180, 118, 2);">Configuration</h1>
+                                {% elif device.device_availability == 'Reserved' %}
+                                    <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(224, 0, 0);">Reserved</h1>
+                                {% elif device.device_availability == 'Taken' %}
+                                    <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(42, 90, 248);">Taken</h1>
+                                {% else %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                                <a href="{% url 'view_resource' device.id %}">View Device</a>
+                            </td>
+                        </tr>
+                    </table>                                      
+                </div>
+                {% endfor %}
+
+            {% else %}
+
+                {% for device in resources %}
+
+                    <div class="device-card-tile">
+                        <table style="width: 100%;">
+                            <tr>
+                                <td>
+                                    <img src="{{ device.device_image.url }}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h1 style="font-weight: 400; font-size: 15px; text-align: center;">{{ device.asset_id }}</h1>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h1 style="font-weight: 400; font-size: 15px; text-align: center;">Device Type: {{ device.device_type }}</h1>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {% if device.device_availability == 'Available' %}
+                                        <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(36, 151, 13);">Available</h1>
+                                    {% elif device.device_availability == 'Configuration' %}
+                                        <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(180, 118, 2);">Configuration</h1>
+                                    {% elif device.device_availability == 'Reserved' %}
+                                        <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(224, 0, 0);">Reserved</h1>
+                                    {% elif device.device_availability == 'Taken' %}
+                                        <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(42, 90, 248);">Taken</h1>
+                                    {% else %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;">
+                                    <a href="{% url 'view_resource' device.id %}">View Device</a>
+                                </td>
+                            </tr>
+                        </table>                                      
+                    </div>
+
+
+                {% endfor %}
+
+            {% endif %}
+        </div>
+
+        <div class="loader-wrapper">
+            <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+        </div>
+
+        </div> 
+        <div id="request_popup">
+            <form action="{% url 'add_resource_page' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h2><i class="fa fa-laptop" aria-hidden="true"></i> Add Device</h2>
+                <input name="asset_id" type="text" class="r-p-textbox" placeholder="Enter asset Id.." value="">
+                <select class="r-p-textbox" name="device_type">
+                    <option selected>--Choose device type--</option>
+                    <option>Desktop</option>
+                    <option>Laptop</option>
+                    <option>Monitor</option>
+                </select>
+                <input name="bitlocker_key" type="text" class="r-p-textbox" placeholder="Enter bitlocker key (only desktop & laptop).." value="">
+                <select class="r-p-textbox" name="device_availability">
+                    <option selected>Available</option>
+                    <option>Configuration</option>
+                    <option>Reserved</option>
+                </select>
+                <textarea class="r-p-textbox" id="rp-textarea" name="device_description" placeholder="Write Device specifications.." rows="4" cols="50" required></textarea>
+                <input type="hidden" class="r-p-textbox" name="added_by" value="{{ user.first_name }} {{ user.last_name }}">
+                <h3 style="font-weight: 400; font-size: 15px;">Select Image: <input type="file" name="device_image" accept="image/*" required></h3>
+                <input class="create-request-button" type="submit" value="Add Device">
+                <input class="close-request-button" type="button" onclick="toggle_blur()" value="Close">
+            </form>
+        </div>
+    </div>     
+</section>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="script.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script>
+    $(window).on("load",function(){
+      $(".loader-wrapper").fadeOut("slow");
+    });
+</script>
+
+{% endblock %}

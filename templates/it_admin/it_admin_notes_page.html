@@ -1,0 +1,24 @@
+{% extends 'base_it_admin.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<section class="home-main">
+    <div class="full-myteam-container">
+        <div class="head-container">
+            <h1>My Notes</h1>
+        </div>
+            <div class="my-notes-container">
+                <button class="add-note-btn" id="add-note-btn">
+                    + Add Note
+                </button>
+            </div>
+        </div>     
+</section>
+
+<script src="{% static 'script.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.2.2/marked.min.js"></script>
+<script src="{% static 'script_notes.js' %}"></script>
+
+{% endblock %}

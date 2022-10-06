@@ -19,8 +19,8 @@
             <div class="search-bar-container">
                 <form action="{% url 'superadmin_users_date_sort' %}" method="POST">
                     {% csrf_token %}
-                    From: <input type="date" style="width: 140px;" name="from_user" class="search-input-box-dt">
-                    To: <input type="date" style="width: 140px;" name="to_user" class="search-input-box-dt">
+                    From: <input type="date" style="width: 140px;" name="from_user" class="search-input-box-dt" required>
+                    To: <input type="date" style="width: 140px;" name="to_user" class="search-input-box-dt" required>
                     <input type="submit" class="search-input-btn-dt" value="Search">
                     <a href="{% url 'add_user_page' %}" style="margin-right: 0%;" class="add-team-btn">User <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
                     <a href="#" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">Print report <i class='bx bx-printer'></i></a>
@@ -78,7 +78,7 @@
                                         {% if user.is_active %}
                                         <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">Active</td>
                                         {% else %}
-                                        <td style="background: rgb(197, 75, 27); color: aliceblue; text-align: center;">Removed</td>
+                                        <td style="background: rgb(197, 75, 27); color: aliceblue; text-align: center;">In Active</td>
                                         {% endif %}
                                         <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'edit_user' user.id %}">Edit User</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'remove_user_access' user.id %}">Remove</a></td>
                                     </tr>
@@ -89,11 +89,20 @@
                     </table>
                 </div>
             </div> 
-        </div>     
+        </div>
+        <div class="loader-wrapper">
+            <!-- <span class="loader"><span class="loader-inner"></span></span> -->
+            <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+        </div>       
     </section>
-
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     <script src="{% static 'script.js' %}"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script>
+        $(window).on("load",function(){
+          $(".loader-wrapper").fadeOut("slow");
+        });
+    </script>
 
 {% endblock %}

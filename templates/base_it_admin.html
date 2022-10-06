@@ -9,6 +9,7 @@
     <title>ORMS | IT Administrator</title>
     <link rel="stylesheet" href="{% static 'main.css' %}">
     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
 </head>
 <body class="home-body">
     <nav class="home-sidebar close">
@@ -47,9 +48,9 @@
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="{% url 'resources_list_table' %}">
+                        <a href="{% url 'resources_listings_page' %}">
                             <i class='bx bx-devices icon' ></i>
-                            <span class="text nav-text">Manage Devices</span>
+                            <span class="text nav-text">View Resources</span>
                         </a>
                     </li>
                     <li class="nav-link">
@@ -65,7 +66,7 @@
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="#">
+                        <a href="{% url 'it_admin_notes_page' %}">
                             <i class='bx bx-note icon' ></i>
                             <span class="text nav-text">My Notes</span>
                         </a>
