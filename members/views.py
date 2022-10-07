@@ -7,6 +7,7 @@ from resource.models import Resource
 from department.models import Department
 from account.models import Account
 from team.models import Team
+import os
 
 # Create your views here.
 
@@ -79,5 +80,32 @@ def search_team_member(request, userid):
 
 def manager_notes_page(request):
     return render(request, 'manager/manager_notes_page.html')
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def edit_team_member(request, memid):
+    get_member_id = Members.objects.get(id=memid)
+    context = { 'get_member_id': get_member_id, }
+    return render(request, 'manager/edit_team_member.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def update_team_member(request, memid):
+    update_tm = Members.objects.get(id=memid)
+
+    if request.method == 'POST':
+        if len(request.FILES) != 0:
+            if len(update_tm.member_image) > 0:
+                os.remove(update_tm.member_image.path)
+            update_tm.member_image = request.FILES['member_image']
+        update_tm.fullname = request.POST['fullname']
+        update_tm.peoplesoft_id = request.POST['peoplesoft_id']
+        update_tm.position = request.POST['position']
+        update_tm.email = request.POST['email']
+        update_tm.contact = request.POST['contact']
+        update_tm.home_address = request.POST['home_address']
+        update_tm.save()
+        message_alert.success(request, 'Team member details of ' + update_tm.peoplesoft_id + ' was updated successfully!')
+    return redirect(view_team_members_details, memid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

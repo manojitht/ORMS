@@ -1,0 +1,70 @@
+{% extends 'base_user.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1><i class="fa fa-pencil-square" aria-hidden="true"></i> Edit Team Member Profile</h1>
+            {% include 'message_alert.html' %}
+        </div>
+        {% if get_member_id %}
+        <div class="department-card-container">
+            <div class="team-member-info">
+                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> Update Team Member Information:</h1>
+                <form action="{% url 'update_team_member' get_member_id.id %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <img src="{{ get_member_id.member_image.url }}" alt="Team member img">
+                    <table>
+                        <tr>
+                            <td><span><i class="fa fa-user" aria-hidden="true"></i> Fullname: </span> <input name="fullname" class="view-edit-team-member-input" type="text" placeholder="Enter fullname.." value="{{get_member_id.fullname}}" required></td>
+                            <td><span><i class="fa fa-id-badge" aria-hidden="true"></i> Peoplesoft Id: </span> <input name="peoplesoft_id" class="view-edit-team-member-input" type="text" placeholder="Enter Peoplesoft Id.." value="{{get_member_id.peoplesoft_id}}" required></td>
+                        </tr>
+                        <tr>
+                            <td><span><i class="fa fa-briefcase" aria-hidden="true"></i> Position: </span> <input name="position" class="view-edit-team-member-input" type="text" placeholder="Enter Position.." value="{{get_member_id.position}}" required></td>
+                            <td><span><i class="fa fa-book" aria-hidden="true"></i> Reporting To: </span> Steve Jobs</td>
+                        </tr>
+                        <tr>
+                            <td><span><i class='bx bxs-envelope' ></i> Email: </span>  <input name="email" class="view-edit-team-member-input" type="email" placeholder="Enter Email Id.." value="{{get_member_id.email}}" required></td>
+                            <td><span><i class='bx bxs-phone-call' ></i> Contact: </span> <input name="contact" class="view-edit-team-member-input" type="text" placeholder="Enter Contact number.." value="{{get_member_id.contact}}" required></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><span><i class="fa fa-home" aria-hidden="true"></i> Home Address:</span> <input name="home_address" class="view-edit-team-member-input" type="text" placeholder="Enter Home Address..." value="{{get_member_id.home_address}}" required></td>
+                        </tr>
+                        <tr>
+                            <td><span><i class="fa fa-picture-o" aria-hidden="true"></i> Member Image: </span> <input name="member_image" style="background-color: #e8e6ff; border: 1px solid #e8e6ff;" type="file" accept="images"></td>
+                            <td><a class="view-edit-team-member-back-btn" href="{% url 'view_team_members_details' get_member_id.id %}">Back</a><input class="view-edit-team-member-btn" type="submit" value="Save changes"></td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        {% endif %}
+
+        <div class="loader-wrapper">
+            <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+        </div>  
+
+        </div> 
+        <div id="warning_popup">
+            <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
+            <h3>Are you sure want to delete the entire team!</h3>
+            <input class="create-request-button" type="button" onclick="toggle_warning_blur()" value="Yes, delete">
+            <input class="close-request-button" type="button" onclick="toggle_warning_blur()" value="No, cancel">
+        </div>
+    </div>     
+</section>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="{% static 'script.js' %}"></script>
+<script>
+    $(window).on("load",function(){
+      $(".loader-wrapper").fadeOut("slow");
+    });
+</script>
+
+{% endblock %}

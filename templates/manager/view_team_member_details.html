@@ -5,21 +5,22 @@
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
-            <h1><i class="fa fa-id-card-o" aria-hidden="true"></i> Team Member Profile</h1>
+            <h1><i class="fa fa-id-card-o" aria-hidden="true"></i> Member Profile</h1>
+            {% include 'message_alert.html' %}
         </div>
         <div class="department-card-container">
-            {% if get_member_id %}
             <div class="team-member-info">
-                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> Team Member Information <a href="#"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></h1>
+                {% if get_member_id %}
+                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> Team Member Information <a href="{% url 'edit_team_member' get_member_id.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></h1>
                 <img src="{{ get_member_id.member_image.url }}" alt="Team member img">
                 <table>
                     <tr>
-                        <td><span>Name: </span> {{get_member_id.fullname}}</td>
-                        <td><span>Peoplesoft Id: </span> {{get_member_id.peoplesoft_id}}</td>
+                        <td><span><i class="fa fa-user" aria-hidden="true"></i> Name: </span> {{get_member_id.fullname}}</td>
+                        <td><span><i class="fa fa-id-badge" aria-hidden="true"></i> Peoplesoft Id: </span> {{get_member_id.peoplesoft_id}}</td>
                     </tr>
                     <tr>
-                        <td><span>Position: </span> {{get_member_id.position}}</td>
-                        <td><span>Reporting To: </span> {{ user.first_name }} {{ user.last_name }}</td>
+                        <td><span><i class="fa fa-briefcase" aria-hidden="true"></i> Position: </span> {{get_member_id.position}}</td>
+                        <td><span><i class="fa fa-book" aria-hidden="true"></i> Reporting To: </span> {{ user.first_name }} {{ user.last_name }}</td>
                     </tr>
                     <tr>
                         <td><span><i class="fa fa-building" aria-hidden="true"></i> Department: </span> {{get_member_id.department}}</td>
@@ -32,19 +33,77 @@
                     <tr>
                         <td colspan="2"><span><i class="fa fa-home" aria-hidden="true"></i> Home Address:</span> {{get_member_id.home_address}}</td>
                     </tr>
+                    <tr>
+                        <td><input class="add-resources-btn" type="button" onclick="toggle_accessories_blur()" value="+ Other Accessories "></td>
+                        <td><input class="add-resources-btn" type="button" onclick="toggle_blur()" value="+ Add Resource "></td>
+                    </tr>
                 </table>
             </div>
             {% else %}
             {% endif %}
+            <div class="loader-wrapper">
+                <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+            </div> 
         </div>
         </div> 
-        <div id="warning_popup">
-            <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
-            <h3>Are you sure want to delete the entire team!</h3>
-            <input class="create-request-button" type="button" onclick="toggle_warning_blur()" value="Yes, delete">
-            <input class="close-request-button" type="button" onclick="toggle_warning_blur()" value="No, cancel">
+        <div id="request_popup">
+            <form>
+                <h2><i class="fa fa-laptop" aria-hidden="true"></i> <i class="fa fa-desktop" aria-hidden="true"></i> Add Device</h2>
+                <input style="margin-bottom: 5%;" name="asset_id" type="text" class="r-p-textbox" placeholder="Enter asset id of resource.." value="" required>
+                <input class="create-request-button" type="submit" value="Add Device">
+                <input class="close-request-button" type="button" onclick="toggle_blur()" value="Close">
+            </form>
+        </div>
+
+        <div id="other_accessories">
+            <form>
+                <h2><i class='bx bxs-mouse'></i> <i class="fa fa-headphones" aria-hidden="true"></i> <i class="fa fa-keyboard-o" aria-hidden="true"></i> <i class="fa fa-plug" aria-hidden="true"></i> Other Accessories</h2>
+                <select class="r-p-textbox" name="device_type">
+                    <option selected>--Keyboard Taken--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                <select class="r-p-textbox" name="device_type">
+                    <option selected>--Mouse Taken--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                <select class="r-p-textbox" name="device_type">
+                    <option selected>--VGA Cables Taken--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                <select class="r-p-textbox" name="device_type">
+                    <option selected>--Power Cables Taken--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                <select class="r-p-textbox" name="device_type">
+                    <option selected>--Network adapter Taken--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                <select class="r-p-textbox" name="device_type">
+                    <option selected>--Headset Taken--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                </select>
+                <textarea class="r-p-textbox" id="rp-textarea" name="device_description" placeholder="Other notes if any.." rows="4" cols="50" required></textarea>
+                <input class="create-request-button" type="submit" value="Submit">
+                <input class="close-request-button" type="button" onclick="toggle_accessories_blur()" value="Close">
+            </form>
         </div>
     </div>     
 </section>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="{% static 'script.js' %}"></script>
+<script>
+    $(window).on("load",function(){
+      $(".loader-wrapper").fadeOut("slow");
+    });
+</script>
 
 {% endblock %}

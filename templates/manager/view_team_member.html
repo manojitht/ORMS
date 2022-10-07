@@ -7,7 +7,7 @@
     <section class="home-main">
         <div class="full-myteam-container">
             <div class="head-container">
-                <h1>My team - {{ user.team }}</h1>
+                <h1><i style="color: #695CFE;" class="fa fa-users" aria-hidden="true"></i> {{ user.team }}</h1>
                 <!-- <input class="search-bar-profile-card" type="search" placeholder="Search by name or ps id.." required> -->
             </div>
             <div class="search-bar-container">
@@ -23,34 +23,73 @@
                     {% if search_team_member %}
                         {% for team_member in search_team_member %}
                             <div class="profile-card">
-                                <img src="{{ team_member.member_image.url }}" class="profile-card-pic">
-                                <h1>{{ team_member.fullname }}</h1>
-                                <h2>{{ team_member.peoplesoft_id }}</h2>
-                                <p>{{ team_member.position }}</p>
-                                <p>{{ team_member.department }}</p>
-                                <a href="{% url 'view_team_members_details' team_member.id %}">See Details</a>
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td><img src="{{ team_member.member_image.url }}" class="profile-card-pic"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h1><i class="fa fa-user" aria-hidden="true"></i> {{ team_member.fullname }}</h1></td>
+                                    </tr>
+                                    <tr>
+                                        <td><h2><i class="fa fa-id-badge" aria-hidden="true"></i> {{ team_member.peoplesoft_id }}</h2></td>
+                                    </tr>
+                                    <tr>
+                                        <td><p><i class="fa fa-briefcase" aria-hidden="true"></i> {{ team_member.position }}</p></td>
+                                    </tr>
+                                    <tr>
+                                        <td><p><i class="fa fa-building" aria-hidden="true"></i> {{ team_member.department }}</p></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="height: 70px;"><a href="{% url 'view_team_members_details' team_member.id %}" class="profile-card-button">See details <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></a></td>
+                                    </tr>
+                                </table>
                             </div>
                         {% endfor %}
                     {% elif team_members %}
                         {% for team_member in team_members %}
-                            <div class="profile-card">
-                                <img src="{{ team_member.member_image.url }}" class="profile-card-pic">
-                                <h1>{{ team_member.fullname }}</h1>
-                                <h2>{{ team_member.peoplesoft_id }}</h2>
-                                <p>{{ team_member.position }}</p>
-                                <p>{{ team_member.department }}</p>
-                                <a href="{% url 'view_team_members_details' team_member.id %}">See Details</a>
-                                <!-- <button class="profile-card-button" type="button" onclick="">See details</button> -->
-                            </div>
+                        <div class="profile-card">
+                            <table style="width: 100%; height: 100%;">
+                                <tr>
+                                    <td><img src="{{ team_member.member_image.url }}" class="profile-card-pic"></td>
+                                </tr>
+                                <tr>
+                                    <td><h1><i class="fa fa-user" aria-hidden="true"></i> {{ team_member.fullname }}</h1></td>
+                                </tr>
+                                <tr>
+                                    <td><h2><i class="fa fa-id-badge" aria-hidden="true"></i> {{ team_member.peoplesoft_id }}</h2></td>
+                                </tr>
+                                <tr>
+                                    <td><p><i class="fa fa-briefcase" aria-hidden="true"></i> {{ team_member.position }}</p></td>
+                                </tr>
+                                <tr>
+                                    <td><p><i class="fa fa-building" aria-hidden="true"></i> {{ team_member.department }}</p></td>
+                                </tr>
+                                <tr>
+                                    <td style="height: 70px;"><a href="{% url 'view_team_members_details' team_member.id %}" class="profile-card-button">See details <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></a></td>
+                                </tr>
+                            </table>
+                        </div>
                         {% endfor %}
                     {% else %}
                     <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_scgyykem.json"  background="#E4E9F7"  speed="1"  style="width: 35%; height: 60%; margin-left: auto; margin-right: auto;" loop   autoplay></lottie-player>
                     {% endif %}
                 </div>
             </div> 
+            <div class="loader-wrapper">
+                <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+            </div> 
         </div> 
     </section>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="{% static 'script.js' %}"></script>
+    <script>
+        $(window).on("load",function(){
+        $(".loader-wrapper").fadeOut("slow");
+        });
+    </script>
 
 
 {% endblock %}

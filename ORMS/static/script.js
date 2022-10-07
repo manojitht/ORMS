@@ -26,6 +26,14 @@ const home_body = document.querySelector(".home-body"),
       request_popup.classList.toggle('active');
   }
 
+    function toggle_accessories_blur(){
+      var blur = document.getElementById('blur');
+      blur.classList.toggle('active');
+    
+      var other_popup = document.getElementById('other_accessories');
+      other_popup.classList.toggle('active');
+  }
+
   function toggle_warning_blur(){
     var blur = document.getElementById('blur');
     blur.classList.toggle('active');

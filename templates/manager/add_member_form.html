@@ -7,7 +7,7 @@
 
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
-            <h1>Add Team Member</h1>
+            <h1><i class="fa fa-id-badge" aria-hidden="true"></i> Add Team Member</h1>
             {% include 'message_alert.html' %}
         </div>
 
@@ -79,8 +79,23 @@
                 <!-- <h4 class="alert-message-success">Profile created successfully!</h4> -->
             </form>
         </div>      
-    </div>      
+    </div>  
+    
+    <div class="loader-wrapper">
+        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+    </div> 
+    
 </section>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="{% static 'script.js' %}"></script>
+<script>
+    $(window).on("load",function(){
+      $(".loader-wrapper").fadeOut("slow");
+    });
+</script>
 
 
 {% endblock %}

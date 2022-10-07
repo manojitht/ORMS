@@ -646,7 +646,6 @@ form .atm-button input:hover {
     display: flex;
     flex-wrap: wrap;
     margin: auto;
-    justify-content: center;
     overflow-y: scroll;
 }
 
@@ -685,12 +684,14 @@ form .atm-button input:hover {
     font-weight: 400;
     font-size: 16px;
     margin-top: 15px;
-    transition: 1s;
+    transition: 0.5s;
+    text-decoration: none;
 }
 
 .profile-card-button:hover {
     background-color: #8c82f3;
     color: #fff;
+    letter-spacing: 0.8px;
 }
 
 .profile-card h1 {
@@ -822,6 +823,21 @@ form .atm-button input:hover {
     border-radius: 25px;
 }
 
+#other_accessories {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-40%, -50%);
+    width: 35%;
+    padding: 50px;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, .30);
+    background: rgb(255, 255, 255);
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.5s;
+    border-radius: 25px;
+}
+
 #request_popup h2 {
     font-weight: 400; 
     font-size: 20px; 
@@ -833,7 +849,25 @@ form .atm-button input:hover {
     margin-bottom: 5%;
 }
 
+#other_accessories h2 {
+    font-weight: 400; 
+    font-size: 20px; 
+    text-align: center;
+    color: #393191;
+    border-bottom: 10px solid rgb(98, 12, 168);
+    border-radius: 10px;
+    background-color: #bcb6fd;
+    margin-bottom: 5%;
+}
+
 #request_popup.active {
+    top: 50%;
+    visibility: visible;
+    opacity: 1;
+    transition: 0.5s;
+}
+
+#other_accessories.active {
     top: 50%;
     visibility: visible;
     opacity: 1;
@@ -858,6 +892,18 @@ form .atm-button input:hover {
 } */
 
 #request_popup select {
+    height: 40px;
+    width: 100%;
+    outline: none;
+    border-radius: 5px;
+    outline: none;
+    padding-left: 15px;
+    font-size: 15px;
+    transition: all 0.5s ease;
+    margin-top: 10px;
+}
+
+#other_accessories select {
     height: 40px;
     width: 100%;
     outline: none;
@@ -2149,6 +2195,59 @@ form .atm-button input:hover {
     color: #ffffff;
 }
 
+.view-edit-team-member-input {
+    width: 50%;
+    height: 40px;
+    padding-left: 2%;
+    background-color: #cbc8fa;
+    border: 1px solid #cbc8fa;
+    outline: none;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.view-edit-team-member-btn {
+    background-color: #4a41a8;
+    padding: 5px;
+    font-size: 13px;
+    text-decoration: none;
+    color: #ffffff;
+    border: 1px solid #4a41a8;
+    border-radius: 5px;
+    float: right;
+    transition: 0.5s;
+    width: 40%;
+    cursor: pointer;
+    text-align: center;
+}
+
+.view-edit-team-member-btn:hover {
+    background-color: #746dcc;
+    border: 1px solid #746dcc;
+    color: #ffffff;
+}
+
+.view-edit-team-member-back-btn {
+    background-color: #4a41a8;
+    padding: 5px;
+    font-size: 13px;
+    text-decoration: none;
+    color: #ffffff;
+    border: 1px solid #4a41a8;
+    border-radius: 5px;
+    float: left;
+    transition: 0.5s;
+    width: 40%;
+    cursor: pointer;
+    text-align: center;
+}
+
+.view-edit-team-member-back-btn:hover {
+    background-color: #746dcc;
+    border: 1px solid #746dcc;
+    color: #ffffff;
+}
+
 /* view all devices listings page styling */
 
 .devices-card-container {
@@ -2204,7 +2303,27 @@ form .atm-button input:hover {
     background: #cfb51e;
 }
 
+/* add resource button styling in view team member page */
 
+.add-resources-btn {
+    margin-right: 2%;
+    background-color: #e8e6ff;
+    color: #433ba0;
+    width: auto;
+    height: 30px;
+    font-size: 12px;
+    border: none;
+    border: 1px solid #594fc4;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: 0.5s;
+    padding: 6px;
+}
+
+.add-resources-btn:hover {
+    background-color: #594fc4;
+    color: #ffffff;
+}
 
 /* preloader for the ORMS app */
 
