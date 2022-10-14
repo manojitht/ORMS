@@ -74,8 +74,8 @@ def restore_department(request, depid):
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def permanent_delete_department(request, depid):
-    restoring_dep = Department.objects.get(id=depid)
-    restoring_dep.delete()
+    dep_delete = Department.objects.get(id=depid)
+    dep_delete.delete()
     message_alert.success(request, 'Department deleted successfully!')
     return redirect(department_deletion_history)
 

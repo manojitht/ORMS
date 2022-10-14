@@ -2318,11 +2318,67 @@ form .atm-button input:hover {
     cursor: pointer;
     transition: 0.5s;
     padding: 6px;
+    text-decoration: none;
 }
 
 .add-resources-btn:hover {
     background-color: #594fc4;
     color: #ffffff;
+}
+
+/* other accessories information styling */
+
+
+.other-accessories-card-info {
+    background-color: #ffffff;
+    margin-top: 15px;
+    margin-bottom: 2%;
+    width: 90%;
+    justify-content: center;
+    border-radius: 15px;
+    padding: 10px;
+    position: relative;
+}
+
+.other-accessories-card-info h1 {
+    margin-left: 1%;
+    font-weight: 400; 
+    font-size: 25px; 
+    color: #080808;
+    border-bottom: 10px solid #535353;
+    border-radius: 10px;
+    background-color: #c7c7c7;
+    padding-left: 1%;
+}
+
+.other-accessories-card-info h1 a {
+    margin-right: 1%;
+    font-weight: 400; 
+    font-size: 25px; 
+    color: #1d1c1c;
+    background-color: #c7c7c7;
+    height: 25px;
+    float: right;
+}
+
+.other-accessories-card-info table {
+    width: 99%;
+    margin-left: 1%;
+    background-color: #e2e2e2;
+    border-radius: 15px;
+    padding: 5px;
+    margin-top: 1%;
+}
+
+.other-accessories-card-info td {
+    padding: 0.5%;
+}
+
+.other-accessories-card-info td span {
+    color: #535353;
+    font-weight: 600;
+    margin-right: 2%;
+    font-size: 16px;
 }
 
 /* preloader for the ORMS app */

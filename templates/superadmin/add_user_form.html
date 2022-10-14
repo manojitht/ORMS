@@ -67,7 +67,7 @@
 
     <div class="add-new-department-form">
         <h1>Add New User Form:</h1>
-         <form action="{% url 'add_user_page' %}" method="POST"">
+         <form action="{% url 'add_user_page' %}" method="POST">
             {% csrf_token %}
              <div class="and-input-box">
                  <span class="details_anu">PeopleSoft Id: (Note: In numerical format)</span>
