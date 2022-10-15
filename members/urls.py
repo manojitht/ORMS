@@ -16,6 +16,7 @@ urlpatterns = [
     path('add_other_accessories/<int:memid>/', views.add_other_accessories, name='add_other_accessories'),
     path('edit_other_accessories/<int:memid>/', views.edit_other_accessories, name='edit_other_accessories'),
     path('update_other_accessories/<int:memid>/', views.update_other_accessories, name='update_other_accessories'),
+    path('mark_returned/<int:resid>/<int:memid>/', views.mark_returned, name='mark_returned'),
     #path('edit_department/<int:depid>/', views.edit_department, name='edit_department'),
     #path('back_to_team_view/<int:temid>/', views.back_to_team_view, name='back_to_team_view'),
 ]

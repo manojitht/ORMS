@@ -206,3 +206,21 @@ def update_other_accessories(request, memid):
     return redirect(view_team_members_details, memid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def mark_returned(request, resid, memid):
+    get_asset = ResourceTaken.objects.get(id=resid)
+    get_asset_id = ResourceTaken.objects.filter(asset_id=get_asset.asset_id)
+    take_asset_id = ResourceTaken.objects.get(asset_id=get_asset.asset_id, id=get_asset.id)
+    update_resource = Resource.objects.filter(asset_id=take_asset_id.asset_id)
+
+    for asset in get_asset_id:
+        asset.device_status = 'Returned'
+        asset.save()
+    
+    for update in update_resource:
+        update.device_availability = 'Available'
+        update.save()
+    
+    message_alert.success(request, 'Mark returned on the device successfully!')
+
+    return redirect(view_team_members_details, memid)

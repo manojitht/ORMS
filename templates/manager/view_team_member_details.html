@@ -71,14 +71,13 @@
                             {% else %}
                                 <td><span><i class="fa fa-code" aria-hidden="true"></i> Bitlocker Key: </span> Not Required.</td>
                             {% endif %}
-                            <td><a href="#">Mark Returned</a></td>
+                            <td><a href="{% url 'mark_returned' get_devices.id get_member_id.id %}">Mark Returned</a></td>
                         </tr>
                     </table>
                 </div>
             {% endfor %}
             {% else %}
                 <div class="device-card-info">
-                    <h1><i class="fa fa-desktop" aria-hidden="true"></i> Device Information <a href="#"></a></h1>
                     <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_awxs6x6k.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px; margin-left: auto; margin-right: auto;"  loop  autoplay></lottie-player>
                     <h2 style="color: black; font-weight: 300; text-align: center; font-size: 15px;">No devices taken by {{get_member_id.fullname}}</h2>
                 </div>
@@ -103,9 +102,8 @@
             </div>
             {% else %}
                 <div class="other-accessories-card-info">
-                    <h1>Other Accessories <i class="fa fa-keyboard-o" aria-hidden="true"></i> <i class='bx bxs-mouse'></i> <i class="fa fa-plug" aria-hidden="true"></i> <i class="fa fa-headphones" aria-hidden="true"></i></h1>
                     <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_scqggbnw.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px; margin-left: auto; margin-right: auto;"  loop  autoplay></lottie-player>
-                    <h2 style="color: black; font-weight: 300; text-align: center; font-size: 15px;">No devices taken by {{get_member_id.fullname}}</h2>
+                    <h2 style="color: black; font-weight: 300; text-align: center; font-size: 15px;">No other accessories taken by {{get_member_id.fullname}}</h2>
                 </div>
             {% endif %}
 
@@ -142,29 +140,29 @@
                 <select class="r-p-textbox" name="keyboard">
                     <option selected>{{get_oa.keyboard}}</option>
                     <option>Taken</option>
-                    <option>Returned</option>
                     <option>Not Taken</option>
+                    <option>Returned</option>
                 </select>
                 <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">* <i class='bx bxs-mouse'></i> Mouse Taken:</h5>
                 <select class="r-p-textbox" name="mouse">
                     <option selected>{{get_oa.mouse}}</option>
                     <option>Taken</option>
-                    <option>Returned</option>
                     <option>Not Taken</option>
+                    <option>Returned</option>
                 </select>
                 <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">* <i class="fa fa-plug" aria-hidden="true"></i> Network adapter Taken:</h5>
                 <select class="r-p-textbox" name="network_adapter">
                     <option selected>{{get_oa.network_adapter}}</option>
                     <option>Taken</option>
-                    <option>Returned</option>
                     <option>Not Taken</option>
+                    <option>Returned</option>
                 </select>
                 <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">* <i class="fa fa-headphones" aria-hidden="true"></i> Headset Taken:</h5>
                 <select class="r-p-textbox" name="headset">
                     <option selected>{{get_oa.headset}}</option>
                     <option>Taken</option>
-                    <option>Returned</option>
                     <option>Not Taken</option>
+                    <option>Returned</option>
                 </select>
                 <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">Other notes:</h5>
                 <textarea class="r-p-textbox" id="rp-textarea" name="other_notes" placeholder="Other notes if any.." rows="4" cols="50" required>{{get_oa.other_notes}}</textarea>
@@ -184,28 +182,24 @@
                 <select class="r-p-textbox" name="keyboard">
                     <option selected>--Keyboard Taken--</option>
                     <option>Taken</option>
-                    <option>Returned</option>
                     <option>Not Taken</option>
                 </select>
                 <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">* <i class='bx bxs-mouse'></i> Mouse Taken:</h5>
                 <select class="r-p-textbox" name="mouse">
                     <option selected>--Mouse Taken--</option>
                     <option>Taken</option>
-                    <option>Returned</option>
                     <option>Not Taken</option>
                 </select>
                 <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">* <i class="fa fa-plug" aria-hidden="true"></i> Network adapter Taken:</h5>
                 <select class="r-p-textbox" name="network_adapter">
                     <option selected>--Network adapter Taken--</option>
                     <option>Taken</option>
-                    <option>Returned</option>
                     <option>Not Taken</option>
                 </select>
                 <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">* <i class="fa fa-headphones" aria-hidden="true"></i> Headset Taken:</h5>
                 <select class="r-p-textbox" name="headset">
                     <option selected>--Headset Taken--</option>
                     <option>Taken</option>
-                    <option>Returned</option>
                     <option>Not Taken</option>
                 </select>
                 <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">Other notes:</h5>
