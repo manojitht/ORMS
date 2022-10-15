@@ -63,7 +63,10 @@ def view_team_members_details(request, memid):
     get_member_id = Members.objects.get(id=memid)
     get_ps_id = Members.objects.get(peoplesoft_id=get_member_id.peoplesoft_id)
     get_devices_id = ResourceTaken.objects.filter(peoplesoft_id=get_ps_id, device_status='Taken')
-    get_oa = OtherAccessories.objects.filter(peoplesoft_id=get_ps_id)
+    try: 
+        get_oa = OtherAccessories.objects.get(peoplesoft_id=get_ps_id)
+    except:
+        get_oa = OtherAccessories.objects.filter(peoplesoft_id=get_ps_id)
 
     # for get_devices in get_devices_id:
     #     description = get_devices.asset_id.device_description

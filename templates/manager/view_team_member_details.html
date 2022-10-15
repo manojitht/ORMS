@@ -47,6 +47,8 @@
                 </table>
             </div>
             <!-- write it -->
+            <h1 style="color: black; font-weight: 400;">Resources taken by <span style="color: #695CFE;">{{get_member_id.fullname}}</span></h1>
+            {% if get_devices_id %}
             {% for get_devices in get_devices_id %}
                 <div class="device-card-info">
                     <h1><i class="fa fa-desktop" aria-hidden="true"></i> Device Information <a href="#"></a></h1>
@@ -74,25 +76,38 @@
                     </table>
                 </div>
             {% endfor %}
-
-            {% for accessories in get_oa %}
+            {% else %}
+                <div class="device-card-info">
+                    <h1><i class="fa fa-desktop" aria-hidden="true"></i> Device Information <a href="#"></a></h1>
+                    <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_awxs6x6k.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px; margin-left: auto; margin-right: auto;"  loop  autoplay></lottie-player>
+                    <h2 style="color: black; font-weight: 300; text-align: center; font-size: 15px;">No devices taken by {{get_member_id.fullname}}</h2>
+                </div>
+            {% endif %}
+            <h1 style="color: black; font-weight: 400;">Other accessories taken by <span style="color: #695CFE;">{{get_member_id.fullname}}</span></h1>
+            {% if get_oa %}
             <div class="other-accessories-card-info">
                 <h1>Other Accessories <i class="fa fa-keyboard-o" aria-hidden="true"></i> <i class='bx bxs-mouse'></i> <i class="fa fa-plug" aria-hidden="true"></i> <i class="fa fa-headphones" aria-hidden="true"></i> <a href="#" onclick="toggle_accessories_blur()"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></h1>
                 <table>
                     <tr>
-                        <td><span><i class="fa fa-keyboard-o" aria-hidden="true"></i> Keyboard: </span> {{ accessories.keyboard }}</td>
-                        <td><span><i class='bx bxs-mouse'></i> Mouse: </span> {{ accessories.mouse }}</td>
+                        <td><span><i class="fa fa-keyboard-o" aria-hidden="true"></i> Keyboard: </span> {{ get_oa.keyboard }}</td>
+                        <td><span><i class='bx bxs-mouse'></i> Mouse: </span> {{ get_oa.mouse }}</td>
                     </tr>
                     <tr>
-                        <td><span><i class="fa fa-plug" aria-hidden="true"></i> Network Adapter: </span> {{ accessories.network_adapter }}</td>
-                        <td><span><i class="fa fa-headphones" aria-hidden="true"></i> Headset: </span> {{ accessories.headset }}</td>
+                        <td><span><i class="fa fa-plug" aria-hidden="true"></i> Network Adapter: </span> {{ get_oa.network_adapter }}</td>
+                        <td><span><i class="fa fa-headphones" aria-hidden="true"></i> Headset: </span> {{ get_oa.headset }}</td>
                     </tr>
                     <tr>
-                        <td colspan="2"><span><i class="fa fa-info-circle" aria-hidden="true"></i> Other notes:</span> {{ accessories.other_notes }}</td>
+                        <td colspan="2"><span><i class="fa fa-info-circle" aria-hidden="true"></i> Other notes:</span> {{ get_oa.other_notes }}</td>
                     </tr>
                 </table>
             </div>
-            {% endfor %}
+            {% else %}
+                <div class="other-accessories-card-info">
+                    <h1>Other Accessories <i class="fa fa-keyboard-o" aria-hidden="true"></i> <i class='bx bxs-mouse'></i> <i class="fa fa-plug" aria-hidden="true"></i> <i class="fa fa-headphones" aria-hidden="true"></i></h1>
+                    <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_scqggbnw.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px; margin-left: auto; margin-right: auto;"  loop  autoplay></lottie-player>
+                    <h2 style="color: black; font-weight: 300; text-align: center; font-size: 15px;">No devices taken by {{get_member_id.fullname}}</h2>
+                </div>
+            {% endif %}
 
             <div class="loader-wrapper">
                 <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
@@ -121,7 +136,7 @@
         <div id="other_accessories">
             <form action="{% url 'update_other_accessories' get_oa.id %}" method="POST">
                 {% csrf_token %}
-                <h2><i class='bx bxs-mouse'></i> <i class="fa fa-headphones" aria-hidden="true"></i> <i class="fa fa-keyboard-o" aria-hidden="true"></i> <i class="fa fa-plug" aria-hidden="true"></i> Other Accessories</h2>
+                <h2><i class='bx bxs-mouse'></i> <i class="fa fa-headphones" aria-hidden="true"></i> <i class="fa fa-keyboard-o" aria-hidden="true"></i> <i class="fa fa-plug" aria-hidden="true"></i> Update Other Accessories</h2>
                 <!-- <input style="margin-bottom: 5%;" name="peoplesoft_id" type="hidden" class="r-p-textbox" value="{{get_member_id.peoplesoft_id}}"> -->
                 <h5 style="margin-top: 0px; color: rgb(87, 86, 86); font-weight: 400;">* <i class="fa fa-keyboard-o" aria-hidden="true"></i> Keyboard Taken:</h5>
                 <select class="r-p-textbox" name="keyboard">
@@ -153,7 +168,7 @@
                 </select>
                 <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">Other notes:</h5>
                 <textarea class="r-p-textbox" id="rp-textarea" name="other_notes" placeholder="Other notes if any.." rows="4" cols="50" required>{{get_oa.other_notes}}</textarea>
-                <input class="create-request-button" type="submit" value="Submit">
+                <input class="create-request-button" type="submit" value="Update">
                 <input class="close-request-button" type="button" onclick="toggle_accessories_blur()" value="Close">
             </form>
         </div>
