@@ -6,23 +6,19 @@
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
-            <h1>Resource Listings</h1>
+            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/color/35/000000/e-learning.png"/> Resource Listings</h1>
             {% include 'message_alert.html' %}
         </div>
-        <div class="search-bar-container">
+        <div class="search-bar-container" style="width: 100%; text-align: center; background-color: #4ec5f5; padding: 10px; border-radius: 15px;">
             <form>
-                <!-- <select name="search_by" class="select-input-box-dt">
-                    <option selected>Department name</option>
-                    <option>Department head</option>
-                    <option>Updated by</option>
-                </select> -->
-                <input style="margin-left: 2.5%;" type="search" class="search-input-box-dt" placeholder="Search by asset id name..">
-                <input type="submit" class="search-input-btn-dt" value="Search">
-                <input style="float: right;" type="button" class="add-team-btn" onclick="toggle_blur()" value="Add Device">
+                <input style="margin-left: 1%; float: left; border-top-left-radius: 15px; border-bottom-left-radius: 15px; border: 1px solid #fff;" type="text" class="search-input-box-dt" name="keyword" placeholder="Search by asset id name.." required>
+                <input style="float: left; background-color: rgb(255, 217, 0); border-top-right-radius: 15px; border-bottom-right-radius: 15px; color: black;" type="submit" class="search-input-btn-dt" value="Search 🔎">
+                <!-- <input style="float: right;" type="button" class="add-team-btn" onclick="toggle_blur()" value="Add Device"> -->
+                <a href="{% url 'add_resource_page' %}" style="margin-right: 5px; background-color: rgb(4, 97, 24);" class="add-team-btn">Add <i class='bx bx-book-add'></i></a>
                 <a href="{% url 'resources_list_table' %}" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">View <i class='bx bx-table' ></i></a>
             </form>
         </div>
-        <div class="devices-card-container">
+        <div style="justify-content: center;" class="devices-card-container">
             {% if get_result %}
 
                 {% for device in get_result %}
@@ -30,7 +26,7 @@
                     <table style="width: 100%;">
                         <tr>
                             <td>
-                                <img src="{{ device.device_image.url }}">
+                                <img src="{{ device.resource_image.url }}">
                             </td>
                         </tr>
                         <tr>
@@ -40,18 +36,18 @@
                         </tr>
                         <tr>
                             <td>
-                                <h1 style="font-weight: 400; font-size: 15px; text-align: center;">Device Type: {{ device.device_type }}</h1>
+                                <h1 style="font-weight: 400; font-size: 15px; text-align: center;">Resource Type: {{ device.resource_category }}</h1>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                {% if device.device_availability == 'Available' %}
+                                {% if device.resource_availability == 'Available' %}
                                     <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(36, 151, 13);">Available</h1>
-                                {% elif device.device_availability == 'Configuration' %}
+                                {% elif device.resource_availability == 'Configuration' %}
                                     <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(180, 118, 2);">Configuration</h1>
-                                {% elif device.device_availability == 'Reserved' %}
+                                {% elif device.resource_availability == 'Reserved' %}
                                     <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(224, 0, 0);">Reserved</h1>
-                                {% elif device.device_availability == 'Taken' %}
+                                {% elif device.resource_availability == 'Taken' %}
                                     <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(42, 90, 248);">Taken</h1>
                                 {% else %}
                                 {% endif %}
@@ -59,7 +55,7 @@
                         </tr>
                         <tr>
                             <td style="text-align: center;">
-                                <a href="{% url 'view_resource' device.id %}">View Device</a>
+                                <a href="{% url 'view_resource' device.id %}">View Resource</a>
                             </td>
                         </tr>
                     </table>                                      
@@ -74,7 +70,7 @@
                         <table style="width: 100%;">
                             <tr>
                                 <td>
-                                    <img src="{{ device.device_image.url }}">
+                                    <img src="{{ device.resource_image.url }}">
                                 </td>
                             </tr>
                             <tr>
@@ -84,18 +80,18 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <h1 style="font-weight: 400; font-size: 15px; text-align: center;">Device Type: {{ device.device_type }}</h1>
+                                    <h1 style="font-weight: 400; font-size: 15px; text-align: center;">Device Type: {{ device.resource_category }}</h1>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    {% if device.device_availability == 'Available' %}
+                                    {% if device.resource_availability == 'Available' %}
                                         <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(36, 151, 13);">Available</h1>
-                                    {% elif device.device_availability == 'Configuration' %}
+                                    {% elif device.resource_availability == 'Configuration' %}
                                         <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(180, 118, 2);">Configuration</h1>
-                                    {% elif device.device_availability == 'Reserved' %}
+                                    {% elif device.resource_availability == 'Reserved' %}
                                         <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(224, 0, 0);">Reserved</h1>
-                                    {% elif device.device_availability == 'Taken' %}
+                                    {% elif device.resource_availability == 'Taken' %}
                                         <h2 style="font-weight: 400; font-size: 15px; text-align: center; color: rgb(42, 90, 248);">Taken</h1>
                                     {% else %}
                                     {% endif %}
@@ -103,7 +99,7 @@
                             </tr>
                             <tr>
                                 <td style="text-align: center;">
-                                    <a href="{% url 'view_resource' device.id %}">View Device</a>
+                                    <a href="{% url 'view_resource' device.id %}">View Resource</a>
                                 </td>
                             </tr>
                         </table>                                      
@@ -120,16 +116,16 @@
         </div>
 
         </div> 
-        <div id="request_popup">
+        <!-- <div id="request_popup">
             <form action="{% url 'add_resource_page' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <h2><i class="fa fa-laptop" aria-hidden="true"></i> Add Device</h2>
                 <input name="asset_id" type="text" class="r-p-textbox" placeholder="Enter asset Id.." value="">
-                <select class="r-p-textbox" name="device_type">
-                    <option selected>--Choose device type--</option>
-                    <option>Desktop</option>
-                    <option>Laptop</option>
-                    <option>Monitor</option>
+                <select class="r-p-textbox" name="resource_category">
+                    <option selected>--Choose resource type--</option>
+                    {% for category in resource_categories %}
+                    <option>{{ category.resource_category }}</option>
+                    {% endfor %}
                 </select>
                 <input name="bitlocker_key" type="text" class="r-p-textbox" placeholder="Enter bitlocker key (only desktop & laptop).." value="">
                 <select class="r-p-textbox" name="device_availability">
@@ -143,8 +139,7 @@
                 <input class="create-request-button" type="submit" value="Add Device">
                 <input class="close-request-button" type="button" onclick="toggle_blur()" value="Close">
             </form>
-        </div>
-    </div>     
+        </div> -->    
 </section>
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>

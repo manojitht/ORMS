@@ -11,7 +11,15 @@ const home_body = document.querySelector(".home-body"),
       });
 
     $(document).ready(function () {
-      $('#team_requests').DataTable();
+      $('#team_requests').DataTable(
+        {
+          dom: 'Bfrtip',
+          buttons: [
+              // 'copy', 'csv', 
+              'excel', 'pdf', 'print'
+          ]
+      }
+      );
      });
 
      $(document).ready(function(){

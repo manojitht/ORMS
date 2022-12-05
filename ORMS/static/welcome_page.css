@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,500;0,900;1,300&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+  /* welcome page of ORMS styling part */
+
+  .content {
+    position: absolute;
+    right: 0;
+    width: 100%;
+    min-height: 100vh;
+    padding: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #000;
+    color: #fff;
+    z-index: 2;
+}
+
+.content header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 40px 100px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.content video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+}
+
+.video-overlay-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.178);
+    mix-blend-mode: overlay;
+}
+
+.text {
+    position: relative;
+    z-index: 10;
+}
+
+.text h2 {
+    font-size: 5em;
+    font-weight: 300;
+    line-height: 1em;
+}
+
+.text h3 {
+    font-size: 3em;
+    font-weight: 200;
+    line-height: 1em;
+}
+
+.text p {
+    font-size: 1em;
+    font-weight: 300;
+    margin: 20px 0;
+    max-width: 700px;
+}
+
+.login-user-btn {
+    display: inline-block;
+    font-size: 1em;
+    background-color: #695CFE;
+    border: 1px solid #695CFE;
+    padding: 10px 30px;
+    text-decoration: none;
+    color: #fff;
+    margin-top: 15px;
+    transition: 0.5s;
+    border-radius: 25px;
+}
+
+.login-user-btn:hover {
+    background-color: #8075f8;
+    border: 1px solid #8075f8;
+}
+
+/* .new-user-btn {
+    display: inline-block;
+    font-size: 1em;
+    background-color: transparent;
+    border: 1px solid #fff;
+    padding: 10px 30px;
+    text-decoration: none;
+    color: #fff;
+    margin-top: 15px;
+    transition: 0.5s;
+    border-radius: 25px;
+}
+
+.new-user-btn:hover {
+    background-color: #ffffff;
+    color: #8075f8;
+} */

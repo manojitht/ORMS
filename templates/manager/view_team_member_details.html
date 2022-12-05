@@ -5,12 +5,18 @@
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
-            <h1><i class="fa fa-user" style="color: #695CFE;" aria-hidden="true"></i> Member Profile</h1>
+            <h1><img src="https://img.icons8.com/external-flaticons-lineal-color-flat-icons/32/000000/external-programmer-computer-science-flaticons-lineal-color-flat-icons-2.png"/> Member Profile</h1>
             {% include 'message_alert.html' %}
         </div>
         {% if get_member_id %}
+        
         <div class="department-card-container">
-            <div class="team-member-info">
+            <div class="search-bar-container" style="width: 90%; text-align: center; background-color: #046ec5; padding: 10px; border-radius: 15px;">
+                <form>
+                    <h1 style="text-align: center; color: rgb(255, 255, 255); font-weight: 400;"><img src="https://img.icons8.com/color/24/000000/note.png"/> Team member details of <span style="color: #fffb00; font-style: italic;">{{get_member_id.fullname}}</span>.</h1>
+                </form>
+            </div>
+            <div style="margin-top: 1%;" class="team-member-info">
                 <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> Team Member Information <a href="{% url 'edit_team_member' get_member_id.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></h1>
                 <img src="{{ get_member_id.member_image.url }}" alt="Team member img">
                 <table>
@@ -34,36 +40,35 @@
                         <td colspan="2"><span><i class="fa fa-home" aria-hidden="true"></i> Home Address:</span> {{get_member_id.home_address}}</td>
                     </tr>
                     <tr>
-                        {% if get_oa %}
-                            <td><a class="add-resources-btn" href="#" onclick="toggle_blur()">+ Add Resource </a></td>
-                            <td></td>
-                        {% else %}
-                            <td><a class="add-resources-btn" href="#" onclick="toggle_accessories_blur()">+ Other Accessories </a></td>
-                            <td><a class="add-resources-btn" href="#" onclick="toggle_blur()">+ Add Resource </a></td>
-                        {% endif %}
+                        <td><a class="add-resources-btn" href="#" onclick="toggle_blur()">+ Add Resource </a></td>
+                        <td><a class="add-resources-btn" href="{% url 'view_history_resources' get_member_id.id %}"><i class="fa fa-history" aria-hidden="true"></i> View History </a></td>
                         <!-- <td><input class="add-resources-btn" type="button" onclick="toggle_accessories_blur()" value="+ Other Accessories "></td>
                         <td><input class="add-resources-btn" type="button" onclick="toggle_blur()" value="+ Add Resource "></td> -->
                     </tr>
                 </table>
             </div>
             <!-- write it -->
-            <h1 style="color: black; font-weight: 400;">Resources taken by <span style="color: #695CFE;">{{get_member_id.fullname}}</span></h1>
+            <div class="search-bar-container" style="width: 90%; text-align: center; background-color: #046ec5; padding: 10px; border-radius: 15px;">
+                <form>
+                    <h1 style="text-align: center; color: rgb(255, 255, 255); font-weight: 400;"><img src="https://img.icons8.com/color/24/000000/note.png"/> Resources taken by <span style="color: #fffb00; font-style: italic;">{{get_member_id.fullname}}</span>.</h1>
+                </form>
+            </div>
             {% if get_devices_id %}
             {% for get_devices in get_devices_id %}
-                <div class="device-card-info">
-                    <h1><i class="fa fa-desktop" aria-hidden="true"></i> Device Information <a href="#"></a></h1>
-                    <img src="{{ get_devices.asset_id.device_image.url }}" alt="Resource img">
+                <div style="margin-top: 1%;" class="device-card-info">
+                    <h1><i class="fa fa-desktop" aria-hidden="true"></i> Resource Information: <a href="#"></a></h1>
+                    <img src="{{ get_devices.asset_id.resource_image.url }}" alt="Resource img">
                     <table>
                         <tr>
                             <td><span><i class="fa fa-desktop" aria-hidden="true"></i> Asset Id: </span> {{ get_devices.asset_id }}</td>
-                            <td><span><i class="fa fa-bars" aria-hidden="true"></i> Device Type: </span> {{ get_devices.device_type }}</td>
+                            <td><span><i class="fa fa-bars" aria-hidden="true"></i> Resource Type: </span> {{ get_devices.resource_category }}</td>
                         </tr>
                         <tr>
                             <td><span><i class="fa fa-calendar" aria-hidden="true"></i> Taken On: </span> {{ get_devices.taken_date }}</td>
-                            <td><span><i class="fa fa-clock-o" aria-hidden="true"></i> Days On Hand: </span> 120 Days</td>
+                            <td><span><i class="fa fa-info-circle" aria-hidden="true"></i> Model Name: </span> {{ get_devices.asset_id.model_name }}</td>
                         </tr>
                         <tr>
-                            <td colspan="2"><span><i class="fa fa-info-circle" aria-hidden="true"></i> Device Specifications:</span> {{ get_devices.asset_id.device_description }}</td>
+                            <td colspan="2"><span><i class="fa fa-info-circle" aria-hidden="true"></i> Resource Specifications:</span><br> <h5 style="font-weight: 300;">{{ get_devices.asset_id.resource_description }}</h5></td>
                         </tr>
                         <tr>
                             {% if get_devices.asset_id.bitlocker_key %}
@@ -71,7 +76,7 @@
                             {% else %}
                                 <td><span><i class="fa fa-code" aria-hidden="true"></i> Bitlocker Key: </span> Not Required.</td>
                             {% endif %}
-                            <td><a href="{% url 'mark_returned' get_devices.id get_member_id.id %}">Mark Returned</a></td>
+                            <td><a href="{% url 'mark_returned' get_devices.id get_member_id.id %}"><i class="fa fa-retweet" aria-hidden="true"></i> Mark Returned</a></td>
                         </tr>
                     </table>
                 </div>
@@ -82,31 +87,6 @@
                     <h2 style="color: black; font-weight: 300; text-align: center; font-size: 15px;">No devices taken by {{get_member_id.fullname}}</h2>
                 </div>
             {% endif %}
-            <h1 style="color: black; font-weight: 400;">Other accessories taken by <span style="color: #695CFE;">{{get_member_id.fullname}}</span></h1>
-            {% if get_oa %}
-            <div class="other-accessories-card-info">
-                <h1>Other Accessories <i class="fa fa-keyboard-o" aria-hidden="true"></i> <i class='bx bxs-mouse'></i> <i class="fa fa-plug" aria-hidden="true"></i> <i class="fa fa-headphones" aria-hidden="true"></i> <a href="#" onclick="toggle_accessories_blur()"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></h1>
-                <table>
-                    <tr>
-                        <td><span><i class="fa fa-keyboard-o" aria-hidden="true"></i> Keyboard: </span> {{ get_oa.keyboard }}</td>
-                        <td><span><i class='bx bxs-mouse'></i> Mouse: </span> {{ get_oa.mouse }}</td>
-                    </tr>
-                    <tr>
-                        <td><span><i class="fa fa-plug" aria-hidden="true"></i> Network Adapter: </span> {{ get_oa.network_adapter }}</td>
-                        <td><span><i class="fa fa-headphones" aria-hidden="true"></i> Headset: </span> {{ get_oa.headset }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><span><i class="fa fa-info-circle" aria-hidden="true"></i> Other notes:</span> {{ get_oa.other_notes }}</td>
-                    </tr>
-                </table>
-            </div>
-            {% else %}
-                <div class="other-accessories-card-info">
-                    <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_scqggbnw.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px; margin-left: auto; margin-right: auto;"  loop  autoplay></lottie-player>
-                    <h2 style="color: black; font-weight: 300; text-align: center; font-size: 15px;">No other accessories taken by {{get_member_id.fullname}}</h2>
-                </div>
-            {% endif %}
-
             <div class="loader-wrapper">
                 <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
             </div> 
@@ -122,94 +102,12 @@
                 <input style="margin-bottom: 5%;" name="peoplesoft_id" type="hidden" class="r-p-textbox" value="{{get_member_id.peoplesoft_id}}">
                 <input style="margin-bottom: 5%;" name="department" type="hidden" class="r-p-textbox" value="{{get_member_id.department}}">
                 <input style="margin-bottom: 5%;" name="team" type="hidden" class="r-p-textbox" value="{{get_member_id.team}}">
-                <input style="margin-bottom: 5%;" name="device_status" type="hidden" class="r-p-textbox" value="Taken">
+                <input style="margin-bottom: 5%;" name="resource_status" type="hidden" class="r-p-textbox" value="Taken">
                 <input style="margin-bottom: 5%;" name="added_by" type="hidden" class="r-p-textbox" value="{{ user.first_name }} {{ user.last_name }}">
                 <input class="create-request-button" type="submit" value="Allocate Device">
                 <input class="close-request-button" type="button" onclick="toggle_blur()" value="Close">
             </form>
         </div>
-
-        {% if get_oa %}
-
-        <div id="other_accessories">
-            <form action="{% url 'update_other_accessories' get_oa.id %}" method="POST">
-                {% csrf_token %}
-                <h2><i class='bx bxs-mouse'></i> <i class="fa fa-headphones" aria-hidden="true"></i> <i class="fa fa-keyboard-o" aria-hidden="true"></i> <i class="fa fa-plug" aria-hidden="true"></i> Update Other Accessories</h2>
-                <!-- <input style="margin-bottom: 5%;" name="peoplesoft_id" type="hidden" class="r-p-textbox" value="{{get_member_id.peoplesoft_id}}"> -->
-                <h5 style="margin-top: 0px; color: rgb(87, 86, 86); font-weight: 400;">* <i class="fa fa-keyboard-o" aria-hidden="true"></i> Keyboard Taken:</h5>
-                <select class="r-p-textbox" name="keyboard">
-                    <option selected>{{get_oa.keyboard}}</option>
-                    <option>Taken</option>
-                    <option>Not Taken</option>
-                    <option>Returned</option>
-                </select>
-                <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">* <i class='bx bxs-mouse'></i> Mouse Taken:</h5>
-                <select class="r-p-textbox" name="mouse">
-                    <option selected>{{get_oa.mouse}}</option>
-                    <option>Taken</option>
-                    <option>Not Taken</option>
-                    <option>Returned</option>
-                </select>
-                <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">* <i class="fa fa-plug" aria-hidden="true"></i> Network adapter Taken:</h5>
-                <select class="r-p-textbox" name="network_adapter">
-                    <option selected>{{get_oa.network_adapter}}</option>
-                    <option>Taken</option>
-                    <option>Not Taken</option>
-                    <option>Returned</option>
-                </select>
-                <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">* <i class="fa fa-headphones" aria-hidden="true"></i> Headset Taken:</h5>
-                <select class="r-p-textbox" name="headset">
-                    <option selected>{{get_oa.headset}}</option>
-                    <option>Taken</option>
-                    <option>Not Taken</option>
-                    <option>Returned</option>
-                </select>
-                <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">Other notes:</h5>
-                <textarea class="r-p-textbox" id="rp-textarea" name="other_notes" placeholder="Other notes if any.." rows="4" cols="50" required>{{get_oa.other_notes}}</textarea>
-                <input class="create-request-button" type="submit" value="Update">
-                <input class="close-request-button" type="button" onclick="toggle_accessories_blur()" value="Close">
-            </form>
-        </div>
-        
-        {% else %}
-
-        <div id="other_accessories">
-            <form action="{% url 'add_other_accessories' get_member_id.id %}" method="POST">
-                {% csrf_token %}
-                <h2><i class='bx bxs-mouse'></i> <i class="fa fa-headphones" aria-hidden="true"></i> <i class="fa fa-keyboard-o" aria-hidden="true"></i> <i class="fa fa-plug" aria-hidden="true"></i> Other Accessories</h2>
-                <input style="margin-bottom: 5%;" name="peoplesoft_id" type="hidden" class="r-p-textbox" value="{{get_member_id.peoplesoft_id}}">
-                <h5 style="margin-top: 0px; color: rgb(87, 86, 86); font-weight: 400;">* <i class="fa fa-keyboard-o" aria-hidden="true"></i> Keyboard Taken:</h5>
-                <select class="r-p-textbox" name="keyboard">
-                    <option selected>--Keyboard Taken--</option>
-                    <option>Taken</option>
-                    <option>Not Taken</option>
-                </select>
-                <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">* <i class='bx bxs-mouse'></i> Mouse Taken:</h5>
-                <select class="r-p-textbox" name="mouse">
-                    <option selected>--Mouse Taken--</option>
-                    <option>Taken</option>
-                    <option>Not Taken</option>
-                </select>
-                <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">* <i class="fa fa-plug" aria-hidden="true"></i> Network adapter Taken:</h5>
-                <select class="r-p-textbox" name="network_adapter">
-                    <option selected>--Network adapter Taken--</option>
-                    <option>Taken</option>
-                    <option>Not Taken</option>
-                </select>
-                <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">* <i class="fa fa-headphones" aria-hidden="true"></i> Headset Taken:</h5>
-                <select class="r-p-textbox" name="headset">
-                    <option selected>--Headset Taken--</option>
-                    <option>Taken</option>
-                    <option>Not Taken</option>
-                </select>
-                <h5 style="margin-top: 10px; color: rgb(87, 86, 86); font-weight: 400;">Other notes:</h5>
-                <textarea class="r-p-textbox" id="rp-textarea" name="other_notes" placeholder="Other notes if any.." rows="4" cols="50" required></textarea>
-                <input class="create-request-button" type="submit" value="Submit">
-                <input class="close-request-button" type="button" onclick="toggle_accessories_blur()" value="Close">
-            </form>
-        </div>
-
-        {% endif %}
     </div>
         {% else %}
         {% endif %}     

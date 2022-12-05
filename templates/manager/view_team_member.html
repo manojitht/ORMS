@@ -7,23 +7,23 @@
     <section class="home-main">
         <div class="full-myteam-container">
             <div class="head-container">
-                <h1><i style="color: #695CFE;" class="fa fa-users" aria-hidden="true"></i> {{ user.team }}</h1>
+                <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/32/000000/conference.png"/> {{ user.team }}</h1>
                 <!-- <input class="search-bar-profile-card" type="search" placeholder="Search by name or ps id.." required> -->
             </div>
-            <div class="search-bar-container">
+            <div class="search-bar-container" style="width: 100%; text-align: center; background-color: #695CFE; padding: 10px; border-radius: 15px;">
                 <form action="{% url 'search_team_member' user.id %}" method="GET">
-                    <input style="margin-left: 1%;" type="text" class="search-input-box-dt" name="keyword" placeholder="Search by name or ps id.." required>
-                    <input type="submit" class="search-input-btn-dt" value="Search">
-                    <a href="#" style="margin-right: 1%;" class="add-team-btn">Migration <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
+                    <input style="margin-left: 1%; float: left; border-top-left-radius: 15px; border-bottom-left-radius: 15px; border: 1px solid #fff;" type="text" class="search-input-box-dt" name="keyword" placeholder="Search by name or ps id.." required>
+                    <input style="float: left; background-color: rgb(255, 217, 0); border-top-right-radius: 15px; border-bottom-right-radius: 15px; color: black;" type="submit" class="search-input-btn-dt" value="Search 🔎">
+                    <a href="{% url 'add_member' %}" style="margin-right: 1%;" class="add-team-btn">New Member <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
                     <a href="#" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">Member Index <i class='bx bx-table' ></i></a>
                 </form>
             </div>
-                <div class="card-container">
+                <div style="justify-content: center;" class="card-container">
 
                     {% if search_team_member %}
                         {% for team_member in search_team_member %}
                             <div class="profile-card">
-                                <table style="width: 100%;">
+                                <table style="width: 100%; height: 100%;">
                                     <tr>
                                         <td><img src="{{ team_member.member_image.url }}" class="profile-card-pic"></td>
                                     </tr>
@@ -40,7 +40,7 @@
                                         <td><p><i class="fa fa-building" aria-hidden="true"></i> {{ team_member.department }}</p></td>
                                     </tr>
                                     <tr>
-                                        <td style="height: 70px;"><a href="{% url 'view_team_members_details' team_member.id %}" class="profile-card-button">See details <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></a></td>
+                                        <td style="height: 70px;"><a href="{% url 'view_team_members_details' team_member.id %}" class="profile-card-button">View details <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></a></td>
                                     </tr>
                                 </table>
                             </div>
@@ -65,7 +65,7 @@
                                     <td><p><i class="fa fa-building" aria-hidden="true"></i> {{ team_member.department }}</p></td>
                                 </tr>
                                 <tr>
-                                    <td style="height: 70px;"><a href="{% url 'view_team_members_details' team_member.id %}" class="profile-card-button">See details <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></a></td>
+                                    <td style="height: 70px;"><a href="{% url 'view_team_members_details' team_member.id %}" class="profile-card-button">View details <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></a></td>
                                 </tr>
                             </table>
                         </div>

@@ -7,12 +7,12 @@
 
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
-            <h1><i class="fa fa-id-badge" aria-hidden="true"></i> Add Team Member</h1>
+            <h1><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/35/000000/add-user-group-woman-man.png"/> Add Team Member</h1>
             {% include 'message_alert.html' %}
         </div>
 
-        <div style="margin-top: 2%;" class="add-new-department-form">
-            <h1 style="font-weight: 300;"><i style="color: #695CFE; font-size: 45px;" class='bx bxs-user-badge'></i>Add New Team Member Form:</h1>
+        <div style="margin-top: auto; margin-bottom: auto;" class="add-new-department-form">
+            <h1 style="font-weight: 300;"><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/56/000000/add-user-group-woman-man.png"/> Add New Team Member Form:</h1>
             <form action="{% url 'add_member' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <table style="width: 100%;">
@@ -74,7 +74,7 @@
                 Select Team Member Profile Image: <input type="file" name="member_image" accept="image/*" required>                
                 <div class="and-input-box">
                     <input class="and-submit-btn" type="submit" value="Create Profile">
-                    <a href="#" class="and-back-btn">Navigate To My Team</a>
+                    <a href="{% url 'view_team_members' user.id %}" class="and-back-btn">Navigate To My Team</a>
                 </div>
                 <!-- <h4 class="alert-message-success">Profile created successfully!</h4> -->
             </form>

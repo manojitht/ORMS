@@ -21,10 +21,11 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path('', views.home, name='home'),
+    path('', views.home, name='home'),
     path('', include('account.urls')),
     path('', include('department.urls')),
     path('', include('team.urls')),
     path('', include('resource.urls')),
     path('', include('members.urls')),
+    path('', include('requests.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,76 @@
+{% extends 'base_it_admin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1>Add Resource Form</h1>
+            {% include 'message_alert.html' %}
+        </div>
+
+        <div class="add-new-department-form">
+            <h1>Add New Resource:</h1>
+            <form action="{% url 'add_resource_page' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="and-input-box">
+                    <span class="details_anu">Asset Id: </span>
+                    <input type="text" name="asset_id" placeholder="Enter asset id.." value="" required>
+                </div>
+                <div class="and-input-box">
+                    <span class="details_anu">Choose resource type: </span>
+                    <select name="resource_category">
+                        <option selected>--Choose Resource Type--</option>
+                        {% for category in resource_categories %}
+                        <option>{{ category.resource_category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="and-input-box">
+                    <span class="details_anu">Model Name: </span>
+                    <input type="text" name="model_name" placeholder="Enter model name.." value="" required>
+                </div>
+                <div class="and-input-box">
+                    <span class="details_anu">Bitlocker key: </span>
+                    <input type="text" name="bitlocker_key" placeholder="Enter the bitlocker (If applicable).." value="">
+                </div>
+                <div class="and-input-box">
+                    <span class="details_anu">Choose Resource Availability: </span>
+                    <select name="resource_availability">
+                        <option selected>Available</option>
+                        <option>Configuration</option>
+                    </select>
+                </div>
+                <div class="and-input-box">
+                    <span class="details_anu">Resource Description: (Max: 250 words) </span>
+                    <textarea id="and-textarea" name="resource_description" rows="4" cols="50" placeholder="Enter resource description here.." required></textarea>
+                </div>
+                <span class="details_anu">Choose resource Image: </span>
+                <input type="file" name="resource_image" accept="image/*" required>
+                <input type="hidden" class="r-p-textbox" name="added_by" value="{{ user.first_name }} {{ user.last_name }}">
+                <div class="and-input-box">
+                    <input class="and-submit-btn" type="submit" value="Add Resource">
+                    <a href="{% url 'resources_listings_page' %}" class="and-back-btn">Back to Resources</a>
+                </div>
+            </form>
+        </div>
+    </div> 
+    <div class="loader-wrapper">
+        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+    </div>      
+</section>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="script.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script>
+    $(window).on("load",function(){
+      $(".loader-wrapper").fadeOut("slow");
+    });
+</script>
+
+{% endblock %}

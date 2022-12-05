@@ -1,0 +1,114 @@
+{% extends 'base_it_admin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1>Requests Incidents</h1>
+            {% include 'message_alert.html' %}
+        </div>
+        <div class="search-bar-container">
+            <table style="width: 100%; text-align: center; background-color: #695CFE; padding: 10px; border-radius: 15px;">
+                <tr>
+                    <td><a class="float-deletion-btn1" href="{% url 'list_pending_requests_it_admin' user.id %}"><img style="margin-bottom: -3px;" src="https://img.icons8.com/color/16/000000/data-pending.png"/> Pending Requests</a></td>
+                    <td><a class="float-deletion-btn2" href="{% url 'list_processing_requests_it_admin' user.id %}"><img style="margin-bottom: -3px;" src="https://img.icons8.com/color/16/000000/neutral-trading.png"/> Processing Requests</a></td>
+                    <td><a class="float-deletion-btn3" href="{% url 'list_completed_requests_it_admin' user.id %}"><img style="margin-bottom: -3px;" src="https://img.icons8.com/color/16/000000/ok--v1.png"/> Completed Requests</a></td>
+                </tr>
+            </table>
+        </div>
+        <div class="search-bar-container">
+            <form action="{% url 'it_admin_completed_requests_date_sort' user.id %}" method="POST">
+                {% csrf_token %}
+                From: <input type="date" style="width: 140px;" name="from_req" class="search-input-box-dt" required>
+                To: <input type="date" style="width: 140px;" name="to_req" class="search-input-box-dt" required>
+                <input type="submit" class="search-input-btn-dt" value="Sort">
+                <a href="#" style="margin-right: 15px; background-color: rgb(24, 24, 24);" class="add-team-btn">Print report <i class='bx bx-printer'></i></a>
+            </form>
+        </div>
+        <div class="container">
+            <h1 style="text-align: center; font-weight: 200; margin-top: 1%; margin-bottom: 1%; background-color: #000000; color: #fff; padding: 0.3%; border-radius: 5px;"><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/42/000000/ok--v1.png"/> Completed Requests Listings</h1>
+            <table id="team_requests" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Request Id</th>
+                        <th>Requested For</th>
+                        <th>Category</th>
+                        <th>Created For</th>
+                        <th>Status</th>
+                        <th>Created On</th>
+                        <th style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if get_result %}
+
+                    {% for requests in get_result %}
+                    <tr>
+                        <td>{{ requests.id }}</td>
+                        <td><a href="#">{{ requests.request_id }}</a></td>
+                        <td>{{ requests.request_resource }}</td>
+                        <td>{{ requests.request_category }}</td>
+                        <td>{{ requests.created_for }}</td>
+                        {% if requests.request_status == 'Pending' %}
+                            <td><h4 style="font-weight: 400; background-color: rgb(238, 181, 26); text-align: center; border-radius: 15px;">{{ requests.request_status }}</h4></td>
+                        {% elif requests.request_status == 'Processing' %}
+                            <td><h4 style="font-weight: 400; background-color: rgb(129, 106, 214); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
+                        {% elif requests.request_status == 'Completed' %}
+                            <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
+                        {% elif requests.request_status == 'Cancelled' %}
+                            <td><h4 style="font-weight: 400; background-color: rgb(230, 78, 18); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
+                        {% endif %}
+                        <td>{{ requests.completed_on }}</td>
+                        <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_selected_completed_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a></td>
+                    </tr>
+                    {% endfor %}
+
+
+                    {% else %}
+
+                        {% for requests in get_requests %}
+                        <tr>
+                            <td>{{ requests.id }}</td>
+                            <td><a href="#">{{ requests.request_id }}</a></td>
+                            <td>{{ requests.request_resource }}</td>
+                            <td>{{ requests.request_category }}</td>
+                            <td>{{ requests.created_for }}</td>
+                            {% if requests.request_status == 'Pending' %}
+                                <td><h4 style="font-weight: 400; background-color: rgb(238, 181, 26); text-align: center; border-radius: 15px;">{{ requests.request_status }}</h4></td>
+                            {% elif requests.request_status == 'Processing' %}
+                                <td><h4 style="font-weight: 400; background-color: rgb(129, 106, 214); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
+                            {% elif requests.request_status == 'Completed' %}
+                                <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
+                            {% elif requests.request_status == 'Cancelled' %}
+                                <td><h4 style="font-weight: 400; background-color: rgb(230, 78, 18); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
+                            {% endif %}
+                            <td>{{ requests.completed_on }}</td>
+                            <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_selected_completed_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a></td>
+                        </tr>
+                        {% endfor %}
+
+                    {% endif %}
+                </tbody>
+            </table>                    
+        </div>
+    </div> 
+    <div class="loader-wrapper">
+        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+    </div>     
+</section>
+
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="{% static 'script.js' %}"></script>
+<script>
+    $(window).on("load",function(){
+    $(".loader-wrapper").fadeOut("slow");
+    });
+</script>
+
+{% endblock %}

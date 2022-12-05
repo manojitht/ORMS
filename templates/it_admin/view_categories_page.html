@@ -1,0 +1,60 @@
+{% extends 'base_it_admin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/color/56/null/category.png"/> Resource categories</h1>
+            {% include 'message_alert.html' %}
+        </div>
+        <div class="search-bar-container" style="width: 96%; text-align: center; background-color: #4ec5f5; padding: 10px; border-radius: 15px; margin-left: 2%;">
+            <form>
+                <h1 style="float: left; color: rgb(255, 255, 255); font-weight: 300; margin-left: 1%;">Categories of resources:</h1>
+                <a href="#" onclick="toggle_blur()" style="margin-right: 5px; background-color: rgb(85, 85, 85); color: #ffffff; border: 1px solid rgb(85, 85, 85);" class="add-team-btn">Category <i class='bx bx-message-square-add'></i></a>
+            </form>
+        </div>
+        <div class="card-box">
+            {% for category in all_categories %}
+                <div class="analytics-card">
+                    <div>
+                        <div class="numbers">{{ category.resource_category }}</div>
+                        <div class="name">{{ category.description }}</div>
+                    </div>
+                    <div class="icon">
+                        <img src="{{ category.category_image.url }}"/>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        </div> 
+        <div id="request_popup">
+            <form action="{% url 'add_category_page' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h2><i class="fa fa-laptop" aria-hidden="true"></i> Add New Category</h2>
+                <input name="resource_category" type="text" class="r-p-textbox" placeholder="Enter category name.." value="">
+                <textarea class="r-p-textbox" id="rp-textarea" name="description" placeholder="Write Category Description.." rows="4" cols="50" required></textarea>
+                <h3 style="font-weight: 400; font-size: 15px;">Select Category Image: <input type="file" name="category_image" accept="image/*" required></h3>
+                <input class="create-request-button" type="submit" value="Add Category">
+                <input class="close-request-button" type="button" onclick="toggle_blur()" value="Close">
+            </form>
+        </div>
+        <div class="loader-wrapper">
+            <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+        </div>     
+</section>
+
+
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="{% static 'script.js' %}"></script>
+<script>
+    $(window).on("load",function(){
+    $(".loader-wrapper").fadeOut("slow");
+    });
+</script>
+
+{% endblock %}

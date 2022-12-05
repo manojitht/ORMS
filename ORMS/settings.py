@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'account',
     'resource',
     'members',
+    'requests',
 ]
 
 MIDDLEWARE = [
@@ -156,5 +157,5 @@ MESSAGE_TAGS = {
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'bigbangcoder8@gmail.com'
-EMAIL_HOST_PASSWORD = 'uedjnvzqdralsqbz'
+EMAIL_HOST_PASSWORD = 'omjxutqwgozjluun'
 EMAIL_PORT = 587

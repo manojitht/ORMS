@@ -18,6 +18,7 @@ class Members(models.Model):
     member_image = models.ImageField(upload_to='photos/members', blank=True, null=True)
     manager_name = models.CharField(max_length=150)
     manager_peoplesoft_id = models.CharField(max_length=150)
+    date_joined = models.DateField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:

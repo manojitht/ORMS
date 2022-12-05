@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'welcome_page.css' %}">
+    <title>Welcome to ORMS!</title>
+</head>
+<body>
+    <section class="content">
+        <header>
+            <img style="width: 60px; height: 60px; border-radius: 5px;" src="{% static 'images//ORMS-logos/ORMS-1 (1).png' %}" class="welcome-page-logo">
+            <div class="toggle"></div>
+        </header>
+        <video src="{% static 'video_files//welcome_page_video.mp4' %}" muted loop autoplay></video>
+
+        <div class="video-overlay-content"></div>
+
+        <div class="text">
+            <h2>Welcome to ORMS!</h2>
+            <h3>An Office Resources Management System</h3>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora, magni minus voluptate quae inventore voluptatem necessitatibus dolor doloribus nisi nostrum suscipit sed voluptas, laboriosam commodi odit sequi perspiciatis id incidunt.</p>
+            <a class="login-user-btn" href="{% url 'login' %}">Login</a>
+            <!-- <a class="new-user-btn" style="margin-left: 2%;" href="#">New User ?</a> -->
+        </div>
+    </section>
+</body>
+</html>

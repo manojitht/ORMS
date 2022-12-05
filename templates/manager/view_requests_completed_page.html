@@ -1,0 +1,149 @@
+{% extends 'base_user.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container">
+            <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/35/000000/writing-down.png"/> My Requests</h1>
+            {% include 'message_alert.html' %}
+        </div>
+        <div class="search-bar-container">
+            <table style="width: 100%; text-align: center; background-color: #695CFE; padding: 10px; border-radius: 15px;">
+                <tr>
+                    <td><a class="float-deletion-btn2" href="{% url 'list_requests_manager' user.id %}">Pending & Processing Requests <img style="margin-bottom: -3px;" src="https://img.icons8.com/color/16/000000/data-pending.png"/></a></td>
+                    <td><a class="float-deletion-btn3" href="{% url 'list_completed_requests_manager' user.id %}">Show Completed Requests <img style="margin-bottom: -3px;" src="https://img.icons8.com/color/16/000000/ok--v1.png"/></a></td>
+                </tr>
+            </table>
+        </div>
+        <div class="search-bar-container">
+            <form action="{% url 'manager_requests_date_sort' user.id %}" method="POST">
+                {% csrf_token %}
+                From: <input type="date" style="width: 140px;" name="from_req" class="search-input-box-dt" required>
+                To: <input type="date" style="width: 140px;" name="to_req" class="search-input-box-dt" required>
+                <input type="submit" class="search-input-btn-dt" value="Sort">
+            </form>
+        </div>
+        <div class="container">
+            <h3 style="text-align: center; font-weight: 200; margin-bottom: 15px; background-color: #000000; color: #fff; padding: 0.3%; border-radius: 5px; margin-top: 10px;"><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/30/000000/ok--v1.png"/> Completed Requests Listings</h3>
+            <table id="team_requests" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Request Id</th>
+                        <th>Requested For</th>
+                        <th>Category</th>
+                        <th>Created For</th>
+                        <th>Status</th>
+                        <th>Created On</th>
+                        <th style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if get_result %}
+
+                    {% for requests in get_result %}
+                    <tr>
+                        <td>{{ requests.id }}</td>
+                        <td><a href="#">{{ requests.request_id }}</a></td>
+                        <td>{{ requests.request_resource }}</td>
+                        <td>{{ requests.request_category }}</td>
+                        <td>{{ requests.created_for }}</td>
+                        {% if requests.request_status == 'Pending' %}
+                            <td><h4 style="font-weight: 400; background-color: rgb(238, 181, 26); text-align: center; border-radius: 15px;">{{ requests.request_status }}</h4></td>
+                        {% elif requests.request_status == 'Processing' %}
+                            <td><h4 style="font-weight: 400; background-color: rgb(129, 106, 214); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
+                        {% elif requests.request_status == 'Completed' %}
+                            <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
+                        {% elif requests.request_status == 'Cancelled' %}
+                            <td><h4 style="font-weight: 400; background-color: rgb(230, 78, 18); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
+                        {% endif %}
+                        <td>{{ requests.created_on }}</td>
+                        {% if requests.request_status == 'Completed' or requests.request_status == 'Cancelled' %}
+                            <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_manager_completed_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'delete_request' requests.id user.id %}"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</a></td>
+                        {% else %}
+                            <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_manager_completed_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(223, 126, 0);" href="{% url 'cancel_request' requests.id user.id %}"><i class='bx bxs-message-alt-x'></i> Cancel</a></td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+
+
+                    {% else %}
+
+                        {% for requests in get_requests_completed %}
+                        <tr>
+                            <td>{{ requests.id }}</td>
+                            <td><a href="#">{{ requests.request_id }}</a></td>
+                            <td>{{ requests.request_resource }}</td>
+                            <td>{{ requests.request_category }}</td>
+                            <td>{{ requests.created_for }}</td>
+                            {% if requests.request_status == 'Pending' %}
+                                <td><h4 style="font-weight: 400; background-color: rgb(238, 181, 26); text-align: center; border-radius: 15px;">{{ requests.request_status }}</h4></td>
+                            {% elif requests.request_status == 'Processing' %}
+                                <td><h4 style="font-weight: 400; background-color: rgb(129, 106, 214); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
+                            {% elif requests.request_status == 'Completed' %}
+                                <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
+                            {% elif requests.request_status == 'Cancelled' %}
+                                <td><h4 style="font-weight: 400; background-color: rgb(230, 78, 18); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
+                            {% endif %}
+                            <td>{{ requests.created_on }}</td>
+                            {% if requests.request_status == 'Completed' or requests.request_status == 'Cancelled' %}
+                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_manager_completed_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'delete_request' requests.id user.id %}"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</a></td>
+                            {% else %}
+                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_manager_completed_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(223, 126, 0);" href="{% url 'cancel_request' requests.id user.id %}"><i class='bx bxs-message-alt-x'></i> Cancel</a></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+
+                    {% endif %}
+                </tbody>
+            </table>                    
+        </div>
+    </div> 
+    <div class="loader-wrapper">
+        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+    </div>
+    <!-- <div id="warning_popup">
+        <h1><i class='bx bxs-bell-ring'></i>  Alert Message!</h2>
+        <h3>Are you sure want to delete the request!</h3>
+        <a href="#" class="warning-btn-delete" onclick="toggle_warning_blur()">Yes, delete</a>
+        <a href="#" class="warning-btn-cancel" onclick="toggle_warning_blur()">No, cancel</a> -->
+        <!-- <input class="create-request-button" type="button" onclick="toggle_warning_blur()" value="Yes, delete">
+        <input class="close-request-button" type="button" onclick="toggle_warning_blur()" value="No, cancel"> -->
+    <!-- </div> -->
+</section>
+
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<!-- datatables starting -->
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
+<!-- datatables ending --> 
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="{% static 'script.js' %}"></script>
+<script>
+    $(window).on("load",function(){
+    $(".loader-wrapper").fadeOut("slow");
+    });
+</script>
+
+<!-- <script>
+    $(document).ready(function () {
+      $('#team_requests').DataTable(
+        {
+          dom: 'Bfrtip',
+          buttons: [
+              'copy', 'csv', 'excel', 'pdf', 'print'
+          ]
+      }
+      );
+     });
+</script> -->
+
+{% endblock %}

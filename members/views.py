@@ -3,10 +3,11 @@ from django.contrib import messages as message_alert, auth
 from django.shortcuts import redirect, render
 from django.db.models import Q
 from members.models import Members
-from resource.models import Resource, ResourceTaken, OtherAccessories
+from resource.models import Resource, ResourceTaken
 from department.models import Department
 from account.models import Account
 from team.models import Team
+from datetime import date
 import os
 
 # Create your views here.
@@ -45,11 +46,6 @@ def add_member(request):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def manager_dashboard(request):
-    return render(request, 'manager/manager_dashboard.html')
-
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 def view_team_members(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
@@ -62,18 +58,14 @@ def view_team_members(request, userid):
 def view_team_members_details(request, memid):
     get_member_id = Members.objects.get(id=memid)
     get_ps_id = Members.objects.get(peoplesoft_id=get_member_id.peoplesoft_id)
-    get_devices_id = ResourceTaken.objects.filter(peoplesoft_id=get_ps_id, device_status='Taken')
-    try: 
-        get_oa = OtherAccessories.objects.get(peoplesoft_id=get_ps_id)
-    except:
-        get_oa = OtherAccessories.objects.filter(peoplesoft_id=get_ps_id)
+    get_devices_id = ResourceTaken.objects.filter(peoplesoft_id=get_ps_id, resource_status='Taken')
 
     # for get_devices in get_devices_id:
     #     description = get_devices.asset_id.device_description
     #     image = get_devices.asset_id.device_image
     #     bitlocker = get_devices.asset_id.bitlocker_key
     
-    context = { 'get_member_id': get_member_id, 'get_devices_id': get_devices_id, 'get_oa': get_oa, }
+    context = { 'get_member_id': get_member_id, 'get_devices_id': get_devices_id, }
     return render(request, 'manager/view_team_member_details.html', context)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -129,24 +121,24 @@ def allocate_device(request, memid):
         department = request.POST['department']
         team = request.POST['team']
         added_by = request.POST['added_by']
-        device_status = request.POST['device_status']
+        resource_status = request.POST['resource_status']
 
-        if Resource.objects.filter(asset_id=asset_id, device_availability='Taken').exists():
+        if Resource.objects.filter(asset_id=asset_id, resource_availability='Taken').exists():
             message_alert.info(request, asset_id + ', is already in use by other team member!')
-        elif Resource.objects.filter(asset_id=asset_id, device_availability='Configuration').exists():
-            message_alert.info(request, asset_id + ', device is not allocated, please check!')
-        elif Resource.objects.filter(asset_id=asset_id, device_availability='Available').exists():
-            message_alert.info(request, asset_id + ', device is not allocated, please check!')
-        elif Resource.objects.filter(asset_id=asset_id, device_availability='Reserved').exists():
-            get_device_type = Resource.objects.get(asset_id=asset_id)
-            device_type = get_device_type.device_type
+        elif Resource.objects.filter(asset_id=asset_id, resource_availability='Configuration').exists():
+            message_alert.info(request, asset_id + ', resource is not allocated, please check!')
+        elif Resource.objects.filter(asset_id=asset_id, resource_availability='Available').exists():
+            message_alert.info(request, asset_id + ', resource is not allocated, please check!')
+        elif Resource.objects.filter(asset_id=asset_id, resource_availability='Reserved').exists():
+            get_resource_type = Resource.objects.get(asset_id=asset_id)
+            # resource_category = get_resource_type.resource_category.resource_category
 
-            allocate_device = ResourceTaken(asset_id=Resource.objects.get(asset_id=asset_id), peoplesoft_id=Members.objects.get(peoplesoft_id=peoplesoft_id), device_type=device_type, department=Department.objects.get(department_name=department),
-            team=Team.objects.get(team_name=team), added_by=added_by, device_status=device_status)
+            allocate_device = ResourceTaken(asset_id=Resource.objects.get(asset_id=asset_id), peoplesoft_id=Members.objects.get(peoplesoft_id=peoplesoft_id), resource_category=get_resource_type.resource_category.resource_category, department=Department.objects.get(department_name=department),
+            team=Team.objects.get(team_name=team), added_by=added_by, resource_status=resource_status)
             allocate_device.save()
             get_asset_id = Resource.objects.filter(asset_id=asset_id)
             for set_taken in get_asset_id:
-                set_taken.device_availability = 'Taken'
+                set_taken.resource_availability = 'Taken'
                 set_taken.save()
             message_alert.success(request, asset_id + ' allocated to ' + peoplesoft_id +' successfully!')
         else:
@@ -159,51 +151,51 @@ def allocate_device(request, memid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def add_other_accessories(request, memid):
-    if request.method == 'POST':
-        peoplesoft_id = request.POST['peoplesoft_id']
-        keyboard = request.POST['keyboard']
-        mouse = request.POST['mouse']
-        network_adapter = request.POST['network_adapter']
-        headset = request.POST['headset']
-        other_notes = request.POST['other_notes']
+# def add_other_accessories(request, memid):
+#     if request.method == 'POST':
+#         peoplesoft_id = request.POST['peoplesoft_id']
+#         keyboard = request.POST['keyboard']
+#         mouse = request.POST['mouse']
+#         network_adapter = request.POST['network_adapter']
+#         headset = request.POST['headset']
+#         other_notes = request.POST['other_notes']
 
-        if keyboard == '--Keyboard Taken--':
-            message_alert.info(request, 'Please select option on keyboard!')
-        elif mouse == '--Mouse Taken--':
-            message_alert.info(request, 'Please select option on mouse!')
-        elif network_adapter == '--Network adapter Taken--':
-            message_alert.info(request, 'Please select option on network adapter!')
-        elif headset == '--Headset Taken--':
-            message_alert.info(request, 'Please select option on headset!')
-        else:
-            add_accessories = OtherAccessories(peoplesoft_id=Members.objects.get(peoplesoft_id=peoplesoft_id), keyboard=keyboard, mouse=mouse,
-            network_adapter=network_adapter, headset=headset, other_notes=other_notes)
-            add_accessories.save()
-            message_alert.success(request, 'Other accessories added to ' + peoplesoft_id +' successfully!')
-    return redirect(view_team_members_details, memid)
-
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-def edit_other_accessories(request, memid):
-    get_oa_id = OtherAccessories.objects.get(id=memid)
-    context = { 'get_oa_id': get_oa_id, }
-    return render(request, 'manager/view_team_member_details.html', context)
+#         if keyboard == '--Keyboard Taken--':
+#             message_alert.info(request, 'Please select option on keyboard!')
+#         elif mouse == '--Mouse Taken--':
+#             message_alert.info(request, 'Please select option on mouse!')
+#         elif network_adapter == '--Network adapter Taken--':
+#             message_alert.info(request, 'Please select option on network adapter!')
+#         elif headset == '--Headset Taken--':
+#             message_alert.info(request, 'Please select option on headset!')
+#         else:
+#             add_accessories = OtherAccessories(peoplesoft_id=Members.objects.get(peoplesoft_id=peoplesoft_id), keyboard=keyboard, mouse=mouse,
+#             network_adapter=network_adapter, headset=headset, other_notes=other_notes)
+#             add_accessories.save()
+#             message_alert.success(request, 'Other accessories added to ' + peoplesoft_id +' successfully!')
+#     return redirect(view_team_members_details, memid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def update_other_accessories(request, memid):
-    update_oa = OtherAccessories.objects.get(id=memid)
+# def edit_other_accessories(request, memid):
+#     get_oa_id = OtherAccessories.objects.get(id=memid)
+#     context = { 'get_oa_id': get_oa_id, }
+#     return render(request, 'manager/view_team_member_details.html', context)
 
-    if request.method == 'POST':
-        update_oa.keyboard = request.POST['keyboard']
-        update_oa.mouse = request.POST['mouse']
-        update_oa.network_adapter = request.POST['network_adapter']
-        update_oa.headset = request.POST['headset']
-        update_oa.other_notes = request.POST['other_notes']
-        update_oa.save()
-        message_alert.success(request, 'Other accessories details was updated successfully!')
-    return redirect(view_team_members_details, memid)
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# def update_other_accessories(request, memid):
+#     update_oa = OtherAccessories.objects.get(id=memid)
+
+#     if request.method == 'POST':
+#         update_oa.keyboard = request.POST['keyboard']
+#         update_oa.mouse = request.POST['mouse']
+#         update_oa.network_adapter = request.POST['network_adapter']
+#         update_oa.headset = request.POST['headset']
+#         update_oa.other_notes = request.POST['other_notes']
+#         update_oa.save()
+#         message_alert.success(request, 'Other accessories details was updated successfully!')
+#     return redirect(view_team_members_details, memid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -212,15 +204,41 @@ def mark_returned(request, resid, memid):
     get_asset_id = ResourceTaken.objects.filter(asset_id=get_asset.asset_id)
     take_asset_id = ResourceTaken.objects.get(asset_id=get_asset.asset_id, id=get_asset.id)
     update_resource = Resource.objects.filter(asset_id=take_asset_id.asset_id)
+    get_asset.resource_status = 'Returned'
+    get_asset.returned_date = date.today()
+    get_asset.save()
 
-    for asset in get_asset_id:
-        asset.device_status = 'Returned'
-        asset.save()
+    # for asset in get_asset_id:
+    #     asset.device_status = 'Returned'
+    #     asset.returned_date = datetime.date.today()
+    #     asset.save()
     
     for update in update_resource:
-        update.device_availability = 'Available'
+        update.resource_availability = 'Available'
         update.save()
     
     message_alert.success(request, 'Mark returned on the device successfully!')
 
     return redirect(view_team_members_details, memid)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def view_history_resources(request, memid):
+    get_member_id = Members.objects.get(id=memid)
+    get_ps_id = Members.objects.get(peoplesoft_id=get_member_id.peoplesoft_id)
+    get_devices_id = ResourceTaken.objects.filter(peoplesoft_id=get_ps_id, resource_status='Returned')
+
+    # for date_range in get_devices_id:
+    #     get_date_taken = ResourceTaken.objects.get(taken_date=date_range.taken_date)
+    #     get_date_returned = ResourceTaken.objects.get(returned_date=date_range.returned_date)
+    #     date_format = "%Y-%m-%d"
+    #     take_date = datetime.strptime(get_date_taken, date_format)
+    #     return_date = datetime.strptime(get_date_returned, date_format)
+    #     no_of_days = return_date - take_date
+    #     print(no_of_days)
+
+
+    context = { 'get_devices_id': get_devices_id, 'get_member_id': get_member_id, }
+    return render(request, 'manager/view_history_devices.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
-from sre_parse import Verbose
-from tabnanny import verbose
+# from sre_parse import Verbose
+# from tabnanny import verbose
 from django.db import models
-from datetime import datetime, date
+# from datetime import datetime, date
 
 # Create your models here.
 class Department(models.Model):

@@ -43,16 +43,16 @@
                             {% for device in get_result %}
                             <tr>
                                 <td>{{ device.asset_id }}</td>
-                                <td>{{ device.device_type }}</td>
+                                <td>{{ device.resource_category }}</td>
                                 <td>{{ device.added_by }}</td>
                                 <td>{{ device.added_on }}</td>
-                                {% if device.device_availability == 'Available' %}
+                                {% if device.resource_availability == 'Available' %}
                                     <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">Available</td>
-                                {% elif device.device_availability == 'Configuration' %}
+                                {% elif device.resource_availability == 'Configuration' %}
                                     <td style="background: rgb(202, 142, 14); color: aliceblue; text-align: center;">Configuration</td>
-                                {% elif device.device_availability == 'Reserved' %}
+                                {% elif device.resource_availability == 'Reserved' %}
                                     <td style="background: rgb(228, 51, 51); color: aliceblue; text-align: center;">Reserved</td>
-                                {% elif device.device_availability == 'Taken' %}
+                                {% elif device.resource_availability == 'Taken' %}
                                     <td style="background: rgb(55, 112, 185); color: aliceblue; text-align: center;">Taken</td>
                                 {% else %}
                                 {% endif %}
@@ -65,16 +65,16 @@
                             {% for device in resources %}
                             <tr>
                                 <td>{{ device.asset_id }}</td>
-                                <td>{{ device.device_type }}</td>
+                                <td>{{ device.resource_category }}</td>
                                 <td>{{ device.added_by }}</td>
                                 <td>{{ device.added_on }}</td>
-                                {% if device.device_availability == 'Available' %}
+                                {% if device.resource_availability == 'Available' %}
                                     <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">Available</td>
-                                {% elif device.device_availability == 'Configuration' %}
+                                {% elif device.resource_availability == 'Configuration' %}
                                     <td style="background: rgb(202, 142, 14); color: aliceblue; text-align: center;">Configuration</td>
-                                {% elif device.device_availability == 'Reserved' %}
+                                {% elif device.resource_availability == 'Reserved' %}
                                     <td style="background: rgb(228, 51, 51); color: aliceblue; text-align: center;">Reserved</td>
-                                {% elif device.device_availability == 'Taken' %}
+                                {% elif device.resource_availability == 'Taken' %}
                                     <td style="background: rgb(55, 112, 185); color: aliceblue; text-align: center;">Taken</td>
                                 {% else %}
                                 {% endif %}

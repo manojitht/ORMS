@@ -1,0 +1,93 @@
+{% extends 'base_it_admin.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+    <div class="full-myteam-container">
+
+        <div class="head-container">
+            <h1><i class="fa fa-envelope-open" aria-hidden="true"></i> View Requests</h1>
+        </div>
+        <div style="margin-top: auto; margin-bottom: auto;" class="department-card-container">
+            {% if get_request_id %}
+            <h1 style="color: black; font-weight: 400;">Showing request reference of <span style="color: #695CFE;">{{get_request_id.request_id}}</span> completed.</h1>
+            <div class="team-member-info">
+                <h1><i class="fa fa-envelope-open" aria-hidden="true"></i> {{ get_request_id.request_id }}</h1>
+                <form>
+                    <table style="margin-top: 1%;">
+                        <tr>
+                            {% if get_member_info %}
+                                <td><span><i class="fa fa-user" aria-hidden="true"></i> Created For: </span> <input class="view-edit-team-member-input" type="text" value="{{ get_member_info.fullname }}" readonly></td>
+                            {% else %}
+                            {% endif %}
+                            <td><span><i class="fa fa-id-badge" aria-hidden="true"></i> Created By: </span> <input class="view-edit-team-member-input" type="text" value="{{ get_request_id.created_by }}" readonly></td>
+                        </tr>
+                        <tr>
+                            <td><span><i class="fa fa-building" aria-hidden="true"></i> Department From: </span> <input class="view-edit-team-member-input" type="text" value="{{ get_request_id.department }}" readonly></td>
+                            <td><span><i class="fa fa-users" aria-hidden="true"></i> Team: </span> <input class="view-edit-team-member-input" type="text" value="{{ get_request_id.team }}" readonly></td>
+                        </tr>
+                        <tr>
+                            <td><span><i class="fa fa-television" aria-hidden="true"></i> Resource Required: </span>  <input class="view-edit-team-member-input" type="email" value="{{ get_request_id.request_resource }}" readonly></td>
+                            <td><span><i class="fa fa-list-alt" aria-hidden="true"></i> Request Category: </span> <input class="view-edit-team-member-input" type="text" value="{{ get_request_id.request_category }}" readonly></td>
+                        </tr>
+                        <tr>
+                            <td><span><i class="fa fa-calendar" aria-hidden="true"></i> Created On: </span>  {{ get_request_id.created_on }}</td>
+                            {% if get_request_id.request_status == 'Pending' %}
+                                <td><span><i class='bx bx-rotate-right'></i> Request Status: </span> <a class="request-status-info" href="#"><i class="fa fa-history" aria-hidden="true"></i> {{ get_request_id.request_status }}</a></td>
+                            {% elif get_request_id.request_status == 'Processing' %}
+                                <td><span><i class='bx bx-rotate-right'></i> Request Status: </span> <a style="background-color: #e09900; color: #000;" class="request-status-info" href="#"><i class="fa fa-history" aria-hidden="true"></i> {{ get_request_id.request_status }}</a></td>
+                            {% elif get_request_id.request_status == 'Completed' %}
+                                <td><span><i class='bx bx-rotate-right'></i> Request Status: </span> <a style="background-color: #049610; color: #fff;" class="request-status-info" href="#"><i class="fa fa-history" aria-hidden="true"></i> {{ get_request_id.request_status }}</a></td>
+                            {% elif get_request_id.request_status == 'Cancelled' %}
+                                <td><span><i class='bx bx-rotate-right'></i> Request Status: </span> <a style="background-color: rgb(230, 78, 18); color: #fff;" class="request-status-info" href="#"><i class="fa fa-history" aria-hidden="true"></i> {{ get_request_id.request_status }}</a></td>
+                            {% else %}
+                            {% endif %}
+                        </tr>
+                        <tr>
+                            <td colspan="2"><span><i class='bx bxs-edit-alt'></i> Request Description:</span> <textarea style="height: 80px; padding-top: 5px;" class="view-edit-team-member-input" rows="4" cols="50" readonly>{{ get_request_id.request_decription }}</textarea></td>
+                        </tr>
+                        <tr>
+                            {% if get_request_id.request_resource == 'Monitor' %}
+                            <td><span><i class="fa fa-television" aria-hidden="true"></i> Monitor Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" value="{{ get_request_id.asset_id }}" readonly></td>
+                            {% elif get_request_id.request_resource == 'Desktop' and not get_request_id.request_category == 'Bitlocker' %}
+                            <td><span><i class="fa fa-desktop" aria-hidden="true"></i> Desktop Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" value="{{ get_request_id.asset_id }}" readonly></td>
+                            {% elif get_request_id.request_resource == 'Laptop' %}
+                                <td><span><i class="fa fa-laptop" aria-hidden="true"></i> Laptop Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" value="{{ get_request_id.asset_id }}" readonly></td>
+                            {% else %}
+                            {% endif %}
+                            <td><span><i class="fa fa-calendar" aria-hidden="true"></i> Completed On: </span>  {{ get_request_id.completed_on }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><span><i class="fa fa-reply-all" aria-hidden="true"></i> Add Comments:</span> <textarea style="height: 80px; padding-top: 5px;" name="request_response" class="view-edit-team-member-input" rows="4" cols="50" placeholder="Write comments for this request.." required>{{ get_request_id.request_response }}</textarea></td>
+                        </tr>
+                        <tr>
+                            <td><a class="view-edit-team-member-back-btn" href="{% url 'list_completed_requests_it_admin' user.id %}">Back</a></td>
+                            <!-- <td><input class="view-edit-team-member-btn" type="submit" value="Print Request"></td> -->
+                            <td><a style="float: right;" class="view-edit-team-member-back-btn" href="#"><i class="fa fa-print" aria-hidden="true"></i> Print Request</a></td>
+                        </tr>
+                    </table>
+                </form>
+                {% else %}
+                {% endif %}
+            </div>
+        </div>
+    </div> 
+    <div class="loader-wrapper">
+        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+    </div>   
+    </div>     
+</section>
+
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="{% static 'script.js' %}"></script>
+<script>
+    $(window).on("load",function(){
+    $(".loader-wrapper").fadeOut("slow");
+    });
+</script>
+
+{% endblock %}

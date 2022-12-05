@@ -1,10 +1,12 @@
 from importlib.resources import Resource
 from multiprocessing import context
 import os
+from unicodedata import category
 from django.shortcuts import render,redirect
 import random
-from .models import Resource
+from .models import Resource, Category
 from django.contrib import messages as message_alert
+from department.models import Department
 # Create your views here.
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -20,36 +22,41 @@ def add_resource_page(request):
     # generated_asset_id = random.randrange(11111111111, 99999999999, 11)
     # context = { 'generated_asset_id': generated_asset_id, }
 
+    resource_categories = Category.objects.all()
+    context = { 'resource_categories': resource_categories, }
+
     if request.method == 'POST':
         asset_id = request.POST['asset_id']
-        device_type = request.POST['device_type']
-        device_availability = request.POST['device_availability']
-        device_description = request.POST['device_description']
+        model_name = request.POST['model_name']
+        resource_category = request.POST['resource_category']
+        resource_availability = request.POST['resource_availability']
+        resource_description = request.POST['resource_description']
         added_by = request.POST['added_by']
         bitlocker_key = request.POST['bitlocker_key']
-        device_image = request.FILES['device_image']
+        resource_image = request.FILES['resource_image']
         
         if Resource.objects.filter(asset_id=asset_id).exists():
             message_alert.info(request, asset_id + ', is already exists!')
-        elif device_type == '--Choose device type--':
+        elif resource_category == '--Choose resource type--':
             message_alert.info(request, 'Please choose a device type to add a device!')
-        elif device_availability == '--Choose device availability--':
+        elif resource_availability == '--Choose device availability--':
             message_alert.info(request, 'Please choose a device availability to add a device!')
         else:
-            resource = Resource(asset_id=asset_id, device_type=device_type, bitlocker_key=bitlocker_key, device_availability=device_availability, device_description=device_description, added_by=added_by, device_image=device_image)
+            resource = Resource(asset_id=asset_id, model_name=model_name, resource_category=Category.objects.get(resource_category=resource_category), bitlocker_key=bitlocker_key, resource_availability=resource_availability, resource_description=resource_description, added_by=added_by, resource_image=resource_image)
             resource.save()
             message_alert.success(request, asset_id + ' is added successfully!')
             return redirect(resources_listings_page)
             # return redirect(resources_list_table)
 
-    return render(request, 'it_admin/resources_listings_page.html')
+    return render(request, 'it_admin/add_resource_form.html', context)
     # return render(request, 'it_admin/resource_form.html', context)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def edit_resource(request, resid):
     selected_res = Resource.objects.get(id=resid)
-    context = { 'selected_res': selected_res, }
+    resource_categories = Category.objects.all()
+    context = { 'selected_res': selected_res, 'resource_categories': resource_categories, }
     return render(request, 'it_admin/edit_resource_page.html', context)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -59,17 +66,19 @@ def update_resource(request, resid):
 
     if request.method == 'POST':
         if len(request.FILES) != 0:
-            if len(update_res.device_image) > 0:
-                os.remove(update_res.device_image.path)
-            update_res.device_image = request.FILES['device_image']
+            if len(update_res.resource_image) > 0:
+                os.remove(update_res.resource_image.path)
+            update_res.resource_image = request.FILES['resource_image']
         update_res.asset_id = request.POST['asset_id']
-        update_res.device_type = request.POST['device_type']
-        update_res.device_availability = request.POST['device_availability']
-        update_res.device_description = request.POST['device_description']
+        update_res.model_name = request.POST['model_name']
+        take_category = request.POST['resource_category']
+        update_res.resource_category = Category.objects.get(resource_category=take_category)
+        update_res.resource_availability = request.POST['resource_availability']
+        update_res.resource_description = request.POST['resource_description']
         update_res.added_by = request.POST['added_by']
         update_res.bitlocker_key = request.POST['bitlocker_key']
         update_res.save()
-        message_alert.success(request, 'Device details of ' + update_res.asset_id + ' was updated successfully!')
+        message_alert.success(request, 'Resource details of ' + update_res.asset_id + ' was updated successfully!')
     return redirect(resources_listings_page)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -123,7 +132,7 @@ def it_admin_notes_page(request):
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def resources_listings_page(request):
-    resources = Resource.objects.all().filter(is_active=True)
+    resources = Resource.objects.all().filter(is_active=True).order_by('resource_availability')
     context = { 'resources': resources, }
     return render(request, 'it_admin/resources_listings_page.html', context)
 
@@ -133,5 +142,31 @@ def view_resource(request, resid):
     selected_res = Resource.objects.get(id=resid)
     context = { 'selected_res': selected_res, }
     return render(request, 'it_admin/view_resource_page.html', context)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def view_resource_categories(request):
+    all_categories = Category.objects.all()
+    context = { 'all_categories': all_categories, }
+    return render(request, 'it_admin/view_categories_page.html', context)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def add_category_page(request):
+    
+    if request.method == 'POST':
+        resource_category = request.POST['resource_category']
+        description = request.POST['description']
+        category_image = request.FILES['category_image']
+        
+        if Category.objects.filter(resource_category=resource_category).exists():
+            message_alert.info(request, resource_category + ', is already exists as category!')
+        else:
+            category = Category(resource_category=resource_category, description=description, category_image=category_image)
+            category.save()
+            message_alert.success(request, resource_category + ' is added successfully as a category!')
+            return redirect(view_resource_categories)
+
+    return redirect(view_resource_categories)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

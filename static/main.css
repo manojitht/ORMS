@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,500;0,900;1,300&display=swap');
 @import url('https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css');
+@import url('https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css');
 
 /* ORMS Login page style */
 
@@ -398,7 +399,7 @@ header .image-logo .header-text {
 } */
 
 .home-sidebar .menu {
-    margin-top: 35px;
+    margin-top: 1.5%;
 }
 
 .home-sidebar .bottom-content{
@@ -406,8 +407,8 @@ header .image-logo .header-text {
 }
 
 .home-sidebar .search-box {
-    background: #fff;
-    border-radius: 5px;
+    height: 0px;
+    width: 0px;
 }
 
 .search-box input {
@@ -458,7 +459,7 @@ header .image-logo .header-text {
     /* display: flex;
     justify-content: center;
     align-items: center; */
-    padding: 10px;
+    /* padding: 10px; */
 }
 
 .home-main .text {
@@ -635,7 +636,7 @@ form .atm-button input:hover {
 
 .home-main .head-container h1 {
     font-weight: 500;
-    font-size: 45px;
+    font-size: 20px;
     color: rgb(88, 88, 88);
 }
 
@@ -721,13 +722,13 @@ form .atm-button input:hover {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: #797979;
+  background-color: #695CFE;
   color: rgb(255, 255, 255);
   font-weight: 500;
   font-size: 13px;
-  border-top: 1px solid #000;
-  border-bottom: 1px solid #000;
-  border-left: 0.5px solid #000;
+  border-top: 1px solid #695CFE;
+  border-bottom: 1px solid #695CFE;
+  border-left: 0.5px solid #695CFE;
   /* border-right: 0.1px solid #000; */
 }
 
@@ -1887,48 +1888,62 @@ form .atm-button input:hover {
 .float-deletion-btn1 {
     height: 45px;
     width: 100%;
-    border: 1px solid #d1b1ee;
+    border: 1px solid #ffffff;
     font-size: 15px;
-    background: #d1b1ee;
-    color: #5d1e99;
+    background: transparent;
+    color: #ffffff;
     cursor: pointer;
     padding: 11px;
     text-decoration: none;
     transition: all 0.5s ease;
-    border-radius: 5px;
+    border-radius: 15px;
     float: left;
+}
+
+.float-deletion-btn1:hover {
+    background: #ffffff;
+    color: #695CFE;
 }
 
 .float-deletion-btn2 {
     height: 45px;
     width: 100%;
-    border: 1px solid #999ff1;
+    border: 1px solid #ffffff;
     font-size: 15px;
-    background: #999ff1;
-    color: #2a33b9;
+    background: transparent;
+    color: #ffffff;
     cursor: pointer;
     padding: 11px;
     text-decoration: none;
     transition: all 0.5s ease;
-    border-radius: 5px;
+    border-radius: 15px;
     float: left;
+}
+
+.float-deletion-btn2:hover {
+    background: #ffffff;
+    color: #695CFE;
 }
 
 .float-deletion-btn3 {
     height: 45px;
     width: 100%;
-    border: 1px solid #eed08f;
+    border: 1px solid #ffffff;
     font-size: 15px;
-    background: #eed08f;
-    color: #856011;
+    background: transparent;
+    color: #ffffff;
     cursor: pointer;
     padding: 11px;
     text-decoration: none;
     transition: all 0.5s ease;
-    border-radius: 5px;
+    border-radius: 15px;
     float: left;
 }
 
+.float-deletion-btn3:hover {
+    background: #ffffff;
+    color: #695CFE;
+}
 /* view team member information page styling */
 
 .team-member-info {
@@ -2379,6 +2394,169 @@ form .atm-button input:hover {
     font-weight: 600;
     margin-right: 2%;
     font-size: 16px;
+}
+
+/* view requests page styling (manager side) */
+
+
+.requests-info {
+    background-color: #ffffff;
+    margin-top: 7.5px;
+    margin-bottom: 10px;
+    width: 90%;
+    justify-content: center;
+    border-radius: 15px;
+    padding: 10px;
+    position: relative;
+}
+
+.requests-info h1 {
+    margin-left: 1%;
+    font-weight: 400; 
+    font-size: 25px; 
+    color: #393191;
+    border-bottom: 10px solid rgb(98, 12, 168);
+    border-radius: 10px;
+    background-color: #bcb6fd;
+    padding-left: 1%;
+}
+
+.requests-info table {
+    width: 98%;
+    margin-left: 1%;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 5px;
+}
+
+.requests-info td {
+    padding: 0.5%;
+}
+
+.requests-info td span {
+    color: #4c43ad;
+    font-weight: 600;
+    margin-right: 2%;
+    font-size: 16px;
+}
+
+.request-status-info {
+    margin-right: 2%;
+    background-color: #ffd000;
+    color: rgb(70, 70, 70);
+    width: auto;
+    height: 30px;
+    font-size: 12px;
+    font-weight: 400;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: 0.5s;
+    padding: 7px;
+    text-decoration: none;
+}
+
+.cancel-request-btn {
+    margin-right: 2%;
+    background-color: #ffebe6;
+    color: #cc0404;
+    width: auto;
+    height: 30px;
+    font-size: 12px;
+    border: none;
+    border: 1px solid #cc0404;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: 0.5s;
+    padding: 6px;
+    text-decoration: none;
+}
+
+.cancel-request-btn:hover {
+    background-color: #cc0404;
+    color: #ffffff;
+}
+
+/* analytics metrics design and styling part */
+
+.analytics-metrics {
+    position: relative;
+    width: 98%;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-gap: 30px;
+    /* min-height: 200px; */
+    height: 60%;
+    margin-bottom: 5px;
+    margin-left: 1%;
+}
+
+.analytics-metrics .box {
+    position: relative;
+    background: #ffffff;
+    padding: 20px;
+    width: 100%;
+    box-shadow: 0 7px 25px rgba(0,0,0,0.08);
+    border-radius: 20px;
+}  
+
+.card-box {
+    position: relative;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* grid-template-columns: repeat(4, 1fr); */
+    grid-gap: 30px;
+    /* height: 20%; */
+}
+
+.card-box .analytics-card {
+    position: relative;
+    background: #fff;
+    padding: 30px;
+    box-shadow: 0 7px 25px rgba(0,0,0,0.08);
+    border-radius: 20px;
+    display: flex;
+    cursor: pointer;
+    justify-content: space-between;
+    margin-top: auto;
+    margin-bottom: auto;
+    transition: 0.5s;
+    width: 48%;
+}
+
+.card-box .analytics-card .numbers {
+    position: relative;
+    font-weight: 500;
+    font-size: 2.5em;
+    color: #695CFE;
+    transition: 0.5s;
+}
+
+.card-box .analytics-card .name {
+  color: #000;
+  font-size: 1.1em;
+  margin-top: 5px;
+  transition: 0.5s;
+}
+
+.card-box .analytics-card .icon {
+  font-size: 3.5em;
+  color: #535353;
+  transition: 0.5s;
+}
+
+.card-box .analytics-card:hover {
+    background-color: #695cfe62;
+}
+
+.card-box .analytics-card:hover .numbers,
+.card-box .analytics-card:hover .name,
+.card-box .analytics-card:hover .icon {
+  color: #fff;
 }
 
 /* preloader for the ORMS app */

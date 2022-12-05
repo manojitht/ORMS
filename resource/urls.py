@@ -15,4 +15,6 @@ urlpatterns = [
     path('resources_date_sort/', views.resources_date_sort, name='resources_date_sort'),
     path('it_admin_notes_page/', views.it_admin_notes_page, name='it_admin_notes_page'),
     path('view_resource/<int:resid>/', views.view_resource, name='view_resource'),
+    path('view_resource_categories/', views.view_resource_categories, name='view_resource_categories'),
+    path('add_category_page/', views.add_category_page, name='add_category_page'),
 ]

@@ -2,6 +2,7 @@
 from base64 import urlsafe_b64decode
 from email.message import EmailMessage
 from genericpath import exists
+from importlib.resources import Resource
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from .forms import LoginUsers
@@ -11,6 +12,10 @@ from django.contrib import messages as message_alert, auth
 from django.contrib.auth.decorators import login_required
 from department.models import Department
 from team.models import Team
+from members.models import Members
+from requests.models import Requests
+from resource.models import ResourceTaken, Resource
+from datetime import datetime, timedelta, date
 
 #generating random password
 import string
@@ -37,10 +42,10 @@ def login(request):
         
             if user is not None and user.is_it_admin:
                 permit_user(request, user)
-                return redirect('it_admin_portal')
+                return redirect('it_admin_portal', user.id)
             elif user is not None and user.is_manager:
                 permit_user(request, user)
-                return redirect('manager_portal')
+                return redirect('manager_portal', user.id)
             elif user is not None and user.is_superadmin:
                 permit_user(request, user)
                 return redirect('superadmin_portal')
@@ -59,6 +64,141 @@ def login(request):
 
 def superadmin_portal(request):
     return render(request, 'superadmin/superadmin_home.html')
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def it_admin_portal(request, userid):
+    # count of requests completed
+    get_user_id = Account.objects.get(id=userid)
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    completed_requests = Requests.objects.all().filter(assigned_to=get_user_psid, request_status='Completed', is_active=True)
+    completed_requests_count = completed_requests.count()
+
+    # count of requests processing
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    processing_requests = Requests.objects.all().filter(assigned_to=get_user_psid, request_status='Processing', is_active=True)
+    processing_requests_count = processing_requests.count()
+
+    # count of requests pending
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    pending_requests = Requests.objects.all().filter(assigned_to=get_user_psid, request_status='Pending', is_active=True)
+    pending_requests_count = pending_requests.count()
+
+    # # count desktops currently in use by team members
+    # get_desktop = ResourceTaken.objects.all().filter(device_type='Desktop', device_status='Taken', is_active=True)
+    # get_count_of_desktop = get_desktop.count()
+
+    # # count laptops currently in use by team members
+    # get_laptop = ResourceTaken.objects.all().filter(device_type='Laptop', device_status='Taken', is_active=True)
+    # get_count_of_laptop = get_laptop.count()
+
+    # # count monitor currently in use by team members
+    # get_monitor = ResourceTaken.objects.all().filter(device_type='Monitor', device_status='Taken', is_active=True)
+    # get_count_of_monitor = get_monitor.count()
+
+    # # piechart analytics data
+    # total_all_desktops = Resource.objects.all().filter(device_type='Desktop', is_active=True)
+    # total_desktops_count = total_all_desktops.count()
+    # total_all_laptops = Resource.objects.all().filter(device_type='Laptop', is_active=True)
+    # total_laptops_count = total_all_laptops.count()
+    # total_all_monitors = Resource.objects.all().filter(device_type='Monitor', is_active=True)
+    # total_monitors_count = total_all_monitors.count()
+
+    # # barchart stacked analytics data
+    # available_all_desktops = Resource.objects.all().filter(device_type='Desktop', device_availability='Available', is_active=True)
+    # available_desktops_count = available_all_desktops.count()
+    # taken_all_desktops = Resource.objects.all().filter(device_type='Desktop', device_availability='Taken', is_active=True)
+    # taken_desktops_count = taken_all_desktops.count()
+    # reserved_all_desktops = Resource.objects.all().filter(device_type='Desktop', device_availability='Reserved', is_active=True)
+    # reserved_desktops_count = reserved_all_desktops.count()
+    # configuration_all_desktops = Resource.objects.all().filter(device_type='Desktop', device_availability='Configuration', is_active=True)
+    # configuration_desktops_count = configuration_all_desktops.count()
+
+    # available_all_laptops = Resource.objects.all().filter(device_type='Laptop', device_availability='Available', is_active=True)
+    # available_laptops_count = available_all_laptops.count()
+    # taken_all_laptops = Resource.objects.all().filter(device_type='Laptop', device_availability='Taken', is_active=True)
+    # taken_laptops_count = taken_all_laptops.count()
+    # reserved_all_laptops = Resource.objects.all().filter(device_type='Laptop', device_availability='Reserved', is_active=True)
+    # reserved_laptops_count = reserved_all_laptops.count()
+    # configuration_all_laptops = Resource.objects.all().filter(device_type='Laptop', device_availability='Configuration', is_active=True)
+    # configuration_laptops_count = configuration_all_laptops.count()
+
+    # available_all_monitors = Resource.objects.all().filter(device_type='Monitor', device_availability='Available', is_active=True)
+    # available_monitors_count = available_all_monitors.count()
+    # taken_all_monitors = Resource.objects.all().filter(device_type='Monitor', device_availability='Taken', is_active=True)
+    # taken_monitors_count = taken_all_monitors.count()
+    # reserved_all_monitors = Resource.objects.all().filter(device_type='Monitor', device_availability='Reserved', is_active=True)
+    # reserved_monitors_count = reserved_all_monitors.count()
+    # configuration_all_monitors = Resource.objects.all().filter(device_type='Monitor', device_availability='Configuration', is_active=True)
+    # configuration_monitors_count = configuration_all_monitors.count()
+
+    context = { 'completed_requests_count': completed_requests_count,
+     'processing_requests_count': processing_requests_count, 
+     'pending_requests_count': pending_requests_count, 
+    #  'get_count_of_desktop': get_count_of_desktop, 
+    #  'get_count_of_monitor': get_count_of_monitor, 
+    #  'get_count_of_laptop': get_count_of_laptop,
+    #  'total_desktops_count': total_desktops_count, 
+    #  'total_laptops_count': total_laptops_count, 
+    #  'total_monitors_count': total_monitors_count, 
+    #  'available_desktops_count': available_desktops_count, 
+    #  'taken_desktops_count': taken_desktops_count, 
+    #  'reserved_desktops_count': reserved_desktops_count, 
+    #  'configuration_desktops_count': configuration_desktops_count, 
+    #  'available_laptops_count': available_laptops_count, 
+    #  'taken_laptops_count': taken_laptops_count, 
+    #  'reserved_laptops_count': reserved_laptops_count, 
+    #  'configuration_laptops_count': configuration_laptops_count, 
+    #  'available_monitors_count': available_monitors_count, 
+    #  'taken_monitors_count': taken_monitors_count, 
+    #  'reserved_monitors_count': reserved_monitors_count, 
+    #  'configuration_monitors_count': configuration_monitors_count,
+      }
+
+    return render(request, 'it_admin/it_administrator_dashboard.html', context)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def manager_portal(request, userid):
+    # total no of team members
+    get_user_id = Account.objects.get(id=userid)
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    team_members = Members.objects.all().filter(manager_peoplesoft_id=get_user_psid, is_active=True).order_by('peoplesoft_id')
+    team_members_count = team_members.count()
+
+    # total no of requests created
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    get_all_requests = Requests.objects.all().filter(created_ps_id=get_user_psid, is_active=True)
+    get_all_requests_count = get_all_requests.count()
+
+    # # total no of monitors in team
+    # get_user_team_name = Account.objects.get(id=userid)
+    # get_monitor = ResourceTaken.objects.all().filter( team__team_name__contains=get_user_team_name.team, resource_category='Monitor', device_status='Taken', is_active=True )
+    # get_count_of_monitor = get_monitor.count()
+
+    # # total no of desktops in team
+    # get_desktop = ResourceTaken.objects.all().filter( team__team_name__contains=get_user_team_name.team, resource_category='Desktop', device_status='Taken', is_active=True )
+    # get_count_of_desktop = get_desktop.count()
+
+    # # total no of laptops in team
+    # get_laptop = ResourceTaken.objects.all().filter( team__team_name__contains=get_user_team_name.team, resource_category='Laptop', device_status='Taken', is_active=True )
+    # get_count_of_laptop = get_laptop.count()
+
+    # total no of users added today
+    members_today = Members.objects.filter(manager_peoplesoft_id=get_user_psid, date_joined__gte=date.today())
+    get_count_members_today = members_today.count()
+
+    # total no of users added this week
+    members_week = Members.objects.filter(manager_peoplesoft_id=get_user_psid, date_joined__gte=datetime.now()-timedelta(days=7))
+    get_count_members_week = members_week.count()
+
+    # total no of users added this month
+    members_month = Members.objects.filter(manager_peoplesoft_id=get_user_psid, date_joined__gte=datetime.now()-timedelta(days=30))
+    get_count_members_month = members_month.count()
+
+    context = { 'team_members_count': team_members_count, 'get_all_requests_count': get_all_requests_count, 'get_count_members_week': get_count_members_week,
+    'get_count_members_month': get_count_members_month, 'get_count_members_today': get_count_members_today, }
+    return render(request, 'manager/manager_dashboard.html', context)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -170,6 +310,12 @@ def add_user_page(request):
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+# def load_teams(request):
+#     department_id = request.GET.get('department')
+#     teams = Team.objects.filter()
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def superadmin_add_user(request):
 
     users = Account.objects.all()
@@ -183,16 +329,6 @@ def superadmin_add_user(request):
     }
 
     return render(request, 'superadmin/display_user_page.html', context)
-
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        
-def it_admin_portal(request):
-    return render(request, 'it_admin/it_administrator_dashboard.html')
-
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-def manager_portal(request):
-    return render(request, 'manager/manager_dashboard.html')
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
