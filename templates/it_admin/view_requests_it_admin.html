@@ -6,20 +6,20 @@
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
-            <h1>Requests Incidents</h1>
+            <h1><img style="margin-bottom: -9px; margin-top: 0.5%;" src="https://img.icons8.com/parakeet/35/null/notepad.png"/> Requests Incidents</h1>
             {% include 'message_alert.html' %}
         </div>
         <div class="search-bar-container">
-            <table style="width: 100%; text-align: center; background-color: #695CFE; padding: 10px; border-radius: 15px;">
+            <table style="width: 100%; text-align: center; background-color: #6e6e6e; padding: 10px;">
                 <tr>
-                    <td><a class="float-deletion-btn1" href="{% url 'list_pending_requests_it_admin' user.id %}"><img style="margin-bottom: -3px;" src="https://img.icons8.com/color/16/000000/data-pending.png"/> Pending Requests</a></td>
-                    <td><a class="float-deletion-btn2" href="{% url 'list_processing_requests_it_admin' user.id %}"><img style="margin-bottom: -3px;" src="https://img.icons8.com/color/16/000000/neutral-trading.png"/> Processing Requests</a></td>
-                    <td><a class="float-deletion-btn3" href="{% url 'list_completed_requests_it_admin' user.id %}"><img style="margin-bottom: -3px;" src="https://img.icons8.com/color/16/000000/ok--v1.png"/> Completed Requests</a></td>
+                    <td><a class="float-deletion-btn1" href="{% url 'list_pending_requests_it_admin' user.id %}"><img style="margin-bottom: -3px;" src="https://img.icons8.com/color/16/null/data-pending.png"/> Pending Requests</a></td>
+                    <td><a class="float-deletion-btn2" href="{% url 'list_processing_requests_it_admin' user.id %}"><img style="margin-bottom: -3px;" src="https://img.icons8.com/color/16/null/neutral-trading.png"/> Processing Requests</a></td>
+                    <td><a class="float-deletion-btn3" href="{% url 'list_completed_requests_it_admin' user.id %}"><img style="margin-bottom: -3px;" src="https://img.icons8.com/color/16/null/ok--v1.png"/> Completed Requests</a></td>
                 </tr>
             </table>
         </div>
         <div class="container">
-            <h1 style="text-align: center; font-weight: 200; margin-top: 1%; margin-bottom: 1%; background-color: #000000; color: #fff; padding: 0.3%; border-radius: 5px;"><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/42/000000/data-pending.png"/> Pending Requests Listings</h1>
+            <h3 style="text-align: center; font-weight: 400; margin-top: 1%; margin-bottom: 1%; background-color: #757575; color: #fff; padding: 0.3%; border-radius: 5px;"><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/34/null/data-pending.png"/> Pending Requests Listings</h3>
             <table id="team_requests" class="display" style="width:100%">
                 <thead>
                     <tr>

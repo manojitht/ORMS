@@ -6,7 +6,7 @@
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
-            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/color/56/null/category.png"/> Resource categories</h1>
+            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/color/35/null/device-manager.png"/> Resource categories</h1>
             {% include 'message_alert.html' %}
         </div>
         <div class="search-bar-container" style="width: 96%; text-align: center; background-color: #4ec5f5; padding: 10px; border-radius: 15px; margin-left: 2%;">
@@ -21,6 +21,7 @@
                     <div>
                         <div class="numbers">{{ category.resource_category }}</div>
                         <div class="name">{{ category.description }}</div>
+                        <div class="card-btn"><a href="{% url 'edit_category_page' category.id %}" class="edit-card-btn">Edit Category</a> <a href="{% url 'delete_category_warning' category.id %}" class="delete-card-btn">Delete Category</a></div>
                     </div>
                     <div class="icon">
                         <img src="{{ category.category_image.url }}"/>
@@ -40,6 +41,7 @@
                 <input class="close-request-button" type="button" onclick="toggle_blur()" value="Close">
             </form>
         </div>
+
         <div class="loader-wrapper">
             <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
         </div>     

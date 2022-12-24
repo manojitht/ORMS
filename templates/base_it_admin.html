@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ORMS | IT Administrator</title>
+    <!-- <title>ORMS | IT Administrator</title> -->
     <link rel="stylesheet" href="{% static 'main.css' %}">
     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
@@ -60,21 +60,21 @@
                         </a>
                     </li>
                     <li class="nav-link">
+                        <a href="{% url 'returned_resources_list_table' %}">
+                            <i class='bx bx-history icon' ></i>
+                            <span class="text nav-text">In & Outs</span>
+                        </a>
+                    </li>
+                    <li class="nav-link">
                         <a href="{% url 'list_pending_requests_it_admin' user.id %}">
                             <i class='bx bx-columns icon' ></i>
                             <span class="text nav-text">View Requests</span>
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="{% url 'resource_deletion_history' %}">
-                            <i class='bx bx-history icon'></i>
-                            <span class="text nav-text">History</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="{% url 'it_admin_notes_page' %}">
-                            <i class='bx bx-note icon' ></i>
-                            <span class="text nav-text">My Notes</span>
+                        <a href="#">
+                            <i class='bx bx-building icon'></i>
+                            <span class="text nav-text">Departments</span>
                         </a>
                     </li>
                     <li class="nav-link">

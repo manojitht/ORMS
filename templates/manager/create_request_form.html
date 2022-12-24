@@ -5,14 +5,14 @@
 
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
-        <div class="head-container">
+        <div class="head-container" style="margin-bottom: 3%;">
             <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/32/000000/writing-down.png"/> Raise Request</h1>
         </div>
         {% include 'message_alert.html' %}
         <div style="margin-top: auto; margin-bottom: auto;" class="department-card-container">
             <div class="add-new-department-form">
                 <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/35/000000/writing-down.png"/> Raise a request:</h1>
-                 <form {% url 'add_member' %}" method="POST">
+                 <form {% url 'add_member' %} method="POST">
                     {% csrf_token %}
                      <div class="and-input-box">
                          <span class="details_anu">Request Id:</span>

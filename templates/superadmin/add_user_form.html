@@ -5,11 +5,10 @@
 
 <section class="home-main">
 
-
     {% if selected_user %}
 
     <div class="add-new-department-form">
-        <h1>Update User: {{selected_user.peoplesoft_id}}</h1>
+        <h1><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/35/000000/add-user-group-woman-man.png"/> Update User: {{selected_user.peoplesoft_id}}</h1>
          <form action="{% url 'update_user' selected_user.id %}" method="POST">
             {% csrf_token %}
              <div class="and-input-box">
@@ -66,7 +65,7 @@
     {% else %}
 
     <div class="add-new-department-form">
-        <h1>Add New User Form:</h1>
+        <h1><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/35/000000/add-user-group-woman-man.png"/> Add New User Form:</h1>
          <form action="{% url 'add_user_page' %}" method="POST">
             {% csrf_token %}
              <div class="and-input-box">

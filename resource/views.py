@@ -4,7 +4,7 @@ import os
 from unicodedata import category
 from django.shortcuts import render,redirect
 import random
-from .models import Resource, Category
+from .models import Resource, Category, ResourceTaken
 from django.contrib import messages as message_alert
 from department.models import Department
 # Create your views here.
@@ -15,6 +15,20 @@ def resources_list_table(request):
     resources = Resource.objects.all().filter(is_active=True)
     context = { 'resources': resources, }
     return render(request, 'it_admin/resources_list_table.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def returned_resources_list_table(request):
+    resources = ResourceTaken.objects.all().filter(is_active=True, resource_status='Returned')
+    context = { 'resources': resources, }
+    return render(request, 'it_admin/view_returns_page.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def taken_resources_list_table(request):
+    resources = ResourceTaken.objects.all().filter(is_active=True, resource_status='Taken')
+    context = { 'resources': resources, }
+    return render(request, 'it_admin/view_taken_page.html', context)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -37,8 +51,9 @@ def add_resource_page(request):
         
         if Resource.objects.filter(asset_id=asset_id).exists():
             message_alert.info(request, asset_id + ', is already exists!')
-        elif resource_category == '--Choose resource type--':
+        elif resource_category == '--Choose Resource Type--':
             message_alert.info(request, 'Please choose a device type to add a device!')
+            return redirect(add_resource_page)
         elif resource_availability == '--Choose device availability--':
             message_alert.info(request, 'Please choose a device availability to add a device!')
         else:
@@ -126,6 +141,26 @@ def resources_date_sort(request):
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+def returned_resources_date_sort(request):
+    if request.method == 'POST':
+        from_date = request.POST['from_res']
+        to_date = request.POST['to_res']
+        get_result =  ResourceTaken.objects.filter(returned_date__gte=from_date, returned_date__lte=to_date)
+    context = { 'get_result': get_result, }
+    return render(request, 'it_admin/view_returns_page.html', context)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def taken_resources_date_sort(request):
+    if request.method == 'POST':
+        from_date = request.POST['from_res']
+        to_date = request.POST['to_res']
+        get_result =  ResourceTaken.objects.filter(taken_date__gte=from_date, taken_date__lte=to_date)
+    context = { 'get_result': get_result, }
+    return render(request, 'it_admin/view_taken_page.html', context)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def it_admin_notes_page(request):
     return render(request, 'it_admin/it_admin_notes_page.html')
 
@@ -168,5 +203,20 @@ def add_category_page(request):
             return redirect(view_resource_categories)
 
     return redirect(view_resource_categories)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def edit_category_page(request, catid):
+    get_cat = Category.objects.get(id=catid)
+    context = { 'get_cat': get_cat, }
+    return render(request, 'it_admin/edit_category_page.html', context)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def delete_category_warning(request, delcatid):
+    get_cat = Category.objects.get(id=delcatid) 
+    # resources_count = Resource.objects.filter(is_active=True, resource_category=get_cat.resource_category).count()
+    context = { 'get_cat': get_cat, }
+    return render(request, 'it_admin/warning_page.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -2487,7 +2487,7 @@ form .atm-button input:hover {
     grid-template-columns: 1fr 2fr;
     grid-gap: 30px;
     /* min-height: 200px; */
-    height: 60%;
+    height: 90%;
     margin-bottom: 5px;
     margin-left: 1%;
 }
@@ -2543,6 +2543,38 @@ form .atm-button input:hover {
   transition: 0.5s;
 }
 
+.card-box .analytics-card .card-btn {
+    font-size: 1.1em;
+    margin-top: 5px;
+    transition: 0.5s;
+}
+
+.card-box .analytics-card .card-btn .edit-card-btn {
+    color: #ffffff;
+    background-color: #028f19;
+    text-decoration: none;
+    font-size: 12px;
+    padding: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 5px;
+    margin-top: 5px;
+    transition: 0.5s;
+}
+
+.card-box .analytics-card .card-btn .delete-card-btn {
+    color: #ffffff;
+    background-color: #eb2906;
+    text-decoration: none;
+    font-size: 12px;
+    padding: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 5px;
+    margin-top: 5px;
+    transition: 0.5s;
+}
+
 .card-box .analytics-card .icon {
   font-size: 3.5em;
   color: #535353;
@@ -2552,6 +2584,17 @@ form .atm-button input:hover {
 .card-box .analytics-card:hover {
     background-color: #695cfe62;
 }
+
+.card-box .analytics-card:hover .card-btn .edit-card-btn {
+    color: #fff;
+    background-color: #016812;
+}
+
+.card-box .analytics-card:hover .card-btn .delete-card-btn {
+    color: #fff;
+    background-color: #a01c05;
+}
+
 
 .card-box .analytics-card:hover .numbers,
 .card-box .analytics-card:hover .name,

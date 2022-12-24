@@ -59,7 +59,7 @@
                             <td><span><i class="fa fa-calendar" aria-hidden="true"></i> Completed On: </span>  {{ get_request_id.completed_on }}</td>
                         </tr>
                         <tr>
-                            <td colspan="2"><span><i class="fa fa-reply-all" aria-hidden="true"></i> Add Comments:</span> <textarea style="height: 80px; padding-top: 5px;" name="request_response" class="view-edit-team-member-input" rows="4" cols="50" placeholder="Write comments for this request.." required>{{ get_request_id.request_response }}</textarea></td>
+                            <td colspan="2"><span><i class="fa fa-reply-all" aria-hidden="true"></i> Comments:</span> <textarea style="height: 80px; padding-top: 5px;" name="request_response" class="view-edit-team-member-input" rows="4" cols="50" placeholder="Write comments for this request.." readonly>{{ get_request_id.request_response }}</textarea></td>
                         </tr>
                         <tr>
                             <td><a class="view-edit-team-member-back-btn" href="{% url 'list_completed_requests_it_admin' user.id %}">Back</a></td>

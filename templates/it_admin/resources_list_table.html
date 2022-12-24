@@ -2,17 +2,15 @@
 {% load static %}
 
 {% block content %}
-
+<title>ORMS - Report Of Total Resources</title>
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
         <!-- <div class="head-container">
             <h1>Add Users</h1>
             <a class="navigator-btn" href="{% url 'add_user_page' %}">Add new user</a>
         </div> -->
-
-        <div class="head-container">
-            <h1>Resources Table</h1>
-            {% include 'message_alert.html' %}
+        <div class="head-container" style="margin-bottom: 3%;">
+            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/color/35/null/device-manager.png"/> Resource Table</h1>
         </div>
         <div class="search-bar-container">
             <form action="{% url 'resources_date_sort' %}" method="POST">
@@ -20,8 +18,7 @@
                 From: <input type="date" style="width: 140px;" name="from_res" class="search-input-box-dt" required>
                 To: <input type="date" style="width: 140px;" name="to_res" class="search-input-box-dt" required>
                 <input type="submit" class="search-input-btn-dt" value="Search">
-                <a href="{% url 'resources_listings_page' %}" style="margin-right: 0%; background-color: rgb(209, 46, 46); border: 1px solid rgb(209, 46, 46);" class="add-team-btn">Back <i class="fa fa-arrow-circle-left" aria-hidden="true"></i></a>
-                <a href="#" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">Print report <i class='bx bx-printer'></i></a>
+                <a href="{% url 'resources_listings_page' %}" style="margin-right: 0.5%; background-color: rgb(209, 46, 46); border: 1px solid rgb(209, 46, 46);" class="add-team-btn">Back <i class="fa fa-arrow-circle-left" aria-hidden="true"></i></a>
             </form>
         </div>
        
@@ -47,13 +44,13 @@
                                 <td>{{ device.added_by }}</td>
                                 <td>{{ device.added_on }}</td>
                                 {% if device.resource_availability == 'Available' %}
-                                    <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">Available</td>
+                                    <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">Available</h4></td>
                                 {% elif device.resource_availability == 'Configuration' %}
-                                    <td style="background: rgb(202, 142, 14); color: aliceblue; text-align: center;">Configuration</td>
+                                    <td><h4 style="font-weight: 400; background-color: rgb(238, 181, 26); text-align: center; border-radius: 15px;">Configuration</h4></td>
                                 {% elif device.resource_availability == 'Reserved' %}
-                                    <td style="background: rgb(228, 51, 51); color: aliceblue; text-align: center;">Reserved</td>
+                                    <td><h4 style="font-weight: 400; background-color: rgb(230, 78, 18); text-align: center; border-radius: 15px; color: #fff;">Reserved</h4></td>
                                 {% elif device.resource_availability == 'Taken' %}
-                                    <td style="background: rgb(55, 112, 185); color: aliceblue; text-align: center;">Taken</td>
+                                    <td><h4 style="font-weight: 400; background-color: rgb(55, 112, 185); text-align: center; border-radius: 15px; color: #fff;">Taken</h4></td>
                                 {% else %}
                                 {% endif %}
                                 <!-- <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'edit_resource' device.id %}">Edit Device</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'delete_resource' device.id %}">Remove Device</a></td> -->
@@ -69,13 +66,13 @@
                                 <td>{{ device.added_by }}</td>
                                 <td>{{ device.added_on }}</td>
                                 {% if device.resource_availability == 'Available' %}
-                                    <td style="background: rgb(60, 161, 29); color: aliceblue; text-align: center;">Available</td>
+                                    <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">Available</h4></td>
                                 {% elif device.resource_availability == 'Configuration' %}
-                                    <td style="background: rgb(202, 142, 14); color: aliceblue; text-align: center;">Configuration</td>
+                                    <td><h4 style="font-weight: 400; background-color: rgb(238, 181, 26); text-align: center; border-radius: 15px;">Configuration</h4></td>
                                 {% elif device.resource_availability == 'Reserved' %}
-                                    <td style="background: rgb(228, 51, 51); color: aliceblue; text-align: center;">Reserved</td>
+                                    <td><h4 style="font-weight: 400; background-color: rgb(230, 78, 18); text-align: center; border-radius: 15px; color: #fff;">Reserved</h4></td>
                                 {% elif device.resource_availability == 'Taken' %}
-                                    <td style="background: rgb(55, 112, 185); color: aliceblue; text-align: center;">Taken</td>
+                                    <td><h4 style="font-weight: 400; background-color: rgb(55, 112, 185); text-align: center; border-radius: 15px; color: #fff;">Taken</h4></td>
                                 {% else %}
                                 {% endif %}
                                 <!-- <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'edit_resource' device.id %}">Edit Device</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'delete_resource' device.id %}">Remove Device</a></td> -->
@@ -93,7 +90,16 @@
     </div>     
 </section>
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<!-- datatables starting -->
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
+<!-- datatables ending -->
 <script src="script.js"></script>
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <script>
