@@ -3,39 +3,38 @@
 
 {% block content %}
 
-
-
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
 
         <div class="head-container" style="margin-bottom: 3%;">
-            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/external-flaticons-flat-flat-icons/35/null/external-department-university-flaticons-flat-flat-icons-2.png"/> View Team</h1>
+            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/color/35/000000/add-user-group-woman-man.png"/> View User Details</h1>
             {% include 'message_alert.html' %}
         </div>
 
         <div class="department-card-container">
-            {% if selected_tem %}
+            {% if get_user %}
             <div style="margin-top: 1%;" class="team-member-info">
-                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> View Team Information: </h1>
+                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> View User Information: </h1>
                 <table style="margin-top: 1%;">
                     <tr>
-                        <td><span>Team Name: </span> {{selected_tem.team_name}}</td>
-                        <td><span>Team Head: </span> {{selected_tem.team_head}}</td>
+                        <td><span>User Name: </span> {{get_user.first_name}} {{get_user.last_name}}</td>
+                        <td><span>PeopleSoft Id: </span> {{get_user.peoplesoft_id}}</td>
                     </tr>
                     <tr>
-                        <td><span>Department Oriented To: </span> {{selected_tem.department}}</td>
-                        <td></td>
+                        <td><span>Department Oriented To: </span> {{get_user.department}}</td>
+                        <td><span>Team Oriented To: </span> {{get_user.team}}</td>
                     </tr>
                     <tr>
-                        <td><span>Team Created By: </span> {{selected_tem.created_by}}</td>
-                        <td><span>Created On: </span> {{selected_tem.created_date}}</td>
+                        <td><span>User Email: </span> {{get_user.email}}</td>
+                        <td><span>Added On: </span> {{get_user.date_joined}}</td>
                     </tr>
                     <tr>
-                        <td colspan="2"><span>Team Description:</span> {{selected_tem.team_description}}</td>
+                        <td><span>User Role: </span> {{get_user.role}}</td>
+                        <td><span>User Status: </span> {{get_user.is_active}}</td>
                     </tr>
                     <tr>
-                        <td><a class="add-resources-btn" href="{% url 'edit_team' selected_tem.id %}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit Team </a> <a class="add-resources-btn" href="#" onclick="toggle_warning_blur()"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete Team </a></td>
-                        <td><a class="add-resources-btn" href="{% url 'superadmin_team_table' %}"><i class="fa fa-hand-o-left" aria-hidden="true"></i> Back to Teams </a></td>
+                        <td><a class="add-resources-btn" href="{% url 'edit_user' get_user.id %}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit User </a> <a class="add-resources-btn" href="#" onclick="toggle_warning_blur()"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete User </a></td>
+                        <td><a class="add-resources-btn" href="{% url 'superadmin_add_user' %}"><i class="fa fa-hand-o-left" aria-hidden="true"></i> Back to Users </a></td>
                     </tr>
                 </table>
             </div>
@@ -45,10 +44,10 @@
             <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
         </div>   
         <div id="warning_popup">
-            <form action="{% url 'delete_team' selected_tem.id %}" method="POST">
+            <form action="{% url 'permanent_delete_user' get_user.id %}" method="POST">
                 {% csrf_token %}
                 <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
-                <h3>Are you sure that you want to delete the entire "{{selected_tem.team_name}}" team!</h3>
+                <h3>Are you sure that you want to delete the selected "{{get_user.peoplesoft_id}}" user!</h3>
                 <input type="hidden" name="delete_name" value="delete">
                 <button type="submit" class="warning-btn-delete" style="background-color: rgb(204, 17, 3);" onclick="toggle_warning_blur()">Yes, delete</button>
                 <a class="warning-btn-cancel" style="background-color: rgb(2, 141, 20);" onclick="toggle_warning_blur()">No, cancel</a>

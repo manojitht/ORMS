@@ -10,14 +10,18 @@
         </div>
         {% if get_devices_id %}
             {% if get_member_id %}
-            <div class="search-bar-container" style="width: 100%; text-align: center; background-color: #046ec5; padding: 10px; border-radius: 15px;">
+            <!-- <div class="search-bar-container" style="width: 100%; text-align: center; background-color: #046ec5; padding: 10px; border-radius: 15px;">
                 <form>
                     <h2 style="text-align: left; color: rgb(255, 255, 255); font-weight: 300; font-size: 17px; margin-top: 5px;"><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/23/000000/story-time.png"/> Device History Taken By <span style="color: #fffb00; font-style: italic;">{{get_member_id.fullname}}</span> Previously.</h2>
                 </form>
-            </div>
-            {% else %}
-            {% endif %}
+            </div> -->
+            <!-- {% else %}
+            {% endif %} -->
         <div class="department-card-container">
+                {% if get_member_id %}
+            <h3 style="color: black; font-weight: 500; background-color: #ffffff; padding: 5px; border-radius: 5px; margin-top: 2%; width: 90%;">Showing Resources History Lists that were taken by <span style="color: #695CFE;">{{get_member_id.fullname}}</span> previously.</h3>
+                {% else %}
+                {% endif %}
             {% for get_devices in get_devices_id %}
                 <div class="device-card-info">
                     <h1><i class="fa fa-desktop" aria-hidden="true"></i> Resource Information <a href="#"><i style="color: rgb(34, 158, 9);" class="fa fa-check-circle" aria-hidden="true"></i></a></h1>
@@ -44,7 +48,6 @@
                             {% else %}
                                 <td><span><i class="fa fa-code" aria-hidden="true"></i> Bitlocker Key: </span> Not Required.</td>
                             {% endif %}
-                                <td><span><i class="fa fa-clock-o" aria-hidden="true"></i> Total Days Kept: </span> 120 Days</td>
                         </tr>
                     </table>
                 </div>

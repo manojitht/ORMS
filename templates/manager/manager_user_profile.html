@@ -1,0 +1,74 @@
+{% extends 'base_user.html' %}
+{% load static %}
+
+{% block content %}
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container" style="margin-bottom: 1%;">
+            <h1><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/35/null/circled-user-male-skin-type-7--v1.png"/> User Profile</h1>
+            {% include 'message_alert.html' %}
+        </div>
+        <div class="department-card-container">
+            <div style="margin-top: 1%;" class="team-member-info">
+                {% if user %}
+                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> User Profile: </h1>
+                    {% if user.accountprofile.home_address %}
+                        <img src="{{user.accountprofile.profile_image.url }}" alt="user profile img"><br>
+                    {% else %}
+                        <img src="{% static 'images/image_placeholder.jpg' %}" alt="user profile img"><br>
+                        <h4 style="font-weight: 400; margin-left: 4%;">No User Profile Image</h4>
+                    {% endif %}  
+                <table>
+                    <tr>
+                        <td><span><i class="fa fa-user" aria-hidden="true"></i> Fullname: </span> {{user.first_name}} {{user.last_name}}</td>
+                        <td><span><i class="fa fa-id-badge" aria-hidden="true"></i> Peoplesoft Id: </span> {{user.peoplesoft_id}}</td>
+                    </tr>
+                    <tr>
+                        <td><span><i class="fa fa-briefcase" aria-hidden="true"></i> Position: </span> {{user.role}}</td>
+                        <td><span><i class="fa fa-book" aria-hidden="true"></i> Date Joined: </span> {{user.date_joined}}</td>
+                    </tr>
+                    <tr>
+                        <td><span><i class="fa fa-building" aria-hidden="true"></i> Department: </span> {{user.department}}</td>
+                        <td><span><i class="fa fa-users" aria-hidden="true"></i> Team: </span> {{user.team}}</td>
+                    </tr>
+                    <tr>
+                        <td><span><i class='bx bxs-envelope' ></i> Email: </span>  {{user.email}}</td>
+                        <td><span><i class='bx bxs-phone-call' ></i> Contact: </span> {{user.accountprofile.contact_number }}</td>
+                    </tr>
+                    <tr>
+                        <td><span><i class='fa fa-users' ></i> Number of Team Members Managing: </span> 15</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><span><i class='fa fa-file-text' ></i> Total Requests Created: </span> 15</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><span><i class="fa fa-home" aria-hidden="true"></i> Home Address:</span> {{user.accountprofile.home_address }}</td>
+                    </tr>
+                    <tr>
+                        <td><a class="add-resources-btn" href="{% url 'manager_edit_user_profile' %}"><i class="fa fa-pencil" aria-hidden="true"></i>  Edit Profile </a></td>
+                        <td><a class="add-resources-btn" href="#"><i class="fa fa-key" aria-hidden="true"></i>  Change Password </a></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="loader-wrapper">
+                <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+            </div> 
+        </div>
+        </div> 
+        {% else %}
+        {% endif %}     
+</section>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="{% static 'script.js' %}"></script>
+<script>
+    $(window).on("load",function(){
+      $(".loader-wrapper").fadeOut("slow");
+    });
+</script>
+
+{% endblock %}

@@ -62,11 +62,13 @@ def login(request):
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url= 'login')
 def superadmin_portal(request):
     return render(request, 'superadmin/superadmin_home.html')
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url= 'login')
 def it_admin_portal(request, userid):
     # count of requests completed
     get_user_id = Account.objects.get(id=userid)
@@ -159,6 +161,7 @@ def it_admin_portal(request, userid):
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url= 'login')
 def manager_portal(request, userid):
     # total no of team members
     get_user_id = Account.objects.get(id=userid)
@@ -202,6 +205,7 @@ def manager_portal(request, userid):
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url= 'login')
 def add_user_page(request):
 
     department_names = Department.objects.all().filter(is_active=True)
@@ -252,7 +256,7 @@ def add_user_page(request):
                         to_email = email
                         send_email = EmailMessage(mail_head_subject, message, to=[to_email])
                         send_email.send()
-                        user.save();
+                        user.save()
                         message_alert.success(request, 'Superadmin user created successfully!')
                     except: 
                         message_alert.info(request, 'Something went wrong!')
@@ -275,7 +279,7 @@ def add_user_page(request):
                         password_generated = 'password@123'
                         send_email = EmailMessage(mail_head_subject, message, to=[to_email])
                         send_email.send()
-                        user.save();
+                        user.save()
                         message_alert.success(request, 'Manager user created successfully!')
                     except: 
                         message_alert.info(request, 'Something went wrong!')
@@ -297,7 +301,7 @@ def add_user_page(request):
                         to_email = email
                         send_email = EmailMessage(mail_head_subject, message, to=[to_email])
                         send_email.send()
-                        user.save();
+                        user.save()
                         message_alert.success(request, 'IT Administrator user created successfully!')
                     except: 
                         message_alert.info(request, 'Something went wrong!')
@@ -310,12 +314,24 @@ def add_user_page(request):
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# def load_teams(request):
-#     department_id = request.GET.get('department')
-#     teams = Team.objects.filter()
+@login_required(login_url= 'login')
+def manager_user_profile(request):
+    return render(request, 'manager/manager_user_profile.html')
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url= 'login')
+def manager_edit_user_profile(request):
+    return render(request, 'manager/edit_manager_profile.html')
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url= 'login')
+def it_admin_user_profile(request):
+    return render(request, 'it_admin/it_admin_user_profile.html')
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+@login_required(login_url= 'login')
 def superadmin_add_user(request):
 
     users = Account.objects.all()
@@ -347,9 +363,18 @@ def activate(request, uidb64, token):
     else:
         message_alert.error(request, 'OOPS!, it seems invalid link.')
         return redirect('login')
-    
+
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url= 'login')
+def view_user_details(request, uid):
+    get_user = Account.objects.get(id=uid)
+    context = { 'get_user': get_user, }
+    return render(request, 'superadmin/view_user_details.html', context)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url= 'login')
 def edit_user(request, uid):
     selected_user = Account.objects.get(id=uid)
     team_names = Team.objects.filter(is_active=True)
@@ -359,6 +384,7 @@ def edit_user(request, uid):
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url= 'login')
 def update_user(request, uid):
     update_user = Account.objects.get(id=uid)
     update_user.peoplesoft_id = request.POST['peoplesoft_id']
@@ -397,6 +423,7 @@ def update_user(request, uid):
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url= 'login')
 def superadmin_users_date_sort(request):
     if request.method == 'POST':
         from_date = request.POST['from_user']
@@ -407,6 +434,7 @@ def superadmin_users_date_sort(request):
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url= 'login')
 def users_deletion_history(request):
     users = Account.objects.all().filter(is_active=False)
     context = { 'users': users, }
@@ -414,6 +442,7 @@ def users_deletion_history(request):
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url= 'login')
 def remove_user_access(request, uid):
     remove_user = Account.objects.get(id=uid)
     remove_user.is_active = False
@@ -423,6 +452,7 @@ def remove_user_access(request, uid):
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url= 'login')
 def restore_user(request, uid):
     restoring_user = Account.objects.get(id=uid)
     restoring_user.is_active = True
@@ -432,11 +462,15 @@ def restore_user(request, uid):
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url= 'login')
 def permanent_delete_user(request, uid):
-    delete_user = Account.objects.get(id=uid)
-    delete_user.delete()
-    message_alert.success(request, 'User permanently deleted successfully!')
-    return redirect(users_deletion_history)
+    if request.method == 'POST':
+        delete_name = request.POST['delete_name']
+        if delete_name == 'delete':
+            user_delete = Account.objects.get(id=uid)
+            user_delete.delete()
+            message_alert.success(request, 'User permanently deleted successfully!')
+    return redirect(superadmin_add_user)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

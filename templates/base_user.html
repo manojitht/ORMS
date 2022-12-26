@@ -51,15 +51,15 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="{% url 'list_requests_manager' user.id %}">
-                            <i class='bx bx-receipt icon' ></i>
-                            <span class="text nav-text">My Requests</span>
+                        <a href="{% url 'add_member' %}">
+                            <i class='bx bx-book-add icon' ></i>
+                            <span class="text nav-text">New Member</span>
                         </a>
                     </li>
                     <li class="">
-                        <a href="#">
-                            <i class='bx bx-git-pull-request icon'></i>
-                            <span class="text nav-text">Migration</span>
+                        <a href="{% url 'list_requests_manager' user.id %}">
+                            <i class='bx bx-receipt icon' ></i>
+                            <span class="text nav-text">My Requests</span>
                         </a>
                     </li>
                     <li class="">
@@ -69,7 +69,7 @@
                         </a>
                     </li>
                     <li class="">
-                        <a href="#">
+                        <a href="{% url 'manager_user_profile' %}">
                             <i class='bx bx-user-circle icon' ></i>
                             <span class="text nav-text">My Profile</span>
                         </a>

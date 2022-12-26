@@ -7,94 +7,51 @@
 
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
-        <div class="head-container">
-            <h1>Department Management</h1>
+
+        <div class="head-container" style="margin-bottom: 3%;">
+            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/external-flaticons-flat-flat-icons/35/null/external-department-university-flaticons-flat-flat-icons-2.png"/> View Department</h1>
             {% include 'message_alert.html' %}
-        </div>
-        <div class="search-bar-container">
-            <form action="{% url 'search_department' %}" method="GET">
-                <!-- <select name="search_by" class="select-input-box-dt">
-                    <option selected>Department name</option>
-                    <option>Department head</option>
-                    <option>Updated by</option>
-                </select> -->
-                <input style="margin-left: 5%;" type="text" class="search-input-box-dt" name="keyword" placeholder="Search by department name here.." required>
-                <input type="submit" class="search-input-btn-dt" value="Search">
-                <a href="{% url 'add_new_department' %}" class="add-team-btn">Department <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
-                <a href="{% url 'superadmin_department_table' %}" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">Department Index <i class='bx bx-table' ></i></a>
-            </form>
         </div>
 
         <div class="department-card-container">
-
-            {% if search_department %}
-
-            {% for department in search_department %}
-                <div class="department-card-tile">
-                    <table style="width: 100%;">
-                        <tr>
-                            <td><h1><span class="txt-diff-dep"><i class='bx bxs-building' ></i>{{ department.department_name }}</span></h1></td>
-                            <td><h1><span>Department Head:</span><br> {{ department.department_head }}</h1></td>
-                        </tr>
-                        <tr>
-                            <td><h1><span>Lastly Updated By:</span><br> {{ department.created_by }}</h1></td>
-                            <td><h1><span>Created On:</span> {{ department.created_on }}</h1></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"><h1><span>Description:</span><br> {{ department.department_description }}</h1></td>
-                        </tr>
-                            <td><h2>.</h2></td>
-                            <td><h2>.</h2></td>
-                        <tr>
-                            <td style="text-align: center;"><a href="{% url 'edit_department' department.id %}" class="department-tile-btn-edit">Update Department</a><a href="{% url 'department_view_teams' department.id %}" class="department-tile-btn-view">View Teams</a></td>
-                            <td style="text-align: center;"><a href="{% url 'delete_department' department.id %}" class="department-tile-btn-delete">Delete Department</a></td>
-                        </tr>
-                    </table>
-                </div>
-            {% endfor %}
-
-            {% elif departments %}
-
-            {% for department in departments %}
-                <div class="department-card-tile">
-                    <table style="width: 100%;">
-                        <tr>
-                            <td><h1><span class="txt-diff-dep"><i class='bx bxs-building' ></i>{{ department.department_name }}</span></h1></td>
-                            <td><h1><span>Department Head:</span><br> {{ department.department_head }}</h1></td>
-                        </tr>
-                        <tr>
-                            <td><h1><span>Lastly Updated By:</span><br> {{ department.created_by }}</h1></td>
-                            <td><h1><span>Created On:</span> {{ department.created_on }}</h1></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"><h1><span>Description:</span><br> {{ department.department_description }}</h1></td>
-                        </tr>
-                            <td><h2>.</h2></td>
-                            <td><h2>.</h2></td>
-                        <tr>
-                            <td style="text-align: center;"><a href="{% url 'edit_department' department.id %}" class="department-tile-btn-edit">Update Department</a><a href="{% url 'department_view_teams' department.id %}" class="department-tile-btn-view">View Teams</a></td>
-                            <td style="text-align: center;"><a href="{% url 'delete_department' department.id %}" class="department-tile-btn-delete">Remove Department</a></td>
-                        </tr>
-                    </table>
-                </div>
-            {% endfor %}
-
-            {% else %}
-            <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_scgyykem.json"  background="#E4E9F7"  speed="1"  style="height: 70%; margin-left: auto; margin-right: auto;" loop    autoplay></lottie-player>
-            {% endif %}
+            {% if selected_dep %}
+            <div style="margin-top: 1%;" class="team-member-info">
+                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> View Department Information: </h1>
+                <table style="margin-top: 1%;">
+                    <tr>
+                        <td><span>Department Name: </span> {{selected_dep.department_name}}</td>
+                        <td><span>Department Head: </span> {{selected_dep.department_head}}</td>
+                    </tr>
+                    <tr>
+                        <td><span>Department Created By: </span> {{selected_dep.created_by}}</td>
+                        <td><span>Created On: </span> {{selected_dep.created_on}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><span>Department Description:</span> {{selected_dep.department_description}}</td>
+                    </tr>
+                    <tr>
+                        <td><a class="add-resources-btn" href="{% url 'edit_department' selected_dep.id %}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit Department </a> <a class="add-resources-btn" href="#" onclick="toggle_warning_blur()"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete Department </a></td>
+                        <td><a class="add-resources-btn" href="{% url 'superadmin_department_table' %}"><i class="fa fa-hand-o-left" aria-hidden="true"></i> Back to Departments </a></td>
+                    </tr>
+                </table>
+            </div>
         </div>
-
         </div>
         <div class="loader-wrapper">
             <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
         </div>   
-        <!-- <div id="warning_popup">
-            onclick="toggle_warning_blur()"
-            <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
-            <h3>Are you sure want to delete the entire department!</h3>
-            <a href="#" class="warning-btn-delete" onclick="toggle_warning_blur()">Yes, delete</a>
-            <a href="#" class="warning-btn-cancel" onclick="toggle_warning_blur()">No, cancel</a>
-        </div>     -->
+        <div id="warning_popup">
+            <form action="{% url 'delete_department' selected_dep.id %}" method="POST">
+                {% csrf_token %}
+                <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
+                <h3>Are you sure that you want to delete the entire "{{selected_dep.department_name}}" department!</h3>
+                <input type="hidden" name="delete_name" value="delete">
+                <button type="submit" class="warning-btn-delete" style="background-color: rgb(204, 17, 3);" onclick="toggle_warning_blur()">Yes, delete</button>
+                <a class="warning-btn-cancel" style="background-color: rgb(2, 141, 20);" onclick="toggle_warning_blur()">No, cancel</a>
+            </form>
+        </div>  
+        {% else %}
+        {% endif %}  
 </section>
 
 

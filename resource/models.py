@@ -49,6 +49,7 @@ class ResourceTaken(models.Model):
     taken_date = models.DateField(auto_now_add=True)
     returned_date = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    reason_notes = models.TextField(max_length=300, blank=True)
 
     def __str__(self):
         return self.asset_id

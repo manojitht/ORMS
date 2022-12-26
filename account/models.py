@@ -125,3 +125,12 @@ class Account(AbstractBaseUser):
 
     def has_module_perms(self, add_label):
         return True
+
+class AccountProfile(models.Model):
+    user = models.OneToOneField(Account, on_delete=models.CASCADE)
+    home_address = models.CharField(blank=True, max_length=200)
+    contact_number = models.CharField(blank=True, max_length=20)
+    profile_image = models.ImageField(blank=True, upload_to='photos/profilepics')
+
+    def __str__(self):
+        return self.user.peoplesoft_id

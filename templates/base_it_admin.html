@@ -44,7 +44,7 @@
                     <li class="nav-link">
                         <a href="{% url 'it_admin_portal' user.id %}">
                             <i class='bx bx-line-chart icon' ></i>
-                            <span class="text nav-text">Admin Dashboard</span>
+                            <span class="text nav-text">Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-link">
@@ -72,13 +72,7 @@
                         </a>
                     </li>
                     <li class="nav-link">
-                        <a href="#">
-                            <i class='bx bx-building icon'></i>
-                            <span class="text nav-text">Departments</span>
-                        </a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="#">
+                        <a href="{% url 'it_admin_user_profile' %}">
                             <i class='bx bx-user-circle icon' ></i>
                             <span class="text nav-text">My Profile</span>
                         </a>

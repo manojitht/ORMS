@@ -7,28 +7,27 @@
 
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
-        <div class="head-container">
-            <h1>Teams Index</h1>
+        <div class="head-container" style="margin-bottom: 3%;">
+            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/external-flaticons-flat-flat-icons/35/null/external-department-university-flaticons-flat-flat-icons-2.png"/> Teams Index</h1>
+            {% include 'message_alert.html' %}
         </div>
         <div class="search-bar-container">
-            <form action="{% url 'superadmin_team_date_sort' %}" method="POST">
+            <form action="{% url 'superadmin_department_date_sort' %}" method="POST">
                 {% csrf_token %}
-                From: <input type="date" style="width: 140px;" name="from_tem" class="search-input-box-dt">
-                To: <input type="date" style="width: 140px;" name="to_tem" class="search-input-box-dt">
+                From: <input type="date" style="width: 140px;" name="from_tem" class="search-input-box-dt" required>
+                To: <input type="date" style="width: 140px;" name="to_tem" class="search-input-box-dt" required>
                 <input type="submit" class="search-input-btn-dt" value="Sort">
-                <a href="{% url 'superadmin_add_team' %}" style="margin-right: 0%;" class="add-team-btn">Team <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
-                <a href="#" style="margin-right: 15px; background-color: rgb(24, 24, 24);" class="add-team-btn">Print report <i class='bx bx-printer'></i></a>
+                <a href="{% url 'superadmin_add_team' %}" style="margin-right: 0.5%;" class="add-team-btn">Team <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
             </form>
         </div>
        
             <div class="container">
-                <table id="team_requests" class="display" style="width:100%">
+                <table id="team_requests" class="display" style="width: 100%;">
                     <thead>
                         <tr>
-                            <th>Id</th>
                             <th>Team Name</th>
-                            <th>Team Head</th>
                             <th>Department Oriented</th>
+                            <th>Team Head</th>
                             <th>Updated By</th>
                             <th>Created On</th>
                             <th>Processing Status</th>
@@ -38,39 +37,37 @@
 
                         {% if get_result %}
 
-                            {% for team in get_result %}
-                                <tr>
-                                    <td>{{ team.id }}</td>
-                                    <td>{{ team.team_name }}</td>
-                                    <td>{{ team.team_head }}</td>
-                                    <td>{{ team.department }}</td>
-                                    <td>{{ team.created_by }}</td>
-                                    <td>{{ team.created_date }}</td>
-                                    {% if team.is_active %}
-                                        <td><h3 style="background: rgb(60, 161, 29); color: aliceblue; text-align: center; font-weight: 300; font-size: 13px; border-radius: 15px;">On Process</h3></td>
-                                    {% else %}
-                                        <td><h3 style="background: rgb(197, 75, 27); color: aliceblue; text-align: center; font-weight: 300; font-size: 13px; border-radius: 15px;">Removed</h3></td>
-                                    {% endif %}
-                                </tr>
-                            {% endfor %}
+                        {% for teams in get_result %}
+                        <tr>
+                            <td><a href="{% url 'display_team' teams.id %}">{{ teams.team_name }}</a></td>
+                            <td>{{ teams.department }}</td>
+                            <td>{{ teams.team_head }}</td>
+                            <td>{{ teams.created_by }}</td>
+                            <td>{{ teams.created_date }}</td>
+                            {% if teams.is_active %}
+                                <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">On Process</h4></td>
+                            {% else %}
+                                <td><h4 style="font-weight: 400; background-color: rgb(197, 75, 27); text-align: center; border-radius: 15px; color: #fff;">Removed</h4></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
 
                         {% else %}
 
-                            {% for team in teams_table %}
-                                <tr>
-                                    <td>{{ team.id }}</td>
-                                    <td>{{ team.team_name }}</td>
-                                    <td>{{ team.team_head }}</td>
-                                    <td>{{ team.department }}</td>
-                                    <td>{{ team.created_by }}</td>
-                                    <td>{{ team.created_date }}</td>
-                                    {% if team.is_active %}
-                                        <td><h3 style="background: rgb(60, 161, 29); color: aliceblue; text-align: center; font-weight: 300; font-size: 13px; border-radius: 15px;">On Process</h3></td>
-                                    {% else %}
-                                        <td><h3 style="background: rgb(197, 75, 27); color: aliceblue; text-align: center; font-weight: 300; font-size: 13px; border-radius: 15px;">Removed</h3></td>
-                                    {% endif %}
-                                </tr>
-                            {% endfor %}
+                        {% for teams in teams_table %}
+                        <tr>
+                            <td><a href="{% url 'display_team' teams.id %}">{{ teams.team_name }}</a></td>
+                            <td>{{ teams.department }}</td>
+                            <td>{{ teams.team_head }}</td>
+                            <td>{{ teams.created_by }}</td>
+                            <td>{{ teams.created_date }}</td>
+                            {% if teams.is_active %}
+                                <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">On Process</h4></td>
+                            {% else %}
+                                <td><h4 style="font-weight: 400; background-color: rgb(197, 75, 27); text-align: center; border-radius: 15px; color: #fff;">Removed</h4></td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
 
                         {% endif %}
                     </tbody>
@@ -80,11 +77,20 @@
     </div>
     <div class="loader-wrapper">
         <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-    </div>        
+    </div>     
 </section>
 
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<!-- datatables starting -->
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
+<!-- datatables ending -->
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <script src="{% static 'script.js' %}"></script>
 <script>

@@ -11,7 +11,7 @@
             <div class="search-bar-container" style="width: 96%; text-align: center; background-color: #4ec5f5; padding: 10px; border-radius: 15px; margin-left: 2%;">
                 <form>
                     <h1 style="float: left; color: rgb(255, 255, 255); font-weight: 300; margin-left: 1%;">Hi there👋 <span style="color: #056a92; font-weight: 400;">{{ user.first_name }}</span>, Welcome to <span style="color: #056a92; font-weight: 400;">ORMS</span> Dashboard.. </h1>
-                    <a href="#" style="margin-right: 5px; background-color: rgb(85, 85, 85); color: #ffffff; border: 1px solid rgb(85, 85, 85);" class="add-team-btn">Export as PDF  <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>
+                    <!-- <a href="#" style="margin-right: 5px; background-color: rgb(85, 85, 85); color: #ffffff; border: 1px solid rgb(85, 85, 85);" class="add-team-btn">Export as PDF  <i class="fa fa-file-pdf-o" aria-hidden="true"></i></a> -->
                 </form>
             </div>
             <div class="analytics-metrics">
@@ -52,29 +52,11 @@
                 </div>
                 <div class="analytics-card">
                     <div>
-                        <div class="numbers">{{ get_count_of_desktop }}</div>
-                        <div class="name">Desktops currently in use by all team members:</div>
+                        <div class="numbers">6</div>
+                        <div class="name">Count of Resource Categories:</div>
                     </div>
                     <div class="icon">
                         <img src="https://img.icons8.com/color/48/null/workstation.png"/>
-                    </div>
-                </div>
-                <div class="analytics-card">
-                    <div>
-                        <div class="numbers">{{ get_count_of_laptop }}</div>
-                        <div class="name">Laptops currently in use by all team members:</div>
-                    </div>
-                    <div class="icon">
-                        <img src="https://img.icons8.com/color/48/null/laptop--v1.png"/>
-                    </div>
-                </div>
-                <div class="analytics-card">
-                    <div>
-                        <div class="numbers">{{ get_count_of_monitor }}</div>
-                        <div class="name">Monitors currently in use by all team members:</div>
-                    </div>
-                    <div class="icon">
-                        <img src="https://img.icons8.com/color/48/null/monitor--v1.png"/>
                     </div>
                 </div>
             </div>
@@ -95,19 +77,21 @@
         var myChart = new Chart(ctx, {
             type: 'polarArea',
             data: {
-                labels: ['Desktops', 'Laptops', 'Monitors'],
+                labels: ['Desktops', 'Laptops', 'Monitors', 'Headset'],
                 datasets: [{
                     label: '# of Count',
-                    data: [{{ total_desktops_count }}, {{ total_laptops_count }}, {{ total_monitors_count }}],
+                    data: [9, 7, 5, 8],
                     backgroundColor: [
                         'rgba(16, 196, 104, 0.2)',
                         'rgba(201, 36, 227, 0.2)',
-                        'rgba(43, 44, 47, 0.2)'
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)'
                     ],
                     borderColor: [
                         'rgba(16, 196, 104, 1)',
                         'rgba(201, 36, 227, 1)',
-                        'rgba(43, 44, 47, 1)'
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)'
                     ],
                     borderWidth: 1
                 }]
@@ -132,7 +116,7 @@
                 labels: ['Available' ,'Taken', 'Reserved', 'Configuration'],
                 datasets: [{
                     label: 'Desktop',
-                    data: [{{ available_desktops_count }}, {{ taken_desktops_count }}, {{ reserved_desktops_count }}, {{ configuration_desktops_count }}],
+                    data: [3, 2, 3, 1],
                      backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(255, 99, 132, 0.2)',
@@ -146,7 +130,7 @@
                     borderWidth: 1
                 },{
                     label: 'Laptop',
-                    data: [{{ available_laptops_count }}, {{ taken_laptops_count }}, {{ reserved_laptops_count }}, {{ configuration_laptops_count }}],
+                    data: [3, 1, 2, 1],
                     backgroundColor: [
                         'rgba(54, 162, 235, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
@@ -161,7 +145,7 @@
                 }
                 ,{
                     label: 'Monitor',
-                    data: [{{ available_monitors_count }}, {{ taken_monitors_count }}, {{ reserved_monitors_count }}, {{ configuration_monitors_count }}],
+                    data: [5, 2, 2, 1],
                     backgroundColor: [
                         'rgba(255, 206, 86, 0.2)',
                         'rgba(255, 206, 86, 0.2)',
@@ -171,6 +155,21 @@
                         'rgba(255, 206, 86, 1)',
                         'rgba(255, 206, 86, 1)',
                         'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }
+                ,{
+                    label: 'Headset',
+                    data: [5, 2, 2, 1],
+                    backgroundColor: [
+                        'rgba(176, 0, 252, 0.2)',
+                        'rgba(176, 0, 252, 0.2)',
+                        'rgba(176, 0, 252, 0.2)'
+                    ],
+                    borderColor: [
+                    'rgba(176, 0, 252, 1)',
+                    'rgba(176, 0, 252, 1)',
+                    'rgba(176, 0, 252, 1)'
                     ],
                     borderWidth: 1
                 }]

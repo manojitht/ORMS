@@ -10,6 +10,7 @@ urlpatterns = [
     path('superadmin_portal', views.superadmin_portal, name='superadmin_portal'),
     path('superadmin_add_user', views.superadmin_add_user, name='superadmin_add_user'),
     path('add_user_page', views.add_user_page, name='add_user_page'),
+    path('view_user_details/<int:uid>/', views.view_user_details, name='view_user_details'),
     path('edit_user/<int:uid>/', views.edit_user, name='edit_user'),
     path('update_user/<int:uid>/', views.update_user, name='update_user'),
     path('remove_user_access/<int:uid>/', views.remove_user_access, name='remove_user_access'),
@@ -20,4 +21,7 @@ urlpatterns = [
     path('superadmin_users_date_sort/', views.superadmin_users_date_sort, name='superadmin_users_date_sort'),
     path('users_deletion_history/', views.users_deletion_history, name='users_deletion_history'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
+    path('manager_user_profile/', views.manager_user_profile, name='manager_user_profile'),
+    path('manager_edit_user_profile/', views.manager_edit_user_profile, name='manager_edit_user_profile'),
+    path('it_admin_user_profile/', views.it_admin_user_profile, name='it_admin_user_profile'),
 ]

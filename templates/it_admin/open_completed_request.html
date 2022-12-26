@@ -7,11 +7,12 @@
     <div class="full-myteam-container">
 
         <div class="head-container">
-            <h1><i class="fa fa-envelope-open" aria-hidden="true"></i> View Requests</h1>
+            <h1><img style="margin-bottom: -9px; margin-top: 0.5%;" src="https://img.icons8.com/parakeet/35/null/notepad.png"/> View Completed Request</h1>
+            {% include 'message_alert.html' %}
         </div>
         <div style="margin-top: auto; margin-bottom: auto;" class="department-card-container">
             {% if get_request_id %}
-            <h1 style="color: black; font-weight: 400;">Showing request reference of <span style="color: #695CFE;">{{get_request_id.request_id}}</span> completed.</h1>
+            <h3 style="color: black; font-weight: 400; background-color: #ffffff; padding: 5px; border-radius: 5px;">Currently viewing the request reference of <span style="color: #695CFE;">{{ get_request_id.request_id }}</span> is completed.</h3>
             <div class="team-member-info">
                 <h1><i class="fa fa-envelope-open" aria-hidden="true"></i> {{ get_request_id.request_id }}</h1>
                 <form>
@@ -62,9 +63,9 @@
                             <td colspan="2"><span><i class="fa fa-reply-all" aria-hidden="true"></i> Comments:</span> <textarea style="height: 80px; padding-top: 5px;" name="request_response" class="view-edit-team-member-input" rows="4" cols="50" placeholder="Write comments for this request.." readonly>{{ get_request_id.request_response }}</textarea></td>
                         </tr>
                         <tr>
-                            <td><a class="view-edit-team-member-back-btn" href="{% url 'list_completed_requests_it_admin' user.id %}">Back</a></td>
+                            <td></td>
                             <!-- <td><input class="view-edit-team-member-btn" type="submit" value="Print Request"></td> -->
-                            <td><a style="float: right;" class="view-edit-team-member-back-btn" href="#"><i class="fa fa-print" aria-hidden="true"></i> Print Request</a></td>
+                            <td><a style="float: right;" class="view-edit-team-member-back-btn" href="{% url 'list_completed_requests_it_admin' user.id %}">Back</a></td>
                         </tr>
                     </table>
                 </form>

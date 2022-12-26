@@ -1,0 +1,69 @@
+{% extends 'base_user.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="home-main">
+    <div class="full-myteam-container" id="blur">
+        <div class="head-container" style="margin-bottom: 1%;">
+            <h1><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/35/null/circled-user-male-skin-type-7--v1.png"/> Edit User Profile</h1>
+            {% include 'message_alert.html' %}
+        </div>
+        <div class="department-card-container">
+            <div class="team-member-info">
+                {% if user %}
+                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> Edit User Profile: </h1>
+                <form>
+                    {% if user.accountprofile.profile_image %}
+                        <img src="{{user.accountprofile.profile_image.url }}" alt="user profile img"><br>
+                    {% else %}
+                        <img src="{% static 'images/image_placeholder.jpg' %}" alt="user profile img"><br>
+                        <h4 style="font-weight: 400; margin-left: 4%;">No User Profile Image</h4>
+                    {% endif %} 
+                    <table style="background-color: #ffffff;">
+                        <tr>
+                            <td><span><i class="fa fa-user" aria-hidden="true"></i> Firstname: </span> <input class="view-edit-team-member-input" type="text" placeholder="Enter fullname.." value="{{user.first_name}}" required></td>
+                            <td><span><i class="fa fa-user" aria-hidden="true"></i> Lastname: </span> <input class="view-edit-team-member-input" type="text" placeholder="Enter fullname.." value="{{user.last_name}}" required></td>
+                        </tr>
+                        <tr>
+                            <td><span><i class="fa fa-briefcase" aria-hidden="true"></i> Position: </span> <input class="view-edit-team-member-input" style="background-color: rgb(206, 206, 206);" type="text" placeholder="Enter Position.." value="{{user.role}}" readonly></td>
+                            <td><span><i class="fa fa-id-badge" aria-hidden="true"></i> Peoplesoft Id: </span> <input class="view-edit-team-member-input" style="background-color: rgb(206, 206, 206);" type="text" placeholder="Enter Peoplesoft Id.." value="{{user.peoplesoft_id}}" readonly></td>
+                        </tr>
+                        <tr>
+                            <td><span><i class="fa fa-building" aria-hidden="true"></i> Department: </span> <input class="view-edit-team-member-input" type="text" style="background-color: rgb(206, 206, 206);" placeholder="Enter Position.." value="{{user.department}}" readonly></td>
+                            <td><span><i class="fa fa-users" aria-hidden="true"></i> Team: </span> <input class="view-edit-team-member-input" type="text" style="background-color: rgb(206, 206, 206);" placeholder="Enter Peoplesoft Id.." value="{{user.team}}" readonly></td>
+                        </tr>
+                        <tr>
+                            <td><span><i class='bx bxs-envelope' ></i> Email: </span>  <input class="view-edit-team-member-input" type="email" placeholder="Enter Email Id.." value="{{user.email}}" required></td>
+                            <td><span><i class='bx bxs-phone-call' ></i> Contact: </span> <input class="view-edit-team-member-input" type="text" placeholder="Enter Contact number.." value="{{user.accountprofile.contact_number}}" required></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><span><i class="fa fa-home" aria-hidden="true"></i> Home Address:</span> <input class="view-edit-team-member-input" type="text" placeholder="Enter Home Address..." value="{{user.accountprofile.home_address}}" required></td>
+                        </tr>
+                        <tr>
+                            <td><span><i class="fa fa-picture-o" aria-hidden="true"></i> Profile Image: </span> <input style="background-color: #ffffff; border: 1px solid #ffffff;" type="file" accept="images"></td>
+                            <td><a class="view-edit-team-member-back-btn" href="{% url 'manager_user_profile' %}">Back</a><input class="view-edit-team-member-btn" type="submit" value="Update Profile"></td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            {% else %}
+            {% endif %}  
+            <div class="loader-wrapper">
+                <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+            </div> 
+        </div>
+        </div>    
+</section>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="{% static 'script.js' %}"></script>
+<script>
+    $(window).on("load",function(){
+      $(".loader-wrapper").fadeOut("slow");
+    });
+</script>
+
+{% endblock %}

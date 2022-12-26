@@ -11,11 +11,10 @@ def notes_page(request):
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def display_departments(request):
-    departments = Department.objects.all().filter(is_active=True).order_by('department_name')
-    context = { 'departments': departments, }
+def display_departments(request, depid):
+    selected_dep = Department.objects.get(id=depid)
+    context = { 'selected_dep': selected_dep, }
     return render(request, 'superadmin/display_department_page.html', context)
-    # naming convention finished.
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -31,7 +30,7 @@ def add_new_department(request):
             department = Department(department_name=department_name, department_head=department_head, department_description=department_description, created_by=created_by)
             department.save()
             message_alert.success(request, department_name + ' is created successfully!')
-            return redirect(display_departments)
+            return redirect(superadmin_department_table)
     else:
         pass
     return render(request, 'superadmin/add_department_form.html')
@@ -40,44 +39,13 @@ def add_new_department(request):
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def delete_department(request, depid):
-    deleting_dep = Department.objects.get(id=depid)
-    deleting_dep_name = Department.objects.get(department_name=deleting_dep.department_name)
-    get_teams = Team.objects.filter(department=deleting_dep_name)
-    for deactivate_tem in get_teams:
-        deactivate_tem.is_active = False
-        deactivate_tem.save()
-    #deleting_dep.delete()
-    deleting_dep.is_active = False
-    deleting_dep.save()
-
-    message_alert.success(request, 'Department removed successfully!')
-    return redirect(display_departments)
-    # naming convention finished.
-
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-def restore_department(request, depid):
-    restoring_dep = Department.objects.get(id=depid)
-    restoring_dep_name = Department.objects.get(department_name=restoring_dep.department_name)
-    get_teams = Team.objects.filter(department=restoring_dep_name)
-    for activate_tem in get_teams:
-        activate_tem.is_active = True
-        activate_tem.save()
-    #deleting_dep.delete()
-    restoring_dep.is_active = True
-    restoring_dep.save()
-
-    message_alert.success(request, 'Department restored successfully!')
-    return redirect(department_deletion_history)
-    # naming convention finished.
-
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-def permanent_delete_department(request, depid):
-    dep_delete = Department.objects.get(id=depid)
-    dep_delete.delete()
-    message_alert.success(request, 'Department deleted successfully!')
-    return redirect(department_deletion_history)
+    if request.method == 'POST':
+        delete_name = request.POST['delete_name']
+        if delete_name == 'delete':
+            dep_delete = Department.objects.get(id=depid)
+            dep_delete.delete()
+            message_alert.success(request, dep_delete.department_name + ' Department deleted successfully!')
+    return redirect(superadmin_department_table)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -98,18 +66,7 @@ def update_department(request, depid):
     update_dep.created_by = request.POST['created_by']
     update_dep.save()
     message_alert.success(request, 'Department is updated successfully!')
-    return redirect(display_departments)
-    # naming convention finished.
-
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-def search_department(request):
-    if 'keyword' in request.GET:
-        keyword = request.GET['keyword']
-        if keyword:
-            search_department = Department.objects.order_by('-created_on').filter(Q(department_name__icontains=keyword) | Q(department_head__icontains=keyword) | Q(department_description__icontains=keyword) | Q(created_by__icontains=keyword))
-    context = { 'search_department': search_department, }
-    return render(request, 'superadmin/display_department_page.html', context)
+    return redirect(display_departments, depid)
     # naming convention finished.
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -124,16 +81,12 @@ def superadmin_department_table(request):
 
 def superadmin_department_date_sort(request):
     if request.method == 'POST':
-        #from_date = request.POST.get('from_date')
-        #from_date = request.POST.get('to_date')
-        #get_result = Department.objects.raw('select id,department_name,department_head,department_description,created_by,created_on from departments where created_on between "'+from_date+'" and "'+to_date+'"')
         from_date = request.POST['from_dep']
         to_date = request.POST['to_dep']
         if from_date != '' and to_date != '':
             get_result =  Department.objects.filter(created_on__gte=from_date, created_on__lte=to_date)
         else:
             message_alert.info(request, 'Please select the date fields properly!')
-
     context = { 'get_result': get_result, }
     return render(request, 'superadmin/department_table_view.html', context)
     # naming convention finished.

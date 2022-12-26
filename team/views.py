@@ -30,18 +30,16 @@ def superadmin_add_team(request):
             team = Team(team_name=team_name, team_head=team_head, department=Department.objects.get(department_name=department), team_description=team_description, created_by=created_by)
             team.save()
             message_alert.success(request, team_name + ' is created successfully!')
-            return redirect(display_departments)
+            return redirect(superadmin_team_table)
     else:
         pass
     return render(request, 'superadmin/add_team_form.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def superadmin_list_team(request):
-    teams = Team.objects.all().filter(is_active=True)
-    department_names = Department.objects.all().filter(is_active=True)
-
-    context = { 'teams': teams, 'department_names': department_names, }
+def display_team(request, temid):
+    selected_tem = Team.objects.get(id=temid)
+    context = { 'selected_tem': selected_tem, }
     return render(request, 'superadmin/display_team_page.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -65,33 +63,35 @@ def update_team(request, temid):
     update_tem.created_by = request.POST['created_by']
     update_tem.save()
     message_alert.success(request, 'Team is updated on the ' + take_dep + ' department successfully!')
-    return redirect(display_departments)
+    return redirect(display_team, temid)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def delete_team(request, temid):
-    deleting_tem = Team.objects.get(id=temid)
-    deleting_tem.is_active = False
-    deleting_tem.save()
-    message_alert.success(request, 'Team removed successfully!')
-    return redirect(display_departments)
+    if request.method == 'POST':
+        delete_name = request.POST['delete_name']
+        if delete_name == 'delete':
+            deleting_tem = Team.objects.get(id=temid)
+            deleting_tem.delete()
+            message_alert.success(request, deleting_tem.team_name + ' Team deleted successfully!')
+    return redirect(superadmin_team_table)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def restore_team(request, temid):
-    restoring_tem = Team.objects.get(id=temid)
-    restoring_tem.is_active = True
-    restoring_tem.save()
-    message_alert.success(request, 'Team restored successfully!')
-    return redirect(team_deletion_history)
+# def restore_team(request, temid):
+#     restoring_tem = Team.objects.get(id=temid)
+#     restoring_tem.is_active = True
+#     restoring_tem.save()
+#     message_alert.success(request, 'Team restored successfully!')
+#     return redirect(team_deletion_history)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def permanent_delete_team(request, temid):
-    restoring_tem = Team.objects.get(id=temid)
-    restoring_tem.delete()
-    message_alert.success(request, 'Team deleted successfully!')
-    return redirect(team_deletion_history)
+# def permanent_delete_team(request, temid):
+#     restoring_tem = Team.objects.get(id=temid)
+#     restoring_tem.delete()
+#     message_alert.success(request, 'Team deleted successfully!')
+#     return redirect(team_deletion_history)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

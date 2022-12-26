@@ -61,7 +61,7 @@
                         {% endif %}
                         <td>{{ requests.created_on }}</td>
                         {% if requests.request_status == 'Completed' or requests.request_status == 'Cancelled' %}
-                            <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_manager_completed_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'delete_request' requests.id user.id %}"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</a></td>
+                            <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_manager_completed_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a></td>
                         {% else %}
                             <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_manager_completed_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(223, 126, 0);" href="{% url 'cancel_request' requests.id user.id %}"><i class='bx bxs-message-alt-x'></i> Cancel</a></td>
                         {% endif %}
@@ -89,7 +89,7 @@
                             {% endif %}
                             <td>{{ requests.created_on }}</td>
                             {% if requests.request_status == 'Completed' or requests.request_status == 'Cancelled' %}
-                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_manager_completed_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'delete_request' requests.id user.id %}"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</a></td>
+                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_manager_completed_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a></td>
                             {% else %}
                                 <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_manager_completed_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(223, 126, 0);" href="{% url 'cancel_request' requests.id user.id %}"><i class='bx bxs-message-alt-x'></i> Cancel</a></td>
                             {% endif %}

@@ -220,3 +220,13 @@ def delete_category_warning(request, delcatid):
     return render(request, 'it_admin/warning_page.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def delete_resource(request, resid):
+    if request.method == 'POST':
+        delete_name = request.POST['delete_name']
+        if delete_name == 'delete':
+            deleting_res = Resource.objects.get(id=resid)
+            deleting_res.delete()
+            message_alert.success(request, deleting_res.asset_id + ' - Resource was deleted successfully!')
+    return redirect(resources_listings_page)
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
