@@ -223,6 +223,15 @@ def mark_returned(request, resid, memid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+def view_member_resource_info(request, memid, resid):
+    get_member_id = Members.objects.get(id=memid)
+    # get_ps_id = Members.objects.get(peoplesoft_id=get_member_id.peoplesoft_id)
+    get_devices_id = ResourceTaken.objects.get(id=resid)
+    context = { 'get_devices_id': get_devices_id, 'get_member_id': get_member_id, }
+    return render(request, 'manager/view_resource_info.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def view_history_resources(request, memid):
     get_member_id = Members.objects.get(id=memid)
     get_ps_id = Members.objects.get(peoplesoft_id=get_member_id.peoplesoft_id)

@@ -10,7 +10,7 @@
                 <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/32/000000/conference.png"/> {{ user.team }}</h1>
                 <!-- <input class="search-bar-profile-card" type="search" placeholder="Search by name or ps id.." required> -->
             </div>
-            <div class="search-bar-container" style="width: 100%; text-align: center; background-color: #695CFE; padding: 10px; border-radius: 15px;">
+            <div class="search-bar-container" style="width: 100%; text-align: center; padding: 10px; border-radius: 15px;">
                 <form action="{% url 'search_team_member' user.id %}" method="GET">
                     <input style="margin-left: 1%; float: left; border-top-left-radius: 15px; border-bottom-left-radius: 15px; border: 1px solid #fff;" type="text" class="search-input-box-dt" name="keyword" placeholder="Search by name or ps id.." required>
                     <input style="float: left; background-color: rgb(255, 217, 0); border-top-right-radius: 15px; border-bottom-right-radius: 15px; color: black;" type="submit" class="search-input-btn-dt" value="Search 🔎">

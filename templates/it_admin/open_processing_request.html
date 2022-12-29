@@ -12,7 +12,7 @@
         </div>
         <div style="margin-top: auto; margin-bottom: auto;" class="department-card-container">
             {% if get_request_id %}
-            <h3 style="color: black; font-weight: 400; background-color: #ffffff; padding: 5px; border-radius: 5px;">Currently viewing the request reference of <span style="color: #695CFE;">{{ get_request_id.request_id }}</span> in processing.</h3>
+            <h3 style="color: black; font-weight: 400; background-color: #ffffff; padding: 5px; border-radius: 5px; margin-top: 1%;">Currently viewing the request reference of <span style="color: #695CFE;">{{ get_request_id.request_id }}</span> in processing.</h3>
             <div class="team-member-info">
                 <h1><i class="fa fa-envelope-open" aria-hidden="true"></i> {{ get_request_id.request_id }}</h1>
                 <form action="{% url 'complete_processing_request' get_request_id.id user.id %}" method="POST">
@@ -53,7 +53,11 @@
                             {% if get_request_id.request_category == 'Bitlocker' %}
                             <td><span><i class="fa fa-code" aria-hidden="true"></i> Bitlocker Key of {{ get_request_id.request_resource }}: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" placeholder="eg. TGS20222022" required></td>
                             {% else %}
-                                <td><span><i class="fa fa-desktop" aria-hidden="true"></i>  Enter {{ get_request_id.request_resource }} Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" placeholder="eg. TGSS0000451202" required></td>
+                                {% if assign_resource %}
+                                    <td><span><i class="fa fa-desktop" aria-hidden="true"></i>  Enter {{ get_request_id.request_resource }} Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" placeholder="eg. TGSS0000451202" value="{{ assign_resource }}" required></td>
+                                {% else %}
+                                <td><span><i class="fa fa-desktop" aria-hidden="true"></i>  Enter {{ get_request_id.request_resource }} Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" placeholder="eg. TGSS0000451202" value=" Sorry there isn't any devices avaiable for this request! " required></td>
+                                {% endif %}
                             {% endif %}
                         </tr>
                         <tr>

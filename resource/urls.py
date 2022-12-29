@@ -22,6 +22,7 @@ urlpatterns = [
     path('view_resource_categories/', views.view_resource_categories, name='view_resource_categories'),
     path('add_category_page/', views.add_category_page, name='add_category_page'),
     path('edit_category_page/<int:catid>/', views.edit_category_page, name='edit_category_page'),
+    path('update_category/<int:catid>/', views.update_category, name='update_category'),
     path('delete_category_warning/<int:delcatid>/', views.delete_category_warning, name='delete_category_warning'),
     path('delete_resource/<int:resid>/', views.delete_resource, name='delete_resource'),
 ]

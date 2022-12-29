@@ -213,6 +213,22 @@ def edit_category_page(request, catid):
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+def update_category(request, catid):
+    update_cat = Category.objects.get(id=catid)
+
+    if request.method == 'POST':
+        if len(request.FILES) != 0:
+            if len(update_cat.category_image) > 0:
+                os.remove(update_cat.category_image.path)
+            update_cat.category_image = request.FILES['category_image']
+        update_cat.resource_category = request.POST['category_name']
+        update_cat.description = request.POST['category_description']
+        update_cat.save()
+        message_alert.success(request, update_cat.resource_category + ' category was updated successfully!')
+    return redirect(view_resource_categories)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def delete_category_warning(request, delcatid):
     get_cat = Category.objects.get(id=delcatid) 
     # resources_count = Resource.objects.filter(is_active=True, resource_category=get_cat.resource_category).count()

@@ -184,9 +184,19 @@ def approve_processing_request(request, reqid, userid):
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def view_selected_processing_request(request, reqid):
+    global assign_resource
     get_request_id = Requests.objects.get(id=reqid)
     get_member_info = Members.objects.get(peoplesoft_id=get_request_id.created_for)
-    context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, }
+    resource_count = Resource.objects.filter(resource_category=Category.objects.get(resource_category=get_request_id.request_resource), resource_availability='Available', is_active=True)
+    if resource_count.count() > 0:
+        get_all_resources = list(Resource.objects.filter(resource_category=Category.objects.get(resource_category=get_request_id.request_resource), resource_availability='Available', is_active=True))
+        assign_resource = random.sample(get_all_resources, 1)[0]
+        message_alert.success(request, 'For this request, there is a resource available for this request!')
+    else:
+        assign_resource = 0
+        message_alert.error(request, 'For this request, there is no resource available for this requested resource!')
+
+    context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, 'assign_resource': assign_resource, }
     return render(request, 'it_admin/open_processing_request.html', context)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

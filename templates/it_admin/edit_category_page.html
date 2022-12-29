@@ -12,7 +12,7 @@
         {% if get_cat %}
         <div class="add-new-department-form">
             <h1><img style="margin-bottom: -9px;" src="{{ get_cat.category_image.url }}"/> Edit {{ get_cat.resource_category }} Category Details:</h1>
-            <form action="{% url 'add_resource_page' %}" method="POST" enctype="multipart/form-data">
+            <form action="{% url 'update_category' get_cat.id %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="and-input-box">
                     <span class="details_anu">Category Name: </span>
@@ -23,7 +23,7 @@
                     <textarea id="and-textarea" name="category_description" rows="4" cols="50" placeholder="Enter category description here.." required>{{get_cat.description}}</textarea>
                 </div>
                 <span class="details_anu">Choose category Image: </span>
-                <input type="file" name="category_image" accept="image/*" required>
+                <input type="file" name="category_image" accept="image/*">
                 <input type="hidden" class="r-p-textbox" name="updated_by" value="{{ user.first_name }} {{ user.last_name }}">
                 <div class="and-input-box">
                     <input class="and-submit-btn" type="submit" value="Update Category">
