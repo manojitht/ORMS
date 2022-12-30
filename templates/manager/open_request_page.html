@@ -9,12 +9,8 @@
             <h1><img style="margin-bottom: -8px;" src="https://img.icons8.com/color/35/000000/writing-down.png"/> View Requests</h1>
         </div>
         {% if get_request_id %}
-        <div class="search-bar-container" style="width: 100%; text-align: center; background-color: #964a03; padding: 10px; border-radius: 15px;">
-            <form>
-                <h1 style="text-align: center; color: rgb(255, 255, 255); font-weight: 400; font-size: 17px; margin-left: 1%;"><img style="margin-bottom: -3px;" src="https://img.icons8.com/color/20/000000/view-file.png"/> You are currently viewing the request of <span style="font-style: italic;">{{ get_request_id.request_id }}</span>.</h1>
-            </form>
-        </div>
         <div style="margin-top: auto; margin-bottom: auto;" class="department-card-container">
+            <h3 style="color: black; font-weight: 400; background-color: #ffffff; padding: 5px; padding-left: 1%; border-radius: 5px; margin-top: 1%; width: 90%;">You are currently viewing the request of <span style="color: #695CFE;">{{ get_request_id.request_id }}</span>.</h3>
             <div class="team-member-info">
                 <h1><i class="fa fa-envelope-open" aria-hidden="true"></i> {{ get_request_id.request_id }}</h1>
                 <form>

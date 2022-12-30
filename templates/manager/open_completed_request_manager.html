@@ -7,11 +7,11 @@
     <div class="full-myteam-container">
 
         <div class="head-container">
-            <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/48/000000/writing-down.png"/> View Requests</h1>
+            <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/35/000000/writing-down.png"/> View Completed Request</h1>
         </div>
         <div style="margin-top: auto; margin-bottom: auto;" class="department-card-container">
             {% if get_request_id %}
-            <h4 style="color: black; font-weight: 400;">Showing request reference of <span style="color: #695CFE;">{{get_request_id.request_id}}</span>, which has been completed.</h4>
+            <h3 style="color: black; font-weight: 400; background-color: #ffffff; padding: 5px; padding-left: 1%; border-radius: 5px; margin-top: 1%; width: 90%;">Showing request reference of <span style="color: #695CFE;">{{ get_request_id.request_id }}</span>, which has been completed.</h3>
             <div class="team-member-info">
                 <h1><i class="fa fa-envelope-open" aria-hidden="true"></i> {{ get_request_id.request_id }}</h1>
                 <form>
@@ -48,13 +48,10 @@
                             <td colspan="2"><span><i class='bx bxs-edit-alt'></i> Request Description:</span> <textarea style="height: 80px; padding-top: 5px;" class="view-edit-team-member-input" rows="4" cols="50" readonly>{{ get_request_id.request_decription }}</textarea></td>
                         </tr>
                         <tr>
-                            {% if get_request_id.request_resource == 'Monitor' %}
-                            <td><span><i class="fa fa-television" aria-hidden="true"></i> Monitor Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" value="{{ get_request_id.asset_id }}" readonly></td>
-                            {% elif get_request_id.request_resource == 'Desktop' and not get_request_id.request_category == 'Bitlocker' %}
-                            <td><span><i class="fa fa-desktop" aria-hidden="true"></i> Desktop Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" value="{{ get_request_id.asset_id }}" readonly></td>
-                            {% elif get_request_id.request_resource == 'Laptop' %}
-                                <td><span><i class="fa fa-laptop" aria-hidden="true"></i> Laptop Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" value="{{ get_request_id.asset_id }}" readonly></td>
+                            {% if get_request_id.request_category == 'Bitlocker' %}
+                                <td><span><i class="fa fa-desktop" aria-hidden="true"></i> Bitlocker Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" value="{{ get_request_id.asset_id }}" readonly></td>
                             {% else %}
+                                <td><span><i class="fa fa-desktop" aria-hidden="true"></i> {{ get_request_id.request_resource }} Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" value="{{ get_request_id.asset_id }}" readonly></td>
                             {% endif %}
                             <td><span><i class="fa fa-calendar" aria-hidden="true"></i> Completed On: </span>  {{ get_request_id.completed_on }}</td>
                         </tr>

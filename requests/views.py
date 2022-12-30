@@ -148,6 +148,15 @@ def list_pending_requests_it_admin(request, userid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+def cancel_request_it_admin(request, reqid, userid):
+    get_request = Requests.objects.get(id=reqid)
+    get_request.request_status = 'Cancelled'
+    get_request.save()
+    message_alert.success(request, get_request.request_id +  ', was cancelled successfully!')
+    return redirect(list_pending_requests_it_admin, userid)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 def list_processing_requests_it_admin(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
@@ -191,7 +200,6 @@ def view_selected_processing_request(request, reqid):
     if resource_count.count() > 0:
         get_all_resources = list(Resource.objects.filter(resource_category=Category.objects.get(resource_category=get_request_id.request_resource), resource_availability='Available', is_active=True))
         assign_resource = random.sample(get_all_resources, 1)[0]
-        message_alert.success(request, 'For this request, there is a resource available for this request!')
     else:
         assign_resource = 0
         message_alert.error(request, 'For this request, there is no resource available for this requested resource!')
@@ -211,6 +219,8 @@ def view_selected_completed_request(request, reqid):
 
 def complete_processing_request(request, reqid, userid):
     update_req = Requests.objects.get(id=reqid)
+    get_user  = Account.objects.get(id=userid)
+    get_user_fullname = get_user.first_name + ' ' + get_user.last_name
     
     if request.method == 'POST':
         update_req.asset_id = request.POST['asset_id']
@@ -223,16 +233,38 @@ def complete_processing_request(request, reqid, userid):
             message_alert.success(request, update_req.request_id + ', was completed successfully!')
         else:
             get_resource = Resource.objects.get(asset_id=update_req.asset_id)
+            allocate_resource = ResourceTaken(asset_id=Resource.objects.get(asset_id= update_req.asset_id), peoplesoft_id=Members.objects.get(peoplesoft_id= update_req.created_for), resource_category=update_req.request_resource, department=Department.objects.get(department_name=update_req.department),
+            team=Team.objects.get(team_name=update_req.team), added_by=update_req.created_by, assigned_by=get_user_fullname,  resource_status='Taken')
             # Resource.objects.get(resource_category=get_resource.resource_category)
 
             if update_req.request_resource == get_resource.resource_category.resource_category and get_resource.resource_availability == 'Available':
-                get_resource.resource_availability = 'Reserved'
+                get_resource.resource_availability = 'Taken'
                 get_resource.save()
                 update_req.save()
+                allocate_resource.save()
                 message_alert.success(request, update_req.request_id + ', was completed successfully!')
             else:
                 message_alert.info(request,'OOPS!, ' + get_resource.resource_category.resource_category + ' (' + update_req.asset_id + '), was under '+ get_resource.resource_availability + ' status (or) please check resource correctly!')
                 redirect(view_selected_processing_request, reqid)
+
+    return redirect(list_processing_requests_it_admin, userid)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def complete_processing_request_bitlocker(request, reqid, userid):
+    update_req = Requests.objects.get(id=reqid)  
+    
+    if request.method == 'POST':
+        update_req.asset_id = request.POST['asset_id']
+        update_req.request_response = request.POST['request_response']
+        update_req.request_status = 'Completed'
+        update_req.completed_on = date.today()
+
+        if update_req.request_category == 'Bitlocker':
+            update_req.save()
+            message_alert.success(request, update_req.request_id + ', was completed successfully!')
+        else:
+            message_alert.error(request, update_req.request_id + ', Something went wrong on this request!')
 
     return redirect(list_processing_requests_it_admin, userid)
 

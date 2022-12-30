@@ -45,6 +45,7 @@ class ResourceTaken(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     added_by = models.CharField(max_length=200)
+    assigned_by = models.CharField(null=True, blank=True, max_length=200)
     resource_status = models.CharField(max_length=200)
     taken_date = models.DateField(auto_now_add=True)
     returned_date = models.DateField(null=True, blank=True)

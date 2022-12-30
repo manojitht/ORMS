@@ -49,13 +49,10 @@
                             <td colspan="2"><span><i class='bx bxs-edit-alt'></i> Request Description:</span> <textarea style="height: 80px; padding-top: 5px;" class="view-edit-team-member-input" rows="4" cols="50" readonly>{{ get_request_id.request_decription }}</textarea></td>
                         </tr>
                         <tr>
-                            {% if get_request_id.request_resource == 'Monitor' %}
-                            <td><span><i class="fa fa-television" aria-hidden="true"></i> Monitor Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" value="{{ get_request_id.asset_id }}" readonly></td>
-                            {% elif get_request_id.request_resource == 'Desktop' and not get_request_id.request_category == 'Bitlocker' %}
-                            <td><span><i class="fa fa-desktop" aria-hidden="true"></i> Desktop Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" value="{{ get_request_id.asset_id }}" readonly></td>
-                            {% elif get_request_id.request_resource == 'Laptop' %}
-                                <td><span><i class="fa fa-laptop" aria-hidden="true"></i> Laptop Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" value="{{ get_request_id.asset_id }}" readonly></td>
+                            {% if get_request_id.request_category == 'Bitlocker' %}
+                                <td><span><i class="fa fa-desktop" aria-hidden="true"></i> Bitlocker Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" value="{{ get_request_id.asset_id }}" readonly></td>
                             {% else %}
+                                <td><span><i class="fa fa-desktop" aria-hidden="true"></i> {{ get_request_id.request_resource }} Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" value="{{ get_request_id.asset_id }}" readonly></td>
                             {% endif %}
                             <td><span><i class="fa fa-calendar" aria-hidden="true"></i> Completed On: </span>  {{ get_request_id.completed_on }}</td>
                         </tr>
