@@ -55,14 +55,10 @@ class ResourceTaken(models.Model):
     def __str__(self):
         return self.asset_id
 
-# class OtherAccessories(models.Model):
-#     peoplesoft_id = models.OneToOneField(Members, on_delete=models.CASCADE)
-#     keyboard = models.CharField(blank=True, max_length=100)
-#     mouse = models.CharField(blank=True, max_length=100)
-#     network_adapter = models.CharField(blank=True, max_length=100)
-#     headset = models.CharField(blank=True, max_length=100)
-#     other_notes = models.TextField(max_length=300, blank=True)
+class OtherAccessories(models.Model):
+    peoplesoft_id = models.OneToOneField(Members, on_delete=models.CASCADE)
+    other_notes = models.TextField(max_length=300, blank=True)
 
-#     def __str__(self):
-#         return self.peoplesoft_id
+    def __str__(self):
+        return self.peoplesoft_id
 
