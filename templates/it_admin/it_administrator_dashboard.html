@@ -52,7 +52,7 @@
                 </div>
                 <div class="analytics-card">
                     <div>
-                        <div class="numbers">6</div>
+                        <div class="numbers">{{ get_categories_count }}</div>
                         <div class="name">Count of Resource Categories:</div>
                     </div>
                     <div class="icon">
@@ -113,7 +113,7 @@
         var myChart = new Chart(myBarChart, {
             type: 'bar',
             data: {
-                labels: ['Available' ,'Taken', 'Reserved', 'Configuration'],
+                labels: ['On Available' ,'Taken', 'On Configuration'],
                 datasets: [{
                     label: 'Desktop',
                     data: [3, 2, 3, 1],

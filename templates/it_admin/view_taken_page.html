@@ -17,7 +17,7 @@
             </table>
         </div>
         <div class="search-bar-container">
-            <form action="{% url 'returned_resources_date_sort' %}" method="POST">
+            <form action="{% url 'taken_resources_date_sort' %}" method="POST">
                 {% csrf_token %}
                 From: <input type="date" style="width: 140px;" name="from_res" class="search-input-box-dt" required>
                 To: <input type="date" style="width: 140px;" name="to_res" class="search-input-box-dt" required>
@@ -31,7 +31,8 @@
                         <tr>
                             <th>Asset Id</th>
                             <th>Device Type</th>
-                            <th>Given To</th>
+                            <th>Issued To</th>
+                            <th>Manager Name</th>
                             <th>Taken Date</th>
                         </tr>
                     </thead>
@@ -43,6 +44,7 @@
                             <tr>
                                 <td>{{ device.asset_id }}</td>
                                 <td>{{ device.resource_category }}</td>
+                                <td>{{ device.peoplesoft_id.fullname }}</td>
                                 <td>{{ device.added_by }}</td>
                                 <td>{{ device.taken_date }}</td>
                             </tr>
@@ -54,6 +56,7 @@
                             <tr>
                                 <td>{{ device.asset_id }}</td>
                                 <td>{{ device.resource_category }}</td>
+                                <td>{{ device.peoplesoft_id.fullname }}</td>
                                 <td>{{ device.added_by }}</td>
                                 <td>{{ device.taken_date }}</td>
                             </tr>

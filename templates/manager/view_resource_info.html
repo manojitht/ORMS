@@ -6,7 +6,7 @@
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
         <div class="head-container">
-            <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/35/000000/time-machine--v1.png"/> View Resource Information</h1>
+            <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/35/null/device-manager.png"/> View Resource Information</h1>
         </div>
         {% if get_devices_id %}
         <div class="department-card-container">
@@ -36,16 +36,33 @@
                         </tr>
                         <tr>
                             <td><a href="{% url 'view_team_members_details' get_member_id.id %}" class="view-res-inf-btn" style="float: left;"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back to member profile</a></td>
-                            <td><a href="#" class="view-res-inf-btn"><i class="fa fa-check" aria-hidden="true"></i> Mark returned</a></td>
+                            <td><a href="#" onclick="toggle_blur()" class="view-res-inf-btn"><i class="fa fa-check" aria-hidden="true"></i> Mark returned</a></td>
                         </tr>
                     </table>
                 </div>
+        </div>
+        </div>
+        <div id="request_popup">
+            <form action="#" method="POST">
+                {% csrf_token %}
+                <h2>Specify Reason</h2>
+                <h5 style="margin-top: 0px; color: rgb(87, 86, 86); font-weight: 400;">*Select Return Reason:</h5>
+                <select name="return_reason">
+                    <option selected>-------------</option>
+                    <option>Leaving From Company</option>
+                    <option>Resource Damaged</option>
+                    <option>Facing Software Issue</option>
+                    <option>Swaping For Highend Resource</option>
+                </select>
+                <input style="margin-bottom: 5%;" name="peoplesoft_id" type="hidden" class="r-p-textbox" value="{{get_member_id.peoplesoft_id}}">
+                <input class="create-request-button" type="submit" value="Confirm">
+                <input class="close-request-button" type="button" onclick="toggle_blur()" value="Close">
+            </form>
+        </div>
             {% else %}
             {% endif %}
-        </div>
         {% else %}
         {% endif %}
-        </div>
         <div class="loader-wrapper">
             <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
         </div>

@@ -31,7 +31,8 @@
                         <tr>
                             <th>Asset Id</th>
                             <th>Device Type</th>
-                            <th>Returned From</th>
+                            <th>Returned By</th>
+                            <th>Manager Name</th>
                             <th>Returned Date</th>
                         </tr>
                     </thead>
@@ -43,6 +44,7 @@
                             <tr>
                                 <td>{{ device.asset_id }}</td>
                                 <td>{{ device.resource_category }}</td>
+                                <td>{{ device.peoplesoft_id.fullname }}</td>
                                 <td>{{ device.added_by }}</td>
                                 <td>{{ device.returned_date }}</td>
                             </tr>
@@ -54,6 +56,7 @@
                             <tr>
                                 <td>{{ device.asset_id }}</td>
                                 <td>{{ device.resource_category }}</td>
+                                <td>{{ device.peoplesoft_id.fullname }}</td>
                                 <td>{{ device.added_by }}</td>
                                 <td>{{ device.returned_date }}</td>
                             </tr>

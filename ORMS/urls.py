@@ -20,7 +20,12 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    
+    #fake admin site
+    path('admin/', include('admin_honeypot.urls')),
+    
+    #admin site
+    path('ormsadminsecurelogin/', admin.site.urls),
     path('', views.home, name='home'),
     path('', include('account.urls')),
     path('', include('department.urls')),

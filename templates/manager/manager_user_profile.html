@@ -11,7 +11,7 @@
         <div class="department-card-container">
             <div style="margin-top: 1%;" class="team-member-info">
                 {% if user %}
-                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> User Profile: </h1>
+                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> My Profile: </h1>
                     {% if user.accountprofile.home_address %}
                         <img src="{{user.accountprofile.profile_image.url }}" alt="user profile img"><br>
                     {% else %}
@@ -48,7 +48,7 @@
                     </tr>
                     <tr>
                         <td><a class="add-resources-btn" href="{% url 'manager_edit_user_profile' %}"><i class="fa fa-pencil" aria-hidden="true"></i>  Edit Profile </a></td>
-                        <td><a class="add-resources-btn" href="#"><i class="fa fa-key" aria-hidden="true"></i>  Change Password </a></td>
+                        <td><a class="add-resources-btn" onclick="toggle_blur()" href="#"><i class="fa fa-key" aria-hidden="true"></i>  Change Password </a></td>
                     </tr>
                 </table>
             </div>
@@ -57,6 +57,21 @@
             </div> 
         </div>
         </div> 
+        <div id="request_popup">
+            <form action="#" method="POST">
+                {% csrf_token %}
+                <h2>Change Password</h2>
+                <h5 style="margin-top: 0px; color: rgb(87, 86, 86); font-weight: 400;">*Current Password:</h5>
+                <input name="current_password" type="password" class="r-p-textbox" placeholder="current password" value="">
+                <h5 style="margin-top: 2%; color: rgb(87, 86, 86); font-weight: 400;">*New Password:</h5>
+                <input name="new_password" type="password" class="r-p-textbox" placeholder="new password" value="">
+                <h5 style="margin-top: 2%; color: rgb(87, 86, 86); font-weight: 400;">*Confirm Password:</h5>
+                <input name="confirm_password" type="password" class="r-p-textbox" placeholder="confirm password" value="">
+                <input style="margin-bottom: 5%;" name="peoplesoft_id" type="hidden" class="r-p-textbox" value="{{get_member_id.peoplesoft_id}}">
+                <input class="create-request-button" type="submit" value="Change Password">
+                <input class="close-request-button" type="button" onclick="toggle_blur()" value="Close">
+            </form>
+        </div>
         {% else %}
         {% endif %}     
 </section>

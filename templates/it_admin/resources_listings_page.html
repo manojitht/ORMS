@@ -10,18 +10,17 @@
             {% include 'message_alert.html' %}
         </div>
         <div class="search-bar-container" style="width: 100%; text-align: center; background-color: #4ec5f5; padding: 10px; border-radius: 15px;">
-            <form>
+            <form action="{% url 'search_resource' %}" method="GET">
                 <input style="margin-left: 1%; float: left; border-top-left-radius: 15px; border-bottom-left-radius: 15px; border: 1px solid #fff;" type="text" class="search-input-box-dt" name="keyword" placeholder="Search by asset id name.." required>
                 <input style="float: left; background-color: rgb(255, 217, 0); border-top-right-radius: 15px; border-bottom-right-radius: 15px; color: black;" type="submit" class="search-input-btn-dt" value="Search 🔎">
-                <!-- <input style="float: right;" type="button" class="add-team-btn" onclick="toggle_blur()" value="Add Device"> -->
                 <a href="{% url 'add_resource_page' %}" style="margin-right: 5px; background-color: rgb(4, 97, 24);" class="add-team-btn">Add <i class='bx bx-book-add'></i></a>
                 <a href="{% url 'resources_list_table' %}" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">View <i class='bx bx-table' ></i></a>
             </form>
         </div>
         <div style="justify-content: center;" class="devices-card-container">
-            {% if get_result %}
+            {% if search_resource %}
 
-                {% for device in get_result %}
+                {% for device in search_resource %}
                 <div class="device-card-tile">
                     <table style="width: 100%;">
                         <tr>
@@ -62,7 +61,7 @@
                 </div>
                 {% endfor %}
 
-            {% else %}
+            {% elif resources %}
 
                 {% for device in resources %}
 
@@ -104,10 +103,10 @@
                             </tr>
                         </table>                                      
                     </div>
-
-
                 {% endfor %}
 
+            {% else %}
+                <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_scgyykem.json"  background="#E4E9F7"  speed="1"  style="width: 35%; height: 60%; margin-left: auto; margin-right: auto;" loop   autoplay></lottie-player>
             {% endif %}
         </div>
 

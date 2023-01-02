@@ -59,9 +59,9 @@
                             <td colspan="2"><span><i class="fa fa-reply-all" aria-hidden="true"></i> Add Comments:</span> <textarea style="height: 80px; padding-top: 5px;" name="request_response" class="view-edit-team-member-input" rows="4" cols="50" placeholder="Write comments for this request.." required>{{ get_request_id.request_response }}</textarea></td>
                         </tr>
                         <tr>
-                            <td><a class="view-edit-team-member-back-btn" href="{% url 'list_completed_requests_manager' user.id %}">Back</a></td>
+                            <td></td>
                             <!-- <td><input class="view-edit-team-member-btn" type="submit" value="Print Request"></td> -->
-                            <td><a style="float: right;" class="view-edit-team-member-back-btn" href="#"><i class="fa fa-print" aria-hidden="true"></i> Print Request</a></td>
+                            <td><a class="view-edit-team-member-back-btn" style="float: right;" href="{% url 'list_completed_requests_manager' user.id %}">Back</a></td>
                         </tr>
                     </table>
                 </form>

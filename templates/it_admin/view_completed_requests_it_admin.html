@@ -24,7 +24,6 @@
                 From: <input type="date" style="width: 140px;" name="from_req" class="search-input-box-dt" required>
                 To: <input type="date" style="width: 140px;" name="to_req" class="search-input-box-dt" required>
                 <input type="submit" class="search-input-btn-dt" value="Sort">
-                <a href="#" style="margin-right: 15px; background-color: rgb(24, 24, 24);" class="add-team-btn">Print report <i class='bx bx-printer'></i></a>
             </form>
         </div>
         <div class="container">
@@ -32,7 +31,6 @@
             <table id="team_requests" class="display" style="width:100%">
                 <thead>
                     <tr>
-                        <th>Id</th>
                         <th>Request Id</th>
                         <th>Requested For</th>
                         <th>Category</th>
@@ -47,7 +45,6 @@
 
                     {% for requests in get_result %}
                     <tr>
-                        <td>{{ requests.id }}</td>
                         <td><a href="#">{{ requests.request_id }}</a></td>
                         <td>{{ requests.request_resource }}</td>
                         <td>{{ requests.request_category }}</td>
@@ -71,7 +68,6 @@
 
                         {% for requests in get_requests %}
                         <tr>
-                            <td>{{ requests.id }}</td>
                             <td><a href="#">{{ requests.request_id }}</a></td>
                             <td>{{ requests.request_resource }}</td>
                             <td>{{ requests.request_category }}</td>

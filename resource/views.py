@@ -7,6 +7,7 @@ import random
 from .models import Resource, Category, ResourceTaken
 from django.contrib import messages as message_alert
 from department.models import Department
+from django.db.models import Q
 # Create your views here.
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -245,4 +246,14 @@ def delete_resource(request, resid):
             deleting_res.delete()
             message_alert.success(request, deleting_res.asset_id + ' - Resource was deleted successfully!')
     return redirect(resources_listings_page)
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def search_resource(request):
+    if 'keyword' in request.GET:
+        keyword = request.GET['keyword']
+        if keyword:
+            search_resource = Resource.objects.filter(is_active=True).filter(Q(asset_id__icontains=keyword) | Q(model_name__icontains=keyword))
+    context = { 'search_resource': search_resource, }
+    return render(request, 'it_admin/resources_listings_page.html', context)
+
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

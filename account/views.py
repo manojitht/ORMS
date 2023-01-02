@@ -14,7 +14,7 @@ from department.models import Department
 from team.models import Team
 from members.models import Members
 from requests.models import Requests
-from resource.models import ResourceTaken, Resource
+from resource.models import ResourceTaken, Resource, Category
 from datetime import datetime, timedelta, date
 
 #generating random password
@@ -64,7 +64,35 @@ def login(request):
 
 @login_required(login_url= 'login')
 def superadmin_portal(request):
-    return render(request, 'superadmin/superadmin_home.html')
+    
+    total_managers = Account.objects.filter(is_active=True, role='Manager')
+    get_total_managers_count = total_managers.count()
+    total_it_administrators = Account.objects.filter(is_active=True, role='IT Administrator')
+    get_total_administrators_count = total_it_administrators.count()
+    total_superadmins = Account.objects.filter(is_active=True, role='Superadmin')
+    get_total_superadmins_count = total_superadmins.count()
+    total_users_month = Account.objects.filter(is_active=True, date_joined__gte=datetime.now()-timedelta(days=30))
+    get_total_users_month_count = total_users_month.count()
+
+    total_departments = Department.objects.filter(is_active=True)
+    get_total_departments = total_departments.count()
+    total_departments_month = Department.objects.filter(is_active=True, created_on__gte=datetime.now()-timedelta(days=30))
+    get_total_department_month_count = total_departments_month.count()
+    total_teams = Team.objects.filter(is_active=True)
+    get_total_teams = total_teams.count()
+    total_teams_month = Team.objects.filter(is_active=True, created_date__gte=datetime.now()-timedelta(days=30))
+    get_total_teams_month_count = total_teams_month.count()
+
+    context = {'get_total_managers_count': get_total_managers_count, 
+    'get_total_administrators_count': get_total_administrators_count, 
+    'get_total_superadmins_count': get_total_superadmins_count, 
+    'get_total_users_month_count': get_total_users_month_count, 
+    'get_total_departments': get_total_departments, 
+    'get_total_department_month_count': get_total_department_month_count,
+    'get_total_teams': get_total_teams, 
+    'get_total_teams_month_count': get_total_teams_month_count, }
+
+    return render(request, 'superadmin/superadmin_home.html', context)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -85,6 +113,10 @@ def it_admin_portal(request, userid):
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
     pending_requests = Requests.objects.all().filter(assigned_to=get_user_psid, request_status='Pending', is_active=True)
     pending_requests_count = pending_requests.count()
+
+    # count of resource categories
+    get_categories = Category.objects.filter(is_active=True)
+    get_categories_count = get_categories.count()
 
     # # count desktops currently in use by team members
     # get_desktop = ResourceTaken.objects.all().filter(device_type='Desktop', device_status='Taken', is_active=True)
@@ -137,25 +169,7 @@ def it_admin_portal(request, userid):
     context = { 'completed_requests_count': completed_requests_count,
      'processing_requests_count': processing_requests_count, 
      'pending_requests_count': pending_requests_count, 
-    #  'get_count_of_desktop': get_count_of_desktop, 
-    #  'get_count_of_monitor': get_count_of_monitor, 
-    #  'get_count_of_laptop': get_count_of_laptop,
-    #  'total_desktops_count': total_desktops_count, 
-    #  'total_laptops_count': total_laptops_count, 
-    #  'total_monitors_count': total_monitors_count, 
-    #  'available_desktops_count': available_desktops_count, 
-    #  'taken_desktops_count': taken_desktops_count, 
-    #  'reserved_desktops_count': reserved_desktops_count, 
-    #  'configuration_desktops_count': configuration_desktops_count, 
-    #  'available_laptops_count': available_laptops_count, 
-    #  'taken_laptops_count': taken_laptops_count, 
-    #  'reserved_laptops_count': reserved_laptops_count, 
-    #  'configuration_laptops_count': configuration_laptops_count, 
-    #  'available_monitors_count': available_monitors_count, 
-    #  'taken_monitors_count': taken_monitors_count, 
-    #  'reserved_monitors_count': reserved_monitors_count, 
-    #  'configuration_monitors_count': configuration_monitors_count,
-      }
+     'get_categories_count': get_categories_count, }
 
     return render(request, 'it_admin/it_administrator_dashboard.html', context)
 
@@ -170,22 +184,20 @@ def manager_portal(request, userid):
     team_members_count = team_members.count()
 
     # total no of requests created
-    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
     get_all_requests = Requests.objects.all().filter(created_ps_id=get_user_psid, is_active=True)
     get_all_requests_count = get_all_requests.count()
 
-    # # total no of monitors in team
-    # get_user_team_name = Account.objects.get(id=userid)
-    # get_monitor = ResourceTaken.objects.all().filter( team__team_name__contains=get_user_team_name.team, resource_category='Monitor', device_status='Taken', is_active=True )
-    # get_count_of_monitor = get_monitor.count()
+    # total no of requests on pending
+    get_all_pending_requests = Requests.objects.all().filter(created_ps_id=get_user_psid, request_status='Pending', is_active=True)
+    get_all_pending_requests_count = get_all_pending_requests.count()
 
-    # # total no of desktops in team
-    # get_desktop = ResourceTaken.objects.all().filter( team__team_name__contains=get_user_team_name.team, resource_category='Desktop', device_status='Taken', is_active=True )
-    # get_count_of_desktop = get_desktop.count()
+    # total resource taken by team
+    resources_taken = ResourceTaken.objects.filter(team=Team.objects.get(team_name=get_user_id.team), resource_status='Taken', is_active=True)
+    get_all_resources_taken_count = resources_taken.count()
 
-    # # total no of laptops in team
-    # get_laptop = ResourceTaken.objects.all().filter( team__team_name__contains=get_user_team_name.team, resource_category='Laptop', device_status='Taken', is_active=True )
-    # get_count_of_laptop = get_laptop.count()
+    # total resource taken by team
+    resources_returned = ResourceTaken.objects.filter(team=Team.objects.get(team_name=get_user_id.team), resource_status='Returned', is_active=True)
+    get_all_resources_returned_count = resources_returned.count()
 
     # total no of users added today
     members_today = Members.objects.filter(manager_peoplesoft_id=get_user_psid, date_joined__gte=date.today())
@@ -199,8 +211,14 @@ def manager_portal(request, userid):
     members_month = Members.objects.filter(manager_peoplesoft_id=get_user_psid, date_joined__gte=datetime.now()-timedelta(days=30))
     get_count_members_month = members_month.count()
 
-    context = { 'team_members_count': team_members_count, 'get_all_requests_count': get_all_requests_count, 'get_count_members_week': get_count_members_week,
-    'get_count_members_month': get_count_members_month, 'get_count_members_today': get_count_members_today, }
+    context = { 'team_members_count': team_members_count,
+     'get_all_requests_count': get_all_requests_count,
+     'get_count_members_week': get_count_members_week,
+    'get_count_members_month': get_count_members_month,
+     'get_count_members_today': get_count_members_today,
+      'get_all_pending_requests_count': get_all_pending_requests_count, 
+      'get_all_resources_taken_count': get_all_resources_taken_count, 
+      'get_all_resources_returned_count': get_all_resources_returned_count, }
     return render(request, 'manager/manager_dashboard.html', context)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -516,7 +534,7 @@ def reset_password(request, uidb64, token):
 
     if user is not None and default_token_generator.check_token(user, token):
         request.session['uid'] = uid
-        message_alert.success(request, 'Please reset your password!')
+        message_alert.info(request, 'Please reset your password!')
         return redirect(reset_password_activity)
     else:
         message_alert.error(request, 'Seems that the link is expired!')

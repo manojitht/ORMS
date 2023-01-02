@@ -25,4 +25,5 @@ urlpatterns = [
     path('update_category/<int:catid>/', views.update_category, name='update_category'),
     path('delete_category_warning/<int:delcatid>/', views.delete_category_warning, name='delete_category_warning'),
     path('delete_resource/<int:resid>/', views.delete_resource, name='delete_resource'),
+    path('search_resource/', views.search_resource, name='search_resource'),
 ]
