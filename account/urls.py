@@ -21,7 +21,10 @@ urlpatterns = [
     path('superadmin_users_date_sort/', views.superadmin_users_date_sort, name='superadmin_users_date_sort'),
     path('users_deletion_history/', views.users_deletion_history, name='users_deletion_history'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
+    path('reset_password/<uidb64>/<token>/', views.reset_password, name='reset_password'),
     path('manager_user_profile/', views.manager_user_profile, name='manager_user_profile'),
     path('manager_edit_user_profile/', views.manager_edit_user_profile, name='manager_edit_user_profile'),
     path('it_admin_user_profile/', views.it_admin_user_profile, name='it_admin_user_profile'),
+    path('forgot_password/', views.forgot_password, name='forgot_password'),
+    path('reset_password_activity/', views.reset_password_activity, name='reset_password_activity'),
 ]

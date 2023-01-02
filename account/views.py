@@ -481,3 +481,65 @@ def logout(request):
     return redirect('login')
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        if Account.objects.filter(email=email).exists():
+            user = Account.objects.get(email__exact=email)
+            current_site = get_current_site(request)
+            mail_head_subject = 'ORMS Reset Password Link'
+            message = render_to_string('account/reset_password_email.html', {
+                'user': user,
+                'domain': current_site,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user),
+            })
+            to_email = email
+            send_email = EmailMessage(mail_head_subject, message, to=[to_email])
+            send_email.send()
+            message_alert.success(request, 'Reset password link has been sent to your email successfully!')
+            return redirect(login)
+        else:
+            message_alert.error(request, 'Your email is not exists, please check!')
+            return redirect(forgot_password)
+    return render(request, 'account/forgot_password.html')
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def reset_password(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode() #decoding the URL token verification
+        user = Account._default_manager.get(pk=uid) #getting the user account by primary key
+    except(TypeError, ValueError, OverflowError, Account.DoesNotExist): #checking the user exists or not and raise an error if user ! in db.
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        request.session['uid'] = uid
+        message_alert.success(request, 'Please reset your password!')
+        return redirect(reset_password_activity)
+    else:
+        message_alert.error(request, 'Seems that the link is expired!')
+        return redirect(login)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def reset_password_activity(request):
+    if request.method == 'POST':
+        password = request.POST['password']
+        confirm_password = request.POST['confirm_password']
+
+        if password == confirm_password:
+            uid = request.session.get('uid')
+            user = Account.objects.get(pk=uid)
+            user.set_password(password)
+            user.save()
+            message_alert.success(request, 'Your password reset done sucsessfully!')
+            return redirect(login)
+        else:
+            message_alert.error(request, 'Passwords does not match, please check!')
+            return redirect(reset_password_activity)
+    else:
+        return render(request, 'account/reset_password_page.html')
+    
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

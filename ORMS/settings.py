@@ -168,8 +168,15 @@ MESSAGE_TAGS = {
 
 
 # #SMTP gmail email configuration
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'bigbangcoder8@gmail.com'
+# EMAIL_HOST_PASSWORD = 'omjxutqwgozjluun'
+# EMAIL_PORT = 587
+
+
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'bigbangcoder8@gmail.com'
-EMAIL_HOST_PASSWORD = 'omjxutqwgozjluun'
+EMAIL_HOST_USER = 'orms.services.info@gmail.com'
+EMAIL_HOST_PASSWORD = 'vwgobvuqcgdiijsz'
 EMAIL_PORT = 587
