@@ -34,8 +34,8 @@ def taken_resources_list_table(request):
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def add_resource_page(request):
-    # generated_asset_id = random.randrange(11111111111, 99999999999, 11)
-    # context = { 'generated_asset_id': generated_asset_id, }
+    generated_asset_id = random.randrange(11111111111, 99999999999, 11)
+    context = { 'generated_asset_id': generated_asset_id, }
 
     resource_categories = Category.objects.all()
     context = { 'resource_categories': resource_categories, }
@@ -58,11 +58,13 @@ def add_resource_page(request):
         elif resource_availability == '--Choose device availability--':
             message_alert.info(request, 'Please choose a device availability to add a device!')
         else:
-            resource = Resource(asset_id=asset_id, model_name=model_name, resource_category=Category.objects.get(resource_category=resource_category), bitlocker_key=bitlocker_key, resource_availability=resource_availability, resource_description=resource_description, added_by=added_by, resource_image=resource_image)
+            resource = Resource(asset_id=asset_id, model_name=model_name, 
+            resource_category=Category.objects.get(resource_category=resource_category), 
+            bitlocker_key=bitlocker_key, resource_availability=resource_availability, 
+            resource_description=resource_description, added_by=added_by, resource_image=resource_image)
             resource.save()
             message_alert.success(request, asset_id + ' is added successfully!')
             return redirect(resources_listings_page)
-            # return redirect(resources_list_table)
 
     return render(request, 'it_admin/add_resource_form.html', context)
     # return render(request, 'it_admin/resource_form.html', context)

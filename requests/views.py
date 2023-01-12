@@ -61,8 +61,11 @@ def create_request(request):
             message_alert.info(request, 'Please choose the request category!')
         else:
             if Members.objects.filter(peoplesoft_id=created_for, manager_peoplesoft_id=created_ps_id, is_active=True).exists():
-                requests = Requests(request_id=request_id, created_for=Members.objects.get(peoplesoft_id=created_for), created_by=created_by, created_ps_id=created_ps_id, department=Department.objects.get(department_name=department)
-                , team=Team.objects.get(team_name=team), request_resource=request_resource, asset_id=asset_id, request_category=request_category, request_status=request_status, request_decription=request_decription,
+                requests = Requests(request_id=request_id, created_for=Members.objects.get(peoplesoft_id=created_for), 
+                created_by=created_by, created_ps_id=created_ps_id, department=Department.objects.get(department_name=department)
+                , team=Team.objects.get(team_name=team), request_resource=request_resource, 
+                asset_id=asset_id, request_category=request_category, request_status=request_status, 
+                request_decription=request_decription,
                 request_response=request_response, assigned_to=assigned_to)
                 requests.save()
                 message_alert.success(request, request_id + ' request is created successfully!')
@@ -112,7 +115,8 @@ def manager_requests_date_sort(request, userid):
         from_date = request.POST['from_req']
         to_date = request.POST['to_req']
         if from_date != '' and to_date != '':
-            get_result =  Requests.objects.filter(created_ps_id=get_user_psid, request_status='Completed', is_active=True).filter(created_on__gte=from_date, created_on__lte=to_date)
+            get_result =  Requests.objects.filter(created_ps_id=get_user_psid, request_status='Completed', 
+            is_active=True).filter(created_on__gte=from_date, created_on__lte=to_date)
         else:
             message_alert.info(request, 'Please select the date fields properly!')
 

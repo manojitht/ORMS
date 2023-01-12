@@ -27,13 +27,15 @@ def add_new_department(request):
         if Department.objects.filter(department_name=department_name).exists():
             message_alert.info(request, 'Department is already exists!')
         else:
-            department = Department(department_name=department_name, department_head=department_head, department_description=department_description, created_by=created_by)
+            department = Department(department_name=department_name, department_head=department_head, 
+            department_description=department_description, created_by=created_by)
             department.save()
             message_alert.success(request, department_name + ' is created successfully!')
             return redirect(superadmin_department_table)
     else:
         pass
     return render(request, 'superadmin/add_department_form.html')
+    
     # naming convention finished.
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -54,6 +56,7 @@ def edit_department(request, depid):
     dep_list = Department.objects.all()
     context = { 'selected_dep': selected_dep, 'dep_list': dep_list, }
     return render(request, 'superadmin/add_department_form.html', context)
+    
     # naming convention finished.
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -67,6 +70,7 @@ def update_department(request, depid):
     update_dep.save()
     message_alert.success(request, 'Department is updated successfully!')
     return redirect(display_departments, depid)
+    
     # naming convention finished.
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -27,7 +27,9 @@ def superadmin_add_team(request):
         elif department == '--Choose department oriented with--':
             message_alert.info(request, 'Please choose a department to create a team!')
         else:
-            team = Team(team_name=team_name, team_head=team_head, department=Department.objects.get(department_name=department), team_description=team_description, created_by=created_by)
+            team = Team(team_name=team_name, team_head=team_head, 
+            department=Department.objects.get(department_name=department), 
+            team_description=team_description, created_by=created_by)
             team.save()
             message_alert.success(request, team_name + ' is created successfully!')
             return redirect(superadmin_team_table)

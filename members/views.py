@@ -31,13 +31,13 @@ def add_member(request):
 
         if Members.objects.filter(peoplesoft_id=peoplesoft_id).exists():
             message_alert.info(request, peoplesoft_id + ', is already exists as team member profile!')
-            # return redirect('add_member')
         elif Members.objects.filter(email=email).exists():
             message_alert.info(request, email + ', is already exists in team member profile!')
-            # return redirect('add_member')
         else:
-            new_member = Members(peoplesoft_id=peoplesoft_id, fullname=fullname, position=position, email=email, contact=contact, department=Department.objects.get(department_name=department),
-            team=Team.objects.get(team_name=team), home_address=home_address, member_image=member_image, manager_name=manager_name, manager_peoplesoft_id=manager_peoplesoft_id)
+            new_member = Members(peoplesoft_id=peoplesoft_id, fullname=fullname, position=position, 
+            email=email, contact=contact, department=Department.objects.get(department_name=department),
+            team=Team.objects.get(team_name=team), home_address=home_address, 
+            member_image=member_image, manager_name=manager_name, manager_peoplesoft_id=manager_peoplesoft_id)
             new_member.save()
             message_alert.success(request, peoplesoft_id + ' team member profile created successfully!')
             return redirect('add_member')
@@ -63,11 +63,6 @@ def view_team_members_details(request, memid):
         get_oa = OtherAccessories.objects.get(peoplesoft_id=get_ps_id)
     except:
         get_oa = OtherAccessories.objects.filter(peoplesoft_id=get_ps_id)
-
-    # for get_devices in get_devices_id:
-    #     description = get_devices.asset_id.device_description
-    #     image = get_devices.asset_id.device_image
-    #     bitlocker = get_devices.asset_id.bitlocker_key
     
     context = { 'get_member_id': get_member_id, 'get_devices_id': get_devices_id, 'get_oa': get_oa, }
     return render(request, 'manager/view_team_member_details.html', context)
@@ -80,7 +75,8 @@ def search_team_member(request, userid):
     if 'keyword' in request.GET:
         keyword = request.GET['keyword']
         if keyword:
-            search_team_member = Members.objects.filter(manager_peoplesoft_id=get_user_psid, is_active=True).filter(Q(peoplesoft_id__icontains=keyword) | Q(fullname__icontains=keyword))
+            search_team_member = Members.objects.filter(manager_peoplesoft_id=get_user_psid, 
+            is_active=True).filter(Q(peoplesoft_id__icontains=keyword) | Q(fullname__icontains=keyword))
     context = { 'search_team_member': search_team_member, }
     return render(request, 'manager/view_team_member.html', context)
 
@@ -193,11 +189,6 @@ def mark_returned(request, resid, memid):
     get_asset.returned_date = date.today()
     get_asset.save()
 
-    # for asset in get_asset_id:
-    #     asset.device_status = 'Returned'
-    #     asset.returned_date = datetime.date.today()
-    #     asset.save()
-    
     for update in update_resource:
         update.resource_availability = 'Available'
         update.save()

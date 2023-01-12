@@ -180,35 +180,43 @@ def manager_portal(request, userid):
     # total no of team members
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
-    team_members = Members.objects.all().filter(manager_peoplesoft_id=get_user_psid, is_active=True).order_by('peoplesoft_id')
+    team_members = Members.objects.all().filter(manager_peoplesoft_id=get_user_psid, 
+    is_active=True).order_by('peoplesoft_id')
     team_members_count = team_members.count()
 
     # total no of requests created
-    get_all_requests = Requests.objects.all().filter(created_ps_id=get_user_psid, is_active=True)
+    get_all_requests = Requests.objects.all().filter(created_ps_id=get_user_psid, 
+    is_active=True)
     get_all_requests_count = get_all_requests.count()
 
     # total no of requests on pending
-    get_all_pending_requests = Requests.objects.all().filter(created_ps_id=get_user_psid, request_status='Pending', is_active=True)
+    get_all_pending_requests = Requests.objects.all().filter(created_ps_id=get_user_psid, 
+    request_status='Pending', is_active=True)
     get_all_pending_requests_count = get_all_pending_requests.count()
 
     # total resource taken by team
-    resources_taken = ResourceTaken.objects.filter(team=Team.objects.get(team_name=get_user_id.team), resource_status='Taken', is_active=True)
+    resources_taken = ResourceTaken.objects.filter(team=Team.objects.get(team_name=get_user_id.team), 
+    resource_status='Taken', is_active=True)
     get_all_resources_taken_count = resources_taken.count()
 
     # total resource taken by team
-    resources_returned = ResourceTaken.objects.filter(team=Team.objects.get(team_name=get_user_id.team), resource_status='Returned', is_active=True)
+    resources_returned = ResourceTaken.objects.filter(team=Team.objects.get(team_name=get_user_id.team), 
+    resource_status='Returned', is_active=True)
     get_all_resources_returned_count = resources_returned.count()
 
     # total no of users added today
-    members_today = Members.objects.filter(manager_peoplesoft_id=get_user_psid, date_joined__gte=date.today())
+    members_today = Members.objects.filter(manager_peoplesoft_id=get_user_psid, 
+    date_joined__gte=date.today())
     get_count_members_today = members_today.count()
 
     # total no of users added this week
-    members_week = Members.objects.filter(manager_peoplesoft_id=get_user_psid, date_joined__gte=datetime.now()-timedelta(days=7))
+    members_week = Members.objects.filter(manager_peoplesoft_id=get_user_psid, 
+    date_joined__gte=datetime.now()-timedelta(days=7))
     get_count_members_week = members_week.count()
 
     # total no of users added this month
-    members_month = Members.objects.filter(manager_peoplesoft_id=get_user_psid, date_joined__gte=datetime.now()-timedelta(days=30))
+    members_month = Members.objects.filter(manager_peoplesoft_id=get_user_psid, 
+    date_joined__gte=datetime.now()-timedelta(days=30))
     get_count_members_month = members_month.count()
 
     context = { 'team_members_count': team_members_count,
