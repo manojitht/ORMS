@@ -14,8 +14,11 @@ urlpatterns = [
     # path('allocate_device/<int:memid>/', views.allocate_device, name='allocate_device'),
     path('add_other_notes/<int:memid>/', views.add_other_notes, name='add_other_notes'),
     path('edit_other_notes/<int:memid>/', views.edit_other_notes, name='edit_other_notes'),
-    path('update_other_notes/<int:memid>/', views.update_other_notes, name='update_other_notes'),
+    path('update_other_notes/<int:memid>/<int:psid>/', views.update_other_notes, name='update_other_notes'),
     path('view_member_resource_info/<int:memid>/<int:resid>/', views.view_member_resource_info, name='view_member_resource_info'),
     path('mark_returned/<int:resid>/<int:memid>/', views.mark_returned, name='mark_returned'),
     path('view_history_resources/<int:memid>/', views.view_history_resources, name='view_history_resources'),
+
+
+    path('delete_team_member/<int:memid>/<int:userid>/', views.delete_team_member, name='delete_team_member'),
 ]

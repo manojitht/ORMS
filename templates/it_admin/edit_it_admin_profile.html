@@ -1,4 +1,4 @@
-{% extends 'base_user.html' %}
+{% extends 'base_it_admin.html' %}
 {% load static %}
 
 {% block content %}
@@ -13,10 +13,10 @@
             <div class="team-member-info">
                 {% if user %}
                 <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> Edit User Profile: </h1>
-                <form action="{% url 'manager_update_user_profile' user.id %}" method="POST" enctype="multipart/form-data">
+                <form action="{% url 'it_admin_update_user_profile' user.id %}" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% if user.accountprofile.profile_image %}
-                        <img src="{{user.accountprofile.profile_image.url }}" alt="user profile img"><br>
+                        <img src="{{ user.accountprofile.profile_image.url }}" alt="user profile img"><br>
                     {% else %}
                         <img src="{% static 'images/image_placeholder.jpg' %}" alt="user profile img"><br>
                         <!-- <h4 style="font-weight: 400; margin-left: 4%;">No User Profile Image</h4> -->
@@ -48,7 +48,7 @@
                             <td><span><i class="fa fa-picture-o" aria-hidden="true"></i> Profile Image: </span> <input name="profile_image" style="background-color: #ffffff; border: 1px solid #ffffff;" type="file" accept="images" required></td>
                             {% endif %} 
                             
-                            <td><a class="view-edit-team-member-back-btn" href="{% url 'manager_user_profile' user.id %}">Back</a><input class="view-edit-team-member-btn" type="submit" value="Update Profile"></td>
+                            <td><a class="view-edit-team-member-back-btn" href="{% url 'it_admin_user_profile' user.id %}">Back</a><input class="view-edit-team-member-btn" type="submit" value="Update Profile"></td>
                         </tr>
                     </table>
                 </form>

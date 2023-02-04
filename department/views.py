@@ -89,9 +89,10 @@ def superadmin_department_date_sort(request):
         to_date = request.POST['to_dep']
         if from_date != '' and to_date != '':
             get_result =  Department.objects.filter(created_on__gte=from_date, created_on__lte=to_date)
+            result_count = get_result.count()
         else:
             message_alert.info(request, 'Please select the date fields properly!')
-    context = { 'get_result': get_result, }
+    context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, }
     return render(request, 'superadmin/department_table_view.html', context)
     # naming convention finished.
 

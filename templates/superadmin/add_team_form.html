@@ -29,7 +29,7 @@
                     <span class="details_anu">Department Oriented: </span>
                     <select name="department">
                         <option selected>{{selected_tem.department}}</option>
-                        {% for department in department_names %}
+                        {% for department in dep_list %}
                         <option>{{ department.department_name }}</option>
                         {% endfor %}
                       </select>

@@ -3,11 +3,11 @@ from base64 import urlsafe_b64decode
 from email.message import EmailMessage
 from genericpath import exists
 from importlib.resources import Resource
-from django.http import HttpResponse
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from .forms import LoginUsers
 from django.contrib.auth import authenticate, login as permit_user
-from .models import Account
+from .models import Account, AccountProfile
 from django.contrib import messages as message_alert, auth
 from django.contrib.auth.decorators import login_required
 from department.models import Department
@@ -16,6 +16,9 @@ from members.models import Members
 from requests.models import Requests
 from resource.models import ResourceTaken, Resource, Category
 from datetime import datetime, timedelta, date
+from django.core import serializers
+import json
+import os
 
 #generating random password
 import string
@@ -118,58 +121,42 @@ def it_admin_portal(request, userid):
     get_categories = Category.objects.filter(is_active=True)
     get_categories_count = get_categories.count()
 
-    # # count desktops currently in use by team members
-    # get_desktop = ResourceTaken.objects.all().filter(device_type='Desktop', device_status='Taken', is_active=True)
-    # get_count_of_desktop = get_desktop.count()
+    # resource categories dashboard info
+    category_list = []
+    category_count_list = []
+    for category in get_categories:
+        category_list.append(category.resource_category)
+        get_resources = Resource.objects.filter(resource_category=category.id, is_active=True)
+        count_resources = get_resources.count()
+        category_count_list.append(count_resources)
 
-    # # count laptops currently in use by team members
-    # get_laptop = ResourceTaken.objects.all().filter(device_type='Laptop', device_status='Taken', is_active=True)
-    # get_count_of_laptop = get_laptop.count()
+    # resources dashboard info
+    available_resource_list = []
+    taken_resource_list = []
+    configuration_resource_list = []
+    for resource_cat in get_categories:
+        get_available_resources = Resource.objects.filter(resource_category=resource_cat.id, resource_availability='Available', is_active=True)
+        count_available_resources = get_available_resources.count()
+        available_resource_list.append(count_available_resources)
 
-    # # count monitor currently in use by team members
-    # get_monitor = ResourceTaken.objects.all().filter(device_type='Monitor', device_status='Taken', is_active=True)
-    # get_count_of_monitor = get_monitor.count()
+        get_taken_resources = Resource.objects.filter(resource_category=resource_cat.id, resource_availability='Taken', is_active=True)
+        count_taken_resources = get_taken_resources.count()
+        taken_resource_list.append(count_taken_resources)
 
-    # # piechart analytics data
-    # total_all_desktops = Resource.objects.all().filter(device_type='Desktop', is_active=True)
-    # total_desktops_count = total_all_desktops.count()
-    # total_all_laptops = Resource.objects.all().filter(device_type='Laptop', is_active=True)
-    # total_laptops_count = total_all_laptops.count()
-    # total_all_monitors = Resource.objects.all().filter(device_type='Monitor', is_active=True)
-    # total_monitors_count = total_all_monitors.count()
-
-    # # barchart stacked analytics data
-    # available_all_desktops = Resource.objects.all().filter(device_type='Desktop', device_availability='Available', is_active=True)
-    # available_desktops_count = available_all_desktops.count()
-    # taken_all_desktops = Resource.objects.all().filter(device_type='Desktop', device_availability='Taken', is_active=True)
-    # taken_desktops_count = taken_all_desktops.count()
-    # reserved_all_desktops = Resource.objects.all().filter(device_type='Desktop', device_availability='Reserved', is_active=True)
-    # reserved_desktops_count = reserved_all_desktops.count()
-    # configuration_all_desktops = Resource.objects.all().filter(device_type='Desktop', device_availability='Configuration', is_active=True)
-    # configuration_desktops_count = configuration_all_desktops.count()
-
-    # available_all_laptops = Resource.objects.all().filter(device_type='Laptop', device_availability='Available', is_active=True)
-    # available_laptops_count = available_all_laptops.count()
-    # taken_all_laptops = Resource.objects.all().filter(device_type='Laptop', device_availability='Taken', is_active=True)
-    # taken_laptops_count = taken_all_laptops.count()
-    # reserved_all_laptops = Resource.objects.all().filter(device_type='Laptop', device_availability='Reserved', is_active=True)
-    # reserved_laptops_count = reserved_all_laptops.count()
-    # configuration_all_laptops = Resource.objects.all().filter(device_type='Laptop', device_availability='Configuration', is_active=True)
-    # configuration_laptops_count = configuration_all_laptops.count()
-
-    # available_all_monitors = Resource.objects.all().filter(device_type='Monitor', device_availability='Available', is_active=True)
-    # available_monitors_count = available_all_monitors.count()
-    # taken_all_monitors = Resource.objects.all().filter(device_type='Monitor', device_availability='Taken', is_active=True)
-    # taken_monitors_count = taken_all_monitors.count()
-    # reserved_all_monitors = Resource.objects.all().filter(device_type='Monitor', device_availability='Reserved', is_active=True)
-    # reserved_monitors_count = reserved_all_monitors.count()
-    # configuration_all_monitors = Resource.objects.all().filter(device_type='Monitor', device_availability='Configuration', is_active=True)
-    # configuration_monitors_count = configuration_all_monitors.count()
+        get_configuration_resources = Resource.objects.filter(resource_category=resource_cat.id, resource_availability='Configuration', is_active=True)
+        count_configuration_resources = get_configuration_resources.count()
+        configuration_resource_list.append(count_configuration_resources)
+    
 
     context = { 'completed_requests_count': completed_requests_count,
      'processing_requests_count': processing_requests_count, 
      'pending_requests_count': pending_requests_count, 
-     'get_categories_count': get_categories_count, }
+     'get_categories_count': get_categories_count,
+     'category_list': category_list,
+     'category_count_list': category_count_list,
+     'available_resource_list': available_resource_list,
+     'taken_resource_list': taken_resource_list,
+     'configuration_resource_list': configuration_resource_list, }
 
     return render(request, 'it_admin/it_administrator_dashboard.html', context)
 
@@ -253,7 +240,6 @@ def add_user_page(request):
         characters = string.ascii_letters + string.digits
         password_generated = ''.join(secrets.choice(characters) for i in range(10))
 
-        
         #password = request.POST['password']
         if Account.objects.filter(peoplesoft_id=peoplesoft_id).exists():
             message_alert.info(request, peoplesoft_id + ', is already exists as an user!')
@@ -268,7 +254,7 @@ def add_user_page(request):
                 return redirect('add_user_page')
             else:
                 if role == 'Superadmin':
-                    user  = Account.objects.create_superuser(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(department_name=department), team=Team.objects.get(team_name=team), role=role, ini_pas=password_generated, password=password_generated)
+                    user  = Account.objects.create_superuser(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(id=department), team=Team.objects.get(id=team), role=role, ini_pas=password_generated, password=password_generated)
                     #Send email to user
                     try: 
                         current_site = get_current_site(request)
@@ -291,7 +277,7 @@ def add_user_page(request):
                     return redirect('add_user_page')
                     #return render(request, 'superadmin/add_user_page.html')
                 elif role == 'Manager':
-                    user  = Account.objects.create_manager(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(department_name=department), team=Team.objects.get(team_name=team), role=role, ini_pas=password_generated, password=password_generated)
+                    user  = Account.objects.create_manager(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(id=department), team=Team.objects.get(id=team), role=role, ini_pas=password_generated, password=password_generated)
                     try: 
                         current_site = get_current_site(request)
                         mail_head_subject = 'ORMS account creation'
@@ -314,7 +300,7 @@ def add_user_page(request):
                     return redirect('add_user_page')
                     #return render(request, 'superadmin/add_user_page.html')
                 elif role == 'IT Administrator':
-                    user  = Account.objects.create_IT_admin(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(department_name=department), team=Team.objects.get(team_name=team), role=role, ini_pas=password_generated, password=password_generated)
+                    user  = Account.objects.create_IT_admin(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(id=department), team=Team.objects.get(id=team), role=role, ini_pas=password_generated, password=password_generated)
                     try: 
                         current_site = get_current_site(request)
                         mail_head_subject = 'ORMS account creation'
@@ -341,8 +327,19 @@ def add_user_page(request):
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url= 'login')
-def manager_user_profile(request):
-    return render(request, 'manager/manager_user_profile.html')
+def manager_user_profile(request, userid):
+    get_user_id = Account.objects.get(id=userid)
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    team_members = Members.objects.all().filter(manager_peoplesoft_id=get_user_psid, 
+    is_active=True).order_by('peoplesoft_id')
+    team_members_count = team_members.count()
+    get_all_requests = Requests.objects.all().filter(created_ps_id=get_user_psid, 
+    is_active=True)
+    get_all_requests_count = get_all_requests.count()
+
+    context = {'team_members_count': team_members_count, 'get_all_requests_count': get_all_requests_count, }
+
+    return render(request, 'manager/manager_user_profile.html', context)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -353,10 +350,181 @@ def manager_edit_user_profile(request):
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url= 'login')
-def it_admin_user_profile(request):
-    return render(request, 'it_admin/it_admin_user_profile.html')
+def manager_update_user_profile(request, userid):
+    update_manager = Account.objects.get(id=userid)
+    get_account = AccountProfile.objects.filter(user=userid).count()
+
+    if get_account == 0:    
+        if request.method == 'POST':
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            email = request.POST['email']
+            contact_number = request.POST['contact_number']
+            home_address = request.POST['home_address']
+            profile_image = request.FILES['profile_image']
+            update_manager.first_name = first_name
+            update_manager.last_name = last_name
+            update_manager.email = email
+            new_account_profile = AccountProfile(user=Account.objects.get(id=userid), home_address=home_address, contact_number=contact_number, profile_image=profile_image)
+            update_manager.save()
+            new_account_profile.save()
+            message_alert.success(request, 'Your account details was updated successfully!')
+    elif get_account == 1:
+        update_account = AccountProfile.objects.get(user=userid)
+        if request.method == 'POST':
+            if len(request.FILES) != 0:
+                if len(update_account.profile_image) > 0:
+                    os.remove(update_account.profile_image.path)
+                update_account.profile_image = request.FILES['profile_image']
+            update_manager.first_name = request.POST['first_name']
+            update_manager.last_name = request.POST['last_name']
+            update_manager.email = request.POST['email']
+            update_account.contact_number = request.POST['contact_number']
+            update_account.home_address = request.POST['home_address']
+            update_account.save()
+            update_manager.save()
+            message_alert.success(request, 'Your account details was updated successfully!')
+    
+    return redirect(manager_user_profile, userid)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url= 'login')
+def superadmin_user_profile(request):
+    return render(request, 'superadmin/superadmin_user_profile.html')
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url= 'login')
+def superadmin_edit_user_profile(request):
+    return render(request, 'superadmin/edit_superadmin_profile.html')
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url= 'login')
+def superadmin_add_user_profile(request, userid):
+    update_superadmin = Account.objects.get(id=userid)
+    
+    if request.method == 'POST':
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        email = request.POST['email']
+        contact_number = request.POST['contact_number']
+        home_address = request.POST['home_address']
+        profile_image = request.FILES['profile_image']
+        update_superadmin.first_name = first_name
+        update_superadmin.last_name = last_name
+        update_superadmin.email = email
+        update_superadmin.save()
+        new_account_profile = AccountProfile(user=Account.objects.get(id=userid), home_address=home_address, contact_number=contact_number, profile_image=profile_image)
+        new_account_profile.save()
+        message_alert.success(request, 'Your account details was updated successfully!')
+        
+    return render(request, 'superadmin/edit_superadmin_profile.html')
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url= 'login')
+def superadmin_update_user_profile(request, userid):
+    update_superadmin = Account.objects.get(id=userid)
+    get_account = AccountProfile.objects.filter(user=userid).count()
+
+    if get_account == 0:    
+        if request.method == 'POST':
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            email = request.POST['email']
+            contact_number = request.POST['contact_number']
+            home_address = request.POST['home_address']
+            profile_image = request.FILES['profile_image']
+            update_superadmin.first_name = first_name
+            update_superadmin.last_name = last_name
+            update_superadmin.email = email
+            new_account_profile = AccountProfile(user=Account.objects.get(id=userid), home_address=home_address, contact_number=contact_number, profile_image=profile_image)
+            update_superadmin.save()
+            new_account_profile.save()
+            message_alert.success(request, 'Your account details was updated successfully!')
+    elif get_account == 1:
+        update_account = AccountProfile.objects.get(user=userid)
+        if request.method == 'POST':
+            if len(request.FILES) != 0:
+                if len(update_account.profile_image) > 0:
+                    os.remove(update_account.profile_image.path)
+                update_account.profile_image = request.FILES['profile_image']
+            update_superadmin.first_name = request.POST['first_name']
+            update_superadmin.last_name = request.POST['last_name']
+            update_superadmin.email = request.POST['email']
+            update_account.contact_number = request.POST['contact_number']
+            update_account.home_address = request.POST['home_address']
+            update_account.save()
+            update_superadmin.save()
+            message_alert.success(request, 'Your account details was updated successfully!')
+
+    return redirect(superadmin_user_profile)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url= 'login')
+def it_admin_user_profile(request, userid):
+    get_user_id = Account.objects.get(id=userid)
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    completed_requests = Requests.objects.all().filter(assigned_to=get_user_psid, request_status='Completed', is_active=True)
+    completed_requests_count = completed_requests.count()
+    get_resources = Resource.objects.filter(is_active=True)
+    count_resources = get_resources.count()
+
+    context = { 'completed_requests_count': completed_requests_count, 'count_resources': count_resources, }
+
+    return render(request, 'it_admin/it_admin_user_profile.html', context)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url= 'login')
+def it_admin_edit_user_profile(request):
+    return render(request, 'it_admin/edit_it_admin_profile.html')
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url= 'login')
+def it_admin_update_user_profile(request, userid):
+    update_it_admin = Account.objects.get(id=userid)
+    get_account = AccountProfile.objects.filter(user=userid).count()
+
+    if get_account == 0:    
+        if request.method == 'POST':
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            email = request.POST['email']
+            contact_number = request.POST['contact_number']
+            home_address = request.POST['home_address']
+            profile_image = request.FILES['profile_image']
+            update_it_admin.first_name = first_name
+            update_it_admin.last_name = last_name
+            update_it_admin.email = email
+            new_account_profile = AccountProfile(user=Account.objects.get(id=userid), home_address=home_address, contact_number=contact_number, profile_image=profile_image)
+            update_it_admin.save()
+            new_account_profile.save()
+            message_alert.success(request, 'Your account details was updated successfully!')
+    elif get_account == 1:
+        update_account = AccountProfile.objects.get(user=userid)
+        if request.method == 'POST':
+            if len(request.FILES) != 0:
+                if len(update_account.profile_image) > 0:
+                    os.remove(update_account.profile_image.path)
+                update_account.profile_image = request.FILES['profile_image']
+            update_it_admin.first_name = request.POST['first_name']
+            update_it_admin.last_name = request.POST['last_name']
+            update_it_admin.email = request.POST['email']
+            update_account.contact_number = request.POST['contact_number']
+            update_account.home_address = request.POST['home_address']
+            update_account.save()
+            update_it_admin.save()
+            message_alert.success(request, 'Your account details was updated successfully!')
+    
+    return redirect(it_admin_user_profile, userid)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 @login_required(login_url= 'login')
 def superadmin_add_user(request):
 
@@ -418,9 +586,9 @@ def update_user(request, uid):
     update_user.last_name = request.POST['last_name']
     update_user.email = request.POST['email']
     get_department = request.POST['department']
-    update_user.department = Department.objects.get(department_name=get_department)
+    update_user.department = Department.objects.get(id=get_department)
     get_team = request.POST['team']
-    update_user.team = Team.objects.get(team_name=get_team)
+    update_user.team = Team.objects.get(id=get_team)
     update_user.role = request.POST['role']
 
     if update_user.role == 'Superadmin':
@@ -455,7 +623,8 @@ def superadmin_users_date_sort(request):
         from_date = request.POST['from_user']
         to_date = request.POST['to_user']
         get_result =  Account.objects.filter(date_joined__gte=from_date, date_joined__lte=to_date)
-    context = { 'get_result': get_result, }
+        result_count = get_result.count()
+    context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, }
     return render(request, 'superadmin/display_user_page.html', context)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -569,3 +738,9 @@ def reset_password_activity(request):
         return render(request, 'account/reset_password_page.html')
     
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def load_teams(request):
+    department_id = request.GET.get('department')
+    teams = Team.objects.filter(department_id=department_id).order_by('team_name')
+    context = { 'teams': teams, }
+    return render(request, 'superadmin/teams_dropdownlist_options.html', context)

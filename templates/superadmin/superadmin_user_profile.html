@@ -1,4 +1,4 @@
-{% extends 'base_user.html' %}
+{% extends 'base_superadmin.html' %}
 {% load static %}
 
 {% block content %}
@@ -13,7 +13,7 @@
                 {% if user %}
                 <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> My User Profile: </h1>
                     {% if user.accountprofile.home_address %}
-                        <img src="{{ user.accountprofile.profile_image.url }}" alt="user profile img"><br>
+                        <img src="{{user.accountprofile.profile_image.url }}" alt="user profile img"><br>
                     {% else %}
                         <img src="{% static 'images/image_placeholder.jpg' %}" alt="user profile img"><br>
                         <!-- <h4 style="font-weight: 400; margin-left: 4%;">No User Profile Image</h4> -->
@@ -32,22 +32,14 @@
                         <td><span><i class="fa fa-users" aria-hidden="true"></i> Team: </span> {{user.team}}</td>
                     </tr>
                     <tr>
-                        <td><span><i class='bx bxs-envelope' ></i> Email: </span>  {{user.email}}</td>
-                        <td><span><i class='bx bxs-phone-call' ></i> Contact: </span> {{user.accountprofile.contact_number }}</td>
-                    </tr>
-                    <tr>
-                        <td><span><i class='fa fa-users' ></i> Number of Team Members Managing: </span> {{team_members_count}}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><span><i class='fa fa-file-text' ></i> Total Requests Created: </span> {{get_all_requests_count}}</td>
-                        <td></td>
+                        <td><span><i class='bx bxs-envelope' ></i> Email: </span>  {{ user.email}}</td>
+                        <td><span><i class='bx bxs-phone-call' ></i> Contact: </span> {{ user.accountprofile.contact_number }}</td>
                     </tr>
                     <tr>
                         <td colspan="2"><span><i class="fa fa-home" aria-hidden="true"></i> Home Address:</span> {{user.accountprofile.home_address }}</td>
                     </tr>
                     <tr>
-                        <td><a class="add-resources-btn" href="{% url 'manager_edit_user_profile' %}"><i class="fa fa-pencil" aria-hidden="true"></i>  Edit Profile </a></td>
+                        <td><a class="add-resources-btn" href="{% url 'superadmin_edit_user_profile' %}"><i class="fa fa-pencil" aria-hidden="true"></i>  Edit Profile </a></td>
                         <td><a class="add-resources-btn" onclick="toggle_blur()" href="#"><i class="fa fa-key" aria-hidden="true"></i>  Change Password </a></td>
                     </tr>
                 </table>

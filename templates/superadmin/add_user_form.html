@@ -9,9 +9,9 @@
 
     <div class="add-new-department-form">
         <h1><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/35/000000/add-user-group-woman-man.png"/> Edit User: {{selected_user.peoplesoft_id}}</h1>
-         <form action="{% url 'update_user' selected_user.id %}" method="POST">
+         <form action="{% url 'update_user' selected_user.id %}" method="POST" id="editUserForm" data-teams-url="{% url 'ajax_load_teams' %}">
             {% csrf_token %}
-             <div class="and-input-box">
+            <div class="and-input-box">
                  <span class="details_anu">PeopleSoft Id: (Note: In numerical format)</span>
                  <input type="number" name="peoplesoft_id" placeholder="Enter peoplesoft ID.." value="{{selected_user.peoplesoft_id}}" required>
              </div>
@@ -27,22 +27,19 @@
                  <span class="details_anu">Email Id: </span>
                  <input type="email" name="email" placeholder="Enter Email Id.." value="{{selected_user.email}}" required>
              </div>
-             <div class="and-input-box">
+            <div class="and-input-box">
                 <span class="details_anu">Department Oriented: </span>
-                <select name="department">
+                <select name="department" id="edit_department">
                     <option selected>{{selected_user.department}}</option>
                     {% for department in department_names %}
-                     <option>{{ department.department_name }}</option>
+                     <option value="{{department.id}}">{{ department.department_name }}</option>
                     {% endfor %}
-                </select>
+                  </select>
             </div>
              <div class="and-input-box">
                 <span class="details_anu">Team Oriented: </span>
-                <select name="team">
+                <select name="team" id="edit_teams">
                     <option selected>{{selected_user.team}}</option>
-                    {% for team in team_names %}
-                     <option value="{{ team.team_name }}">{{ team.team_name }}</option>
-                    {% endfor %}
                 </select>
             </div>
              <div class="and-input-box">
@@ -66,7 +63,7 @@
 
     <div class="add-new-department-form">
         <h1><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/35/000000/add-user-group-woman-man.png"/> Add New User Form:</h1>
-         <form action="{% url 'add_user_page' %}" method="POST">
+         <form action="{% url 'add_user_page' %}" method="POST" id="addUserForm" data-teams-url="{% url 'ajax_load_teams' %}">
             {% csrf_token %}
              <div class="and-input-box">
                  <span class="details_anu">PeopleSoft Id: (Note: In numerical format)</span>
@@ -86,21 +83,16 @@
              </div>
              <div class="and-input-box">
                 <span class="details_anu">Department Oriented: </span>
-                <select name="department">
-                    <option selected>--Choose department--</option>
+                <select name="department" id="department">
+                    <option value="">--Choose department--</option>
                     {% for department in department_names %}
-                     <option>{{ department.department_name }}</option>
+                        <option value="{{department.id}}">{{ department.department_name }}</option>
                     {% endfor %}
                   </select>
             </div>
              <div class="and-input-box">
                 <span class="details_anu">Team Oriented: </span>
-                <select name="team">
-                    <option selected>--Choose team--</option>
-                    {% for team in team_names %}
-                     <option value="{{ team.team_name }}">{{ team.team_name }}</option>
-                    {% endfor %}
-                  </select>
+                <select name="team" id="teams"></select>
             </div>
              <div class="and-input-box">
                 <span class="details_anu">Select User Role: </span>
@@ -136,6 +128,42 @@
           $(".loader-wrapper").fadeOut("slow");
         });
     </script>
+    <script>
+        // for add user form
+        $("#department").change(function () {
+          var url = $("#addUserForm").attr("data-teams-url");  // get the url of the `load_teams` view
+          var department_nameId = $(this).val();  // get the selected department ID from the HTML input
+    
+          $.ajax({                       // initialize an AJAX request
+            url: url,                    // set the url of the request (= localhost:8000/load-teams/)
+            data: {
+              'department': department_nameId       // add the department id to the GET parameters
+            },
+            success: function (data) {   // `data` is the return of the `load_teams` view function
+              $("#teams").html(data);  // replace the contents of the team input with the data that came from the server
+            }
+          });
+    
+        });
+    </script>
 
+<script>
+    // for edit user form
+    $("#edit_department").change(function () {
+      var url = $("#editUserForm").attr("data-teams-url");  // get the url of the `load_teams` view
+      var edit_department_nameId = $(this).val();  // get the selected department ID from the HTML input
+
+      $.ajax({                       // initialize an AJAX request
+        url: url,                    // set the url of the request (= localhost:8000/load-teams/)
+        data: {
+          'department': edit_department_nameId       // add the department id to the GET parameters
+        },
+        success: function (data) {   // `data` is the return of the `load_teams` view function
+          $("#edit_teams").html(data);  // replace the contents of the team input with the data that came from the server
+        }
+      });
+
+    });
+</script>
 
 {% endblock %}

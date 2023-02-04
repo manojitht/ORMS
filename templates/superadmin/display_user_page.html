@@ -21,21 +21,23 @@
            
                 <div class="container">
                     <table id="team_requests" class="display" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>PS Id</th>
-                                <th>Fullname</th>
-                                <th>Department</th>
-                                <th>Team</th>
-                                <th>Role</th>
-                                <th>Created On</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
+                        
                             {% if get_result %}
+
+                            <thead>
+                                <th colspan="8" style="background-color: #949494; text-align: center; color: rgb(255, 255, 255); border: 1px solid rgb(114, 113, 113);">Showing Date From: {{ from_date }} to Date To: {{ to_date }} (Total Results: {{ result_count }})</th>
+                                <tr>
+                                    <th>PS Id</th>
+                                    <th>Fullname</th>
+                                    <th>Department</th>
+                                    <th>Team</th>
+                                    <th>Role</th>
+                                    <th>Created On</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
                                 {% for user in get_result %}
                                     <tr>
@@ -55,6 +57,20 @@
                                 {% endfor %}
 
                             {% else %}
+
+                            <thead>
+                                <tr>
+                                    <th>PS Id</th>
+                                    <th>Fullname</th>
+                                    <th>Department</th>
+                                    <th>Team</th>
+                                    <th>Role</th>
+                                    <th>Created On</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
                                 {% for user in users %}
                                     <tr>

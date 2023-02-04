@@ -12,7 +12,7 @@
             {% include 'message_alert.html' %}
         </div>
         <div class="search-bar-container">
-            <form action="{% url 'superadmin_department_date_sort' %}" method="POST">
+            <form action="{% url 'superadmin_team_date_sort' %}" method="POST">
                 {% csrf_token %}
                 From: <input type="date" style="width: 140px;" name="from_tem" class="search-input-box-dt" required>
                 To: <input type="date" style="width: 140px;" name="to_tem" class="search-input-box-dt" required>
@@ -23,19 +23,21 @@
        
             <div class="container">
                 <table id="team_requests" class="display" style="width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>Team Name</th>
-                            <th>Department Oriented</th>
-                            <th>Team Head</th>
-                            <th>Updated By</th>
-                            <th>Created On</th>
-                            <th>Processing Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
 
                         {% if get_result %}
+
+                        <thead>
+                            <th colspan="6" style="background-color: #949494; text-align: center; color: rgb(255, 255, 255); border: 1px solid rgb(114, 113, 113);">Showing Date From: {{ from_date }} to Date To: {{ to_date }} (Total Results: {{ result_count }})</th>
+                            <tr>
+                                <th>Team Name</th>
+                                <th>Department Oriented</th>
+                                <th>Team Head</th>
+                                <th>Updated By</th>
+                                <th>Created On</th>
+                                <th>Processing Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
                         {% for teams in get_result %}
                         <tr>
@@ -53,6 +55,18 @@
                         {% endfor %}
 
                         {% else %}
+
+                        <thead>
+                            <tr>
+                                <th>Team Name</th>
+                                <th>Department Oriented</th>
+                                <th>Team Head</th>
+                                <th>Updated By</th>
+                                <th>Created On</th>
+                                <th>Processing Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
                         {% for teams in teams_table %}
                         <tr>

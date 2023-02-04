@@ -11,7 +11,7 @@
         {% if get_member_id %}
         
         <div class="department-card-container">
-            <h3 style="color: black; font-weight: 400; background-color: #ffffff; padding: 5px; border-radius: 5px;">Currently viewing the team member profile of <span style="color: #695CFE;">{{get_member_id.fullname}}</span>.</h3>
+            <h3 style="color: black; font-weight: 400; background-color: #ffffff; padding: 5px; border-radius: 5px; width: 90%;">Currently viewing the team member profile of <span style="color: #695CFE;">{{get_member_id.fullname}}</span>.</h3>
             <div style="margin-top: 1%;" class="team-member-info">
                 <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> Team Member Information <a href="{% url 'edit_team_member' get_member_id.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></h1>
                 <img src="{{ get_member_id.member_image.url }}" alt="Team member img">
@@ -37,12 +37,18 @@
                     </tr>
                     <tr>
                         <td><a class="add-resources-btn" style="float: left;" href="{% url 'view_team_members' user.id %}"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back </a> <a class="add-resources-btn" style="float: left;" href="#" onclick="toggle_blur()"><i class="fa fa-pencil" aria-hidden="true"></i> Add Notes </a></td>
-                        <td><a class="add-resources-btn" style="float: right;" href="#" onclick="toggle_warning_blur()"><i class="fa fa-trash" aria-hidden="true"></i> Delete </a> <a class="add-resources-btn" style="float: right;" href="{% url 'view_history_resources' get_member_id.id %}"><i class="fa fa-history" aria-hidden="true"></i> View History </a></td>
+                        <td>
+                            {% if device_count %}  
+                            {% else %}
+                                <a class="add-resources-btn" style="float: right;" href="#" onclick="toggle_warning_blur()"><i class="fa fa-trash" aria-hidden="true"></i> Delete </a>
+                            {% endif %}
+                            <a class="add-resources-btn" style="float: right;" href="{% url 'view_history_resources' get_member_id.id %}"><i class="fa fa-history" aria-hidden="true"></i> View History </a>
+                        </td>
                     </tr>
                 </table>
             </div>
             
-            <h3 style="color: black; font-weight: 500; background-color: #ffffff; padding: 5px; border-radius: 5px; margin-top: 2%;">Resources Lists that were taken by <span style="color: #695CFE;">{{get_member_id.fullname}}</span>.</h3>
+            <h3 style="color: black; font-weight: 500; background-color: #ffffff; padding: 5px; border-radius: 5px; margin-top: 2%; width: 90%;">Resources Lists that were taken by <span style="color: #695CFE;">{{get_member_id.fullname}}</span>.</h3>
             {% if get_devices_id %}
             {% for get_devices in get_devices_id %}
                 <div style="margin-top: 1%;" class="device-card-info">
@@ -67,14 +73,14 @@
             {% else %}
                 <div class="device-card-info">
                     <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_awxs6x6k.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px; margin-left: auto; margin-right: auto;"  loop  autoplay></lottie-player>
-                    <h2 style="color: black; font-weight: 300; text-align: center; font-size: 15px;">No devices taken by {{get_member_id.fullname}}</h2>
+                    <h2 style="color: black; font-weight: 300; text-align: center; font-size: 15px;">Currently, no devices taken by {{get_member_id.fullname}}</h2>
                 </div>
             {% endif %}
 
 
 
             {% if get_oa %}
-                <h3 style="color: black; font-weight: 500; background-color: #ffffff; padding: 5px; border-radius: 5px; margin-top: 2%;">Additional Notes For <span style="color: #695CFE;">{{get_member_id.fullname}}</span>.</h3>
+                <h3 style="color: black; font-weight: 500; background-color: #ffffff; padding: 5px; border-radius: 5px; margin-top: 2%; width: 90%;">Additional Notes For <span style="color: #695CFE;">{{get_member_id.fullname}}</span>.</h3>
                 <div class="other-accessories-card-info">
                     <h1><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Other Notes: </a> <a href="#" onclick="toggle_blur()"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></h1>
                     <table>
@@ -93,7 +99,7 @@
         
         {% if get_oa %}
         <div id="request_popup">
-            <form action="{% url 'update_other_notes' get_oa.id %}" method="POST">
+            <form action="{% url 'update_other_notes' get_oa.id get_member_id.id %}" method="POST">
                 {% csrf_token %}
                 <h2> Add Notes to {{get_member_id.fullname}}</h2>
                 <h5 style="margin-top: 0px; color: rgb(87, 86, 86); font-weight: 400;">*Write your notes:</h5>
@@ -119,7 +125,7 @@
 
         
         <div id="warning_popup">
-            <form action="#}" method="POST">
+            <form action="{% url 'delete_team_member' get_member_id.id user.id %}" method="POST">
                 {% csrf_token %}
                 <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
                 <h3>Are you sure that you want to delete "{{get_member_id.fullname}}" permanently?</h3>

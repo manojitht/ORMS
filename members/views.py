@@ -50,7 +50,8 @@ def view_team_members(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
     team_members = Members.objects.all().filter(manager_peoplesoft_id=get_user_psid, is_active=True).order_by('peoplesoft_id')
-    context = { 'team_members': team_members, }
+    tm_count = team_members.count()
+    context = { 'team_members': team_members, 'tm_count': tm_count, }
     return render(request, 'manager/view_team_member.html', context)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -59,12 +60,13 @@ def view_team_members_details(request, memid):
     get_member_id = Members.objects.get(id=memid)
     get_ps_id = Members.objects.get(peoplesoft_id=get_member_id.peoplesoft_id)
     get_devices_id = ResourceTaken.objects.filter(peoplesoft_id=get_ps_id, resource_status='Taken')
+    device_count = get_devices_id.count()
     try: 
         get_oa = OtherAccessories.objects.get(peoplesoft_id=get_ps_id)
     except:
         get_oa = OtherAccessories.objects.filter(peoplesoft_id=get_ps_id)
     
-    context = { 'get_member_id': get_member_id, 'get_devices_id': get_devices_id, 'get_oa': get_oa, }
+    context = { 'get_member_id': get_member_id, 'get_devices_id': get_devices_id, 'get_oa': get_oa, 'device_count': device_count, }
     return render(request, 'manager/view_team_member_details.html', context)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -77,7 +79,8 @@ def search_team_member(request, userid):
         if keyword:
             search_team_member = Members.objects.filter(manager_peoplesoft_id=get_user_psid, 
             is_active=True).filter(Q(peoplesoft_id__icontains=keyword) | Q(fullname__icontains=keyword))
-    context = { 'search_team_member': search_team_member, }
+            search_count = search_team_member.count()
+    context = { 'search_team_member': search_team_member, 'keyword': keyword, 'search_count': search_count, }
     return render(request, 'manager/view_team_member.html', context)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -114,43 +117,6 @@ def update_team_member(request, memid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# def allocate_device(request, memid):
-#     if request.method == 'POST':
-#         asset_id = request.POST['asset_id']
-#         peoplesoft_id = request.POST['peoplesoft_id']
-#         department = request.POST['department']
-#         team = request.POST['team']
-#         added_by = request.POST['added_by']
-#         resource_status = request.POST['resource_status']
-
-#         if Resource.objects.filter(asset_id=asset_id, resource_availability='Taken').exists():
-#             message_alert.info(request, asset_id + ', is already in use by other team member!')
-#         elif Resource.objects.filter(asset_id=asset_id, resource_availability='Configuration').exists():
-#             message_alert.info(request, asset_id + ', resource is not allocated, please check!')
-#         elif Resource.objects.filter(asset_id=asset_id, resource_availability='Available').exists():
-#             message_alert.info(request, asset_id + ', resource is not allocated, please check!')
-#         elif Resource.objects.filter(asset_id=asset_id, resource_availability='Reserved').exists():
-#             get_resource_type = Resource.objects.get(asset_id=asset_id)
-#             # resource_category = get_resource_type.resource_category.resource_category
-
-#             allocate_device = ResourceTaken(asset_id=Resource.objects.get(asset_id=asset_id), peoplesoft_id=Members.objects.get(peoplesoft_id=peoplesoft_id), resource_category=get_resource_type.resource_category.resource_category, department=Department.objects.get(department_name=department),
-#             team=Team.objects.get(team_name=team), added_by=added_by, resource_status=resource_status)
-#             allocate_device.save()
-#             get_asset_id = Resource.objects.filter(asset_id=asset_id)
-#             for set_taken in get_asset_id:
-#                 set_taken.resource_availability = 'Taken'
-#                 set_taken.save()
-#             message_alert.success(request, asset_id + ' allocated to ' + peoplesoft_id +' successfully!')
-#         else:
-#             message_alert.error(request, asset_id + ' invalid asset id, please check!')
-
-#             # get_member_id = Members.objects.get(peoplesoft_id=peoplesoft_id)
-#             # member_id = get_member_id.id
-
-#     return redirect(view_team_members_details, memid)
-
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 def add_other_notes(request, memid):
     if request.method == 'POST':
         peoplesoft_id = request.POST['peoplesoft_id']
@@ -169,32 +135,47 @@ def edit_other_notes(request, memid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def update_other_notes(request, memid):
+def update_other_notes(request, memid, psid):
     update_oa = OtherAccessories.objects.get(id=memid)
 
     if request.method == 'POST':
         update_oa.other_notes = request.POST['other_notes']
         update_oa.save()
         message_alert.success(request, 'Other notes was updated successfully!')
-    return redirect(view_team_members_details, memid)
+    return redirect(view_team_members_details, psid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def mark_returned(request, resid, memid):
     get_asset = ResourceTaken.objects.get(id=resid)
-    get_asset_id = ResourceTaken.objects.filter(asset_id=get_asset.asset_id)
-    take_asset_id = ResourceTaken.objects.get(asset_id=get_asset.asset_id, id=get_asset.id)
+    take_asset_id = ResourceTaken.objects.get(id=get_asset.id, asset_id=get_asset.asset_id)
     update_resource = Resource.objects.filter(asset_id=take_asset_id.asset_id)
-    get_asset.resource_status = 'Returned'
-    get_asset.returned_date = date.today()
-    get_asset.save()
 
-    for update in update_resource:
-        update.resource_availability = 'Available'
-        update.save()
+    if request.method == 'POST':
+        reason_notes = request.POST['return_reason']
+        # peoplesoft_id = request.POST['peoplesoft_id']
+
+        if reason_notes == 'Leaving From Company' or reason_notes == 'Swaping For Highend Resource':
+            get_asset.resource_status = 'Returned'
+            get_asset.returned_date = date.today()
+            get_asset.reason_notes = reason_notes
+            get_asset.save()
+            for update in update_resource:
+                update.resource_availability = 'Available'
+                update.save()
+                message_alert.success(request, 'Mark returned on the device successfully!')
+        elif reason_notes == 'Resource Damaged' or reason_notes == 'Facing Software Issue':
+            get_asset.resource_status = 'Returned'
+            get_asset.returned_date = date.today()
+            get_asset.reason_notes = reason_notes
+            get_asset.save()
+            for update in update_resource:
+                update.resource_availability = 'Configuration'
+                update.save()
+                message_alert.success(request, 'Mark returned on the device successfully!')
+        elif reason_notes == '-------------':
+            message_alert.info(request, 'Please choose a return reason to mark it as return!')
     
-    message_alert.success(request, 'Mark returned on the device successfully!')
-
     return redirect(view_team_members_details, memid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -225,5 +206,16 @@ def view_history_resources(request, memid):
 
     context = { 'get_devices_id': get_devices_id, 'get_member_id': get_member_id, }
     return render(request, 'manager/view_history_devices.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def delete_team_member(request, memid, userid):
+    deleting_mem = Members.objects.get(id=memid)
+    if request.method == 'POST':
+        delete_name = request.POST['delete_name']
+        if delete_name == 'delete':
+            message_alert.success(request, deleting_mem.fullname + ' was deleted successfully!')
+            deleting_mem.delete()
+    return redirect(view_team_members, userid)    
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

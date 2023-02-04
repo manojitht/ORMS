@@ -22,9 +22,18 @@ urlpatterns = [
     path('users_deletion_history/', views.users_deletion_history, name='users_deletion_history'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
     path('reset_password/<uidb64>/<token>/', views.reset_password, name='reset_password'),
-    path('manager_user_profile/', views.manager_user_profile, name='manager_user_profile'),
+    path('manager_user_profile/<int:userid>/', views.manager_user_profile, name='manager_user_profile'),
     path('manager_edit_user_profile/', views.manager_edit_user_profile, name='manager_edit_user_profile'),
-    path('it_admin_user_profile/', views.it_admin_user_profile, name='it_admin_user_profile'),
+    path('manager_update_user_profile/<int:userid>/', views.manager_update_user_profile, name='manager_update_user_profile'),
+    path('it_admin_user_profile/<int:userid>/', views.it_admin_user_profile, name='it_admin_user_profile'),
+    path('it_admin_edit_user_profile/', views.it_admin_edit_user_profile, name='it_admin_edit_user_profile'),
+    path('it_admin_update_user_profile/<int:userid>/', views.it_admin_update_user_profile, name='it_admin_update_user_profile'),
+    path('superadmin_user_profile/', views.superadmin_user_profile, name='superadmin_user_profile'),
+    path('superadmin_edit_user_profile/', views.superadmin_edit_user_profile, name='superadmin_edit_user_profile'),
+    path('superadmin_update_user_profile/<int:userid>/', views.superadmin_update_user_profile, name='superadmin_update_user_profile'),
     path('forgot_password/', views.forgot_password, name='forgot_password'),
     path('reset_password_activity/', views.reset_password_activity, name='reset_password_activity'),
+
+
+    path('load_teams/', views.load_teams, name='ajax_load_teams'),
 ]

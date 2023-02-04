@@ -43,7 +43,7 @@
         </div>
         </div>
         <div id="request_popup">
-            <form action="#" method="POST">
+            <form action="{% url 'mark_returned' get_devices_id.id get_member_id.id %}" method="POST">
                 {% csrf_token %}
                 <h2>Specify Reason</h2>
                 <h5 style="margin-top: 0px; color: rgb(87, 86, 86); font-weight: 400;">*Select Return Reason:</h5>
@@ -54,7 +54,7 @@
                     <option>Facing Software Issue</option>
                     <option>Swaping For Highend Resource</option>
                 </select>
-                <input style="margin-bottom: 5%;" name="peoplesoft_id" type="hidden" class="r-p-textbox" value="{{get_member_id.peoplesoft_id}}">
+                <!-- <input style="margin-bottom: 5%;" name="peoplesoft_id" type="hidden" class="r-p-textbox" value="{{get_member_id.peoplesoft_id}}"> -->
                 <input class="create-request-button" type="submit" value="Confirm">
                 <input class="close-request-button" type="button" onclick="toggle_blur()" value="Close">
             </form>

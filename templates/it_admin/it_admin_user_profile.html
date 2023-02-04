@@ -7,18 +7,18 @@
 
     <div class="full-myteam-container" id="blur">
         <div class="head-container" style="margin-bottom: 1%;">
-            <h1><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/35/null/circled-user-male-skin-type-7--v1.png"/> User Profile</h1>
+            <h1><img style="margin-bottom: -8px;" src="https://img.icons8.com/color/38/null/circled-user-male-skin-type-7--v1.png"/> My User Profile</h1>
             {% include 'message_alert.html' %}
         </div>
         <div class="department-card-container">
             <div style="margin-top: 1%;" class="team-member-info">
                 {% if user %}
-                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> User Profile: </h1>
+                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> My User Profile: </h1>
                     {% if user.accountprofile.home_address %}
-                        <img src="{{user.accountprofile.profile_image.url }}" alt="user profile img"><br>
+                        <img src="{{ user.accountprofile.profile_image.url }}" alt="user profile img"><br>
                     {% else %}
                         <img src="{% static 'images/image_placeholder.jpg' %}" alt="user profile img"><br>
-                        <h4 style="font-weight: 400; margin-left: 4%;">No User Profile Image</h4>
+                        <!-- <h4 style="font-weight: 400; margin-left: 4%;">No User Profile Image</h4> -->
                     {% endif %}  
                 <table>
                     <tr>
@@ -38,18 +38,18 @@
                         <td><span><i class='bx bxs-phone-call' ></i> Contact: </span> {{user.accountprofile.contact_number }}</td>
                     </tr>
                     <tr>
-                        <td><span><i class='fa fa-laptop' ></i> Number of Resources Managing: </span> 15</td>
+                        <td><span><i class='fa fa-laptop' ></i> Number of Resources Managing: </span> {{ count_resources }}</td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td><span><i class='fa fa-file-text' ></i> Total Requests Handled: </span> 15</td>
+                        <td><span><i class='fa fa-file-text' ></i> Total Requests Handled: </span> {{ completed_requests_count }}</td>
                         <td></td>
                     </tr>
                     <tr>
                         <td colspan="2"><span><i class="fa fa-home" aria-hidden="true"></i> Home Address:</span> {{user.accountprofile.home_address }}</td>
                     </tr>
                     <tr>
-                        <td><a class="add-resources-btn" href="{% url 'it_admin_user_profile' %}"><i class="fa fa-pencil" aria-hidden="true"></i>  Edit Profile </a></td>
+                        <td><a class="add-resources-btn" href="{% url 'it_admin_edit_user_profile' %}"><i class="fa fa-pencil" aria-hidden="true"></i>  Edit Profile </a></td>
                         <td><a class="add-resources-btn" href="#"><i class="fa fa-key" aria-hidden="true"></i>  Change Password </a></td>
                     </tr>
                 </table>

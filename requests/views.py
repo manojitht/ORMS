@@ -96,18 +96,6 @@ def view_manager_completed_request(request, reqid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# def search_request(request, userid):
-#     get_user_id = Account.objects.get(id=userid)
-#     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
-#     if 'keyword' in request.GET:
-#         keyword = request.GET['keyword']
-#         if keyword:
-#             search_requests = Requests.objects.filter(created_ps_id=get_user_psid, is_active=True).filter(Q(request_id__icontains=keyword) | Q(created_for__icontains=keyword))
-#     context = { 'search_requests': search_requests, }
-#     return render(request, 'manager/view_requests_page.html', context)
-
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 def manager_requests_date_sort(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
@@ -282,12 +270,13 @@ def it_admin_completed_requests_date_sort(request, userid):
         to_date = request.POST['to_req']
         if from_date != '' and to_date != '':
             get_result =  Requests.objects.filter(assigned_to=get_user_psid, request_status='Completed').filter(completed_on__gte=from_date, completed_on__lte=to_date)
+            result_count = get_result.count()
         # elif from_date.date < to_date.date:
         #     message_alert.info(request, 'The from date should be greater than to date!')
         else:
             message_alert.info(request, 'Please select the date fields properly!')
 
-    context = { 'get_result': get_result, }
+    context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, }
     return render(request, 'it_admin/view_completed_requests_it_admin.html', context)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -17,6 +17,13 @@
                 <a href="{% url 'resources_list_table' %}" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">View <i class='bx bx-table' ></i></a>
             </form>
         </div>
+        {% if search_resource %}
+            <h8 style="font-size: 15px; text-align: center; color: rgb(85, 85, 85);">Searched for: {{ keyword }}, (Total results found: {{ search_count }})</h8>
+        {% elif resources %}
+            <h8 style="font-size: 15px; text-align: center; color: rgb(85, 85, 85);">Total Resources Showing: {{ res_count }}</h8>
+        {% else %}
+            <h8 style="font-size: 15px; text-align: center; color: rgb(85, 85, 85);">Total Resources Showing: 0</h8>
+        {% endif %}
         <div style="justify-content: center;" class="devices-card-container">
             {% if search_resource %}
 

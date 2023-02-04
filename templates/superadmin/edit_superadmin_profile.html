@@ -1,4 +1,4 @@
-{% extends 'base_user.html' %}
+{% extends 'base_superadmin.html' %}
 {% load static %}
 
 {% block content %}
@@ -6,14 +6,14 @@
 <section class="home-main">
     <div class="full-myteam-container" id="blur">
         <div class="head-container" style="margin-bottom: 1%;">
-            <h1><img style="margin-bottom: -8px;" src="https://img.icons8.com/color/38/null/circled-user-male-skin-type-7--v1.png"/> My User Profile</h1>
+            <h1><img style="margin-bottom: -8px;" src="https://img.icons8.com/color/38/null/circled-user-male-skin-type-7--v1.png"/> Edit User Profile</h1>
             {% include 'message_alert.html' %}
         </div>
         <div class="department-card-container">
             <div class="team-member-info">
                 {% if user %}
                 <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> Edit User Profile: </h1>
-                <form action="{% url 'manager_update_user_profile' user.id %}" method="POST" enctype="multipart/form-data">
+                <form action="{% url 'superadmin_update_user_profile' user.id %}" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% if user.accountprofile.profile_image %}
                         <img src="{{user.accountprofile.profile_image.url }}" alt="user profile img"><br>
@@ -48,7 +48,7 @@
                             <td><span><i class="fa fa-picture-o" aria-hidden="true"></i> Profile Image: </span> <input name="profile_image" style="background-color: #ffffff; border: 1px solid #ffffff;" type="file" accept="images" required></td>
                             {% endif %} 
                             
-                            <td><a class="view-edit-team-member-back-btn" href="{% url 'manager_user_profile' user.id %}">Back</a><input class="view-edit-team-member-btn" type="submit" value="Update Profile"></td>
+                            <td><a class="view-edit-team-member-back-btn" href="{% url 'superadmin_user_profile' %}">Back</a><input class="view-edit-team-member-btn" type="submit" value="Update Profile"></td>
                         </tr>
                     </table>
                 </form>

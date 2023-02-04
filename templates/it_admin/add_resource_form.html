@@ -17,7 +17,7 @@
                 {% csrf_token %}
                 <div class="and-input-box">
                     <span class="details_anu">Asset Id: </span>
-                    <input type="text" name="asset_id" placeholder="Enter asset id.." value="" required>
+                    <input type="text" name="asset_id" placeholder="Enter asset id.." value="{{ full_generated_aset_id }}" required>
                 </div>
                 <div class="and-input-box">
                     <span class="details_anu">Choose resource type: </span>

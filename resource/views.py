@@ -34,11 +34,10 @@ def taken_resources_list_table(request):
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def add_resource_page(request):
-    generated_asset_id = random.randrange(11111111111, 99999999999, 11)
-    context = { 'generated_asset_id': generated_asset_id, }
-
+    generated_asset_id = random.randrange(111111111, 999999999, 9)
+    full_generated_aset_id = 'TGSSIT' + str(generated_asset_id)
     resource_categories = Category.objects.all()
-    context = { 'resource_categories': resource_categories, }
+    context = { 'resource_categories': resource_categories, 'full_generated_aset_id': full_generated_aset_id, }
 
     if request.method == 'POST':
         asset_id = request.POST['asset_id']
@@ -139,7 +138,8 @@ def resources_date_sort(request):
         from_date = request.POST['from_res']
         to_date = request.POST['to_res']
         get_result =  Resource.objects.filter(added_on__gte=from_date, added_on__lte=to_date)
-    context = { 'get_result': get_result, }
+        result_count = get_result.count()
+    context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, }
     return render(request, 'it_admin/resources_list_table.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -149,7 +149,8 @@ def returned_resources_date_sort(request):
         from_date = request.POST['from_res']
         to_date = request.POST['to_res']
         get_result =  ResourceTaken.objects.filter(returned_date__gte=from_date, returned_date__lte=to_date)
-    context = { 'get_result': get_result, }
+        result_count = get_result.count()
+    context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, }
     return render(request, 'it_admin/view_returns_page.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -159,7 +160,8 @@ def taken_resources_date_sort(request):
         from_date = request.POST['from_res']
         to_date = request.POST['to_res']
         get_result =  ResourceTaken.objects.filter(taken_date__gte=from_date, taken_date__lte=to_date)
-    context = { 'get_result': get_result, }
+        result_count = get_result.count()
+    context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, }
     return render(request, 'it_admin/view_taken_page.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -171,7 +173,8 @@ def it_admin_notes_page(request):
 
 def resources_listings_page(request):
     resources = Resource.objects.all().filter(is_active=True).order_by('resource_availability')
-    context = { 'resources': resources, }
+    res_count = resources.count()
+    context = { 'resources': resources, 'res_count': res_count, }
     return render(request, 'it_admin/resources_listings_page.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -185,7 +188,8 @@ def view_resource(request, resid):
 
 def view_resource_categories(request):
     all_categories = Category.objects.all()
-    context = { 'all_categories': all_categories, }
+    category_count = all_categories.count()
+    context = { 'all_categories': all_categories, 'category_count': category_count, }
     return render(request, 'it_admin/view_categories_page.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -255,7 +259,8 @@ def search_resource(request):
         keyword = request.GET['keyword']
         if keyword:
             search_resource = Resource.objects.filter(is_active=True).filter(Q(asset_id__icontains=keyword) | Q(model_name__icontains=keyword))
-    context = { 'search_resource': search_resource, }
+            search_count = search_resource.count()
+    context = { 'search_resource': search_resource, 'keyword': keyword, 'search_count': search_count, }
     return render(request, 'it_admin/resources_listings_page.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

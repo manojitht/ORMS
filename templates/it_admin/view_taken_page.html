@@ -27,18 +27,20 @@
        
             <div class="container">
                 <table id="team_requests" class="display" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>Asset Id</th>
-                            <th>Device Type</th>
-                            <th>Issued To</th>
-                            <th>Manager Name</th>
-                            <th>Taken Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
+                    
                         {% if get_result %}
+
+                        <thead>
+                            <th colspan="5" style="background-color: #949494; text-align: center; color: rgb(0, 0, 0); border: 1px solid rgb(114, 113, 113);">Showing Date From: {{ from_date }} to Date To: {{ to_date }} (Total Results: {{ result_count }})</th>
+                            <tr>
+                                <th>Asset Id</th>
+                                <th>Device Type</th>
+                                <th>Issued To</th>
+                                <th>Manager Name</th>
+                                <th>Taken Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
                             {% for device in get_result %}
                             <tr>
@@ -51,6 +53,17 @@
                             {% endfor %}
 
                         {% else %}
+
+                        <thead>
+                            <tr>
+                                <th>Asset Id</th>
+                                <th>Device Type</th>
+                                <th>Issued To</th>
+                                <th>Manager Name</th>
+                                <th>Taken Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
                             {% for device in resources %}
                             <tr>

@@ -8,7 +8,7 @@
         <div class="full-myteam-container">
             <div class="head-container">
                 <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/32/000000/conference.png"/> {{ user.team }}</h1>
-                <!-- <input class="search-bar-profile-card" type="search" placeholder="Search by name or ps id.." required> -->
+                {% include 'message_alert.html' %}
             </div>
             <div class="search-bar-container" style="width: 100%; text-align: center; padding: 10px; border-radius: 15px;">
                 <form action="{% url 'search_team_member' user.id %}" method="GET">
@@ -18,6 +18,13 @@
                     <a href="#" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">Member Index <i class='bx bx-table' ></i></a>
                 </form>
             </div>
+            {% if search_team_member %}
+                <h8 style="font-size: 15px; text-align: center; color: rgb(85, 85, 85);">Searched for: {{ keyword }}, (Total results found: {{ search_count }})</h8>
+            {% elif team_members %}
+                <h8 style="font-size: 15px; text-align: center; color: rgb(85, 85, 85);">Total Team Members: {{ tm_count }}</h8>
+            {% else %}
+                <h8 style="font-size: 15px; text-align: center; color: rgb(85, 85, 85);">Total Team Members: 0</h8>
+            {% endif %}
                 <div style="justify-content: center;" class="card-container">
 
                     {% if search_team_member %}
