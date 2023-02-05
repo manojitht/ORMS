@@ -34,6 +34,10 @@ urlpatterns = [
     path('forgot_password/', views.forgot_password, name='forgot_password'),
     path('reset_password_activity/', views.reset_password_activity, name='reset_password_activity'),
 
+    path('manager_change_password/<int:userid>/', views.manager_change_password, name='manager_change_password'),
+    path('it_admin_change_password/<int:userid>/', views.it_admin_change_password, name='it_admin_change_password'),
+    path('superadmin_change_password/<int:userid>/', views.superadmin_change_password, name='superadmin_change_password'),
+
 
     path('load_teams/', views.load_teams, name='ajax_load_teams'),
 ]

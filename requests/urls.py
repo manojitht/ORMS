@@ -5,7 +5,7 @@ from .import views
 urlpatterns = [
     path('list_requests_manager/<int:userid>/', views.list_requests_manager, name='list_requests_manager'),
     path('list_completed_requests_manager/<int:userid>/', views.list_completed_requests_manager, name='list_completed_requests_manager'),
-    path('create_request/', views.create_request, name='create_request'),
+    path('create_request/<int:userid>/', views.create_request, name='create_request'),
     path('view_selected_request/<int:reqid>/', views.view_selected_request, name='view_selected_request'),
     path('view_manager_completed_request/<int:reqid>/', views.view_manager_completed_request, name='view_manager_completed_request'),
     path('manager_requests_date_sort/<int:userid>/', views.manager_requests_date_sort, name='manager_requests_date_sort'),

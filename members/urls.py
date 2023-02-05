@@ -21,4 +21,7 @@ urlpatterns = [
 
 
     path('delete_team_member/<int:memid>/<int:userid>/', views.delete_team_member, name='delete_team_member'),
+
+    path('view_team_members_index_table/<int:userid>/', views.view_team_members_index_table, name='view_team_members_index_table'),
+    path('date_sort_team_members_index_table/<int:userid>/', views.date_sort_team_members_index_table, name='date_sort_team_members_index_table'),
 ]

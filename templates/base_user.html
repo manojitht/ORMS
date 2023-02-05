@@ -62,6 +62,12 @@
                             <span class="text nav-text">My Requests</span>
                         </a>
                     </li>
+                    <li class="nav-link">
+                        <a href="{% url 'manager_taken_resources_list_table' user.id %}">
+                            <i class='bx bx-history icon' ></i>
+                            <span class="text nav-text">In & Out</span>
+                        </a>
+                    </li>
                     <li class="">
                         <a href="{% url 'manager_notes_page' %}">
                             <i class='bx bx-note icon' ></i>

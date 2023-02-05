@@ -9,6 +9,9 @@ from account.models import Account
 from team.models import Team
 from datetime import date
 import os
+from django.conf import settings
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 # Create your views here.
 
@@ -163,7 +166,18 @@ def mark_returned(request, resid, memid):
             for update in update_resource:
                 update.resource_availability = 'Available'
                 update.save()
+
+                #send email functionality for return resource process
+                mail_head_subject = ' Resource Mark Returned Completed For ' + update.asset_id + ''
+                message = render_to_string('account/resource_mark_return_email.html', {
+                    'get_asset': get_asset,
+                    'asset_id': update.asset_id,
+                })
+                email_from = settings.EMAIL_HOST_USER
+                recipient_list = [get_asset.peoplesoft_id.email,]
+                send_mail(mail_head_subject, message, email_from, recipient_list)
                 message_alert.success(request, 'Mark returned on the device successfully!')
+
         elif reason_notes == 'Resource Damaged' or reason_notes == 'Facing Software Issue':
             get_asset.resource_status = 'Returned'
             get_asset.returned_date = date.today()
@@ -172,7 +186,18 @@ def mark_returned(request, resid, memid):
             for update in update_resource:
                 update.resource_availability = 'Configuration'
                 update.save()
-                message_alert.success(request, 'Mark returned on the device successfully!')
+
+            #send email functionality for return resource process
+            mail_head_subject = ' Resource Mark Returned Completed For ' + update.asset_id + ''
+            message = render_to_string('account/resource_mark_return_email.html', {
+                'get_asset': get_asset,
+                'asset_id': update.asset_id,
+            })
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [get_asset.peoplesoft_id.email,]
+            send_mail(mail_head_subject, message, email_from, recipient_list)
+            message_alert.success(request, 'Mark returned on the device successfully!')
+
         elif reason_notes == '-------------':
             message_alert.info(request, 'Please choose a return reason to mark it as return!')
     
@@ -217,5 +242,27 @@ def delete_team_member(request, memid, userid):
             message_alert.success(request, deleting_mem.fullname + ' was deleted successfully!')
             deleting_mem.delete()
     return redirect(view_team_members, userid)    
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def view_team_members_index_table(request, userid):
+    get_user_id = Account.objects.get(id=userid)
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    team_members = Members.objects.all().filter(manager_peoplesoft_id=get_user_psid, is_active=True).order_by('peoplesoft_id')
+    context = { 'team_members': team_members, }
+    return render(request, 'manager/member_index_table.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def date_sort_team_members_index_table(request, userid):
+    get_user_id = Account.objects.get(id=userid)
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    if request.method == 'POST':
+        from_date = request.POST['from_mem']
+        to_date = request.POST['to_mem']
+        get_result =  Members.objects.filter(date_joined__gte=from_date, date_joined__lte=to_date, manager_peoplesoft_id=get_user_psid, is_active=True).order_by('peoplesoft_id')
+        result_count = get_result.count()
+    context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, }
+    return render(request, 'manager/member_index_table.html', context)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

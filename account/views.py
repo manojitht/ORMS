@@ -206,14 +206,35 @@ def manager_portal(request, userid):
     date_joined__gte=datetime.now()-timedelta(days=30))
     get_count_members_month = members_month.count()
 
+    # resource categories dashboard info
+    get_categories = Category.objects.filter(is_active=True)
+    category_list = []
+    category_count_list = []
+    for category in get_categories:
+        category_list.append(category.resource_category)
+        get_resources = ResourceTaken.objects.filter(resource_category=category.resource_category, resource_status='Taken', is_active=True)
+        count_resources = get_resources.count()
+        category_count_list.append(count_resources)
+
+    # request count on dashboard info
+    request_list = []
+    for resource_cat in get_categories:
+        get_requests = Requests.objects.filter(request_resource=resource_cat.resource_category, created_ps_id=get_user_psid, is_active=True)
+        request_count = get_requests.count()
+        request_list.append(request_count)
+
     context = { 'team_members_count': team_members_count,
      'get_all_requests_count': get_all_requests_count,
      'get_count_members_week': get_count_members_week,
-    'get_count_members_month': get_count_members_month,
+     'get_count_members_month': get_count_members_month,
      'get_count_members_today': get_count_members_today,
-      'get_all_pending_requests_count': get_all_pending_requests_count, 
-      'get_all_resources_taken_count': get_all_resources_taken_count, 
-      'get_all_resources_returned_count': get_all_resources_returned_count, }
+     'get_all_pending_requests_count': get_all_pending_requests_count, 
+     'get_all_resources_taken_count': get_all_resources_taken_count, 
+     'get_all_resources_returned_count': get_all_resources_returned_count,
+     'category_list': category_list,
+     'category_count_list': category_count_list, 
+     'request_list': request_list, }
+    
     return render(request, 'manager/manager_dashboard.html', context)
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -744,3 +765,89 @@ def load_teams(request):
     teams = Team.objects.filter(department_id=department_id).order_by('team_name')
     context = { 'teams': teams, }
     return render(request, 'superadmin/teams_dropdownlist_options.html', context)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url= 'login')
+def manager_change_password(request, userid):
+    get_user_id = Account.objects.get(id=userid)
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    user = Account.objects.get(peoplesoft_id__exact=get_user_psid)
+    if request.method == 'POST':
+        current_password = request.POST['current_password']
+        new_password = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
+
+        if new_password == confirm_password:
+            success = user.check_password(current_password)
+            if success:
+                user.set_password(new_password)
+                user.save()
+                message_alert.success(request, 'Your account password was changed successfully!')
+                return redirect(manager_user_profile, userid)
+            else:
+                message_alert.error(request, 'Please enter the current password correctly!')
+                return redirect(manager_user_profile, userid)
+        else:
+            message_alert.error(request, 'Confirm password does not matches!')
+            return redirect(manager_user_profile, userid)
+    return redirect(manager_user_profile, userid)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url= 'login')
+def it_admin_change_password(request, userid):
+    get_user_id = Account.objects.get(id=userid)
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    user = Account.objects.get(peoplesoft_id__exact=get_user_psid)
+    if request.method == 'POST':
+        current_password = request.POST['current_password']
+        new_password = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
+
+        if new_password == confirm_password:
+            success = user.check_password(current_password)
+            if success:
+                user.set_password(new_password)
+                user.save()
+                message_alert.success(request, 'Your account password was changed successfully!')
+                return redirect(it_admin_user_profile, userid)
+            else:
+                message_alert.error(request, 'Please enter the current password correctly!')
+                return redirect(it_admin_user_profile, userid)
+        else:
+            message_alert.error(request, 'Confirm password does not matches!')
+            return redirect(it_admin_user_profile, userid)
+    return redirect(it_admin_user_profile, userid)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url= 'login')
+def superadmin_change_password(request, userid):
+    get_user_id = Account.objects.get(id=userid)
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    user = Account.objects.get(peoplesoft_id__exact=get_user_psid)
+    if request.method == 'POST':
+        current_password = request.POST['current_password']
+        new_password = request.POST['new_password']
+        confirm_password = request.POST['confirm_password']
+
+        if new_password == confirm_password:
+            success = user.check_password(current_password)
+            if success:
+                user.set_password(new_password)
+                user.save()
+                message_alert.success(request, 'Your account password was changed successfully!')
+                return redirect(superadmin_user_profile)
+            else:
+                message_alert.error(request, 'Please enter the current password correctly!')
+                return redirect(superadmin_user_profile)
+        else:
+            message_alert.error(request, 'Confirm password does not matches!')
+            return redirect(superadmin_user_profile)
+    return redirect(superadmin_user_profile)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                
+
+        

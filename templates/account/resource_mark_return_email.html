@@ -1,0 +1,18 @@
+{% autoescape off %}
+
+Hi {{get_asset.peoplesoft_id.fullname}},
+
+    The ({{asset_id}}) was marked return successfully from your manager {{get_asset.peoplesoft_id.manager_name}}. 
+    
+    The return reson for the {{asset_id}} is specified as ({{get_asset.reason_notes}}).
+
+    This resource was returned dated on {{get_asset.returned_date}}.
+
+    Please keep this email with your self for the evidence purposes.
+
+Thank you,
+ORMS Team.
+
+Have a great day!
+
+{% endautoescape %}

@@ -51,6 +51,7 @@ class ResourceTaken(models.Model):
     returned_date = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     reason_notes = models.TextField(max_length=300, blank=True)
+    manager_peoplesoft_id = models.CharField(max_length=200, blank=True)
 
     def __str__(self):
         return self.asset_id

@@ -26,4 +26,12 @@ urlpatterns = [
     path('delete_category_warning/<int:delcatid>/', views.delete_category_warning, name='delete_category_warning'),
     path('delete_resource/<int:resid>/', views.delete_resource, name='delete_resource'),
     path('search_resource/', views.search_resource, name='search_resource'),
+
+
+    path('manager_returned_resources_list_table/<int:userid>/', views.manager_returned_resources_list_table, name='manager_returned_resources_list_table'),
+    path('manager_taken_resources_list_table/<int:userid>/', views.manager_taken_resources_list_table, name='manager_taken_resources_list_table'),
+    path('manager_returned_resources_date_sort/<int:userid>/', views.manager_returned_resources_date_sort, name='manager_returned_resources_date_sort'),
+    path('manager_taken_resources_date_sort/<int:userid>/', views.manager_taken_resources_date_sort, name='manager_taken_resources_date_sort'),
+
+    
 ]

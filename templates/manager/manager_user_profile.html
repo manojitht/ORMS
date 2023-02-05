@@ -58,7 +58,7 @@
         </div>
         </div> 
         <div id="request_popup">
-            <form action="#" method="POST">
+            <form action="{% url 'manager_change_password' user.id %}" method="POST">
                 {% csrf_token %}
                 <h2>Change Password</h2>
                 <h5 style="margin-top: 0px; color: rgb(87, 86, 86); font-weight: 400;">*Current Password:</h5>

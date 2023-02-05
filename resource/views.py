@@ -7,6 +7,7 @@ import random
 from .models import Resource, Category, ResourceTaken
 from django.contrib import messages as message_alert
 from department.models import Department
+from account.models import Account
 from django.db.models import Q
 # Create your views here.
 
@@ -264,3 +265,47 @@ def search_resource(request):
     return render(request, 'it_admin/resources_listings_page.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def manager_returned_resources_list_table(request, userid):
+    get_user_id = Account.objects.get(id=userid)
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    resources = ResourceTaken.objects.all().filter(is_active=True, resource_status='Returned', manager_peoplesoft_id=get_user_psid)
+    context = { 'resources': resources, }
+    return render(request, 'manager/view_returns_page.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def manager_taken_resources_list_table(request, userid):
+    get_user_id = Account.objects.get(id=userid)
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    resources = ResourceTaken.objects.all().filter(is_active=True, resource_status='Taken', manager_peoplesoft_id=get_user_psid)
+    context = { 'resources': resources, }
+    return render(request, 'manager/view_taken_page.html', context)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def manager_returned_resources_date_sort(request, userid):
+    get_user_id = Account.objects.get(id=userid)
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    if request.method == 'POST':
+        from_date = request.POST['from_res']
+        to_date = request.POST['to_res']
+        get_result =  ResourceTaken.objects.filter(returned_date__gte=from_date, returned_date__lte=to_date, manager_peoplesoft_id=get_user_psid)
+        result_count = get_result.count()
+    context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, }
+    return render(request, 'manager/view_returns_page.html', context)
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def manager_taken_resources_date_sort(request, userid):
+    get_user_id = Account.objects.get(id=userid)
+    get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
+    if request.method == 'POST':
+        from_date = request.POST['from_res']
+        to_date = request.POST['to_res']
+        get_result =  ResourceTaken.objects.filter(taken_date__gte=from_date, taken_date__lte=to_date, manager_peoplesoft_id=get_user_psid)
+        result_count = get_result.count()
+    context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, }
+    return render(request, 'manager/view_taken_page.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
