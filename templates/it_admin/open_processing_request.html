@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+<title>ORMS | Processing Request</title>
 
 <section class="home-main">
     <div class="full-myteam-container">
@@ -110,7 +111,13 @@
                                     <td><span><i class="fa fa-desktop" aria-hidden="true"></i>  Enter {{ get_request_id.request_resource }} Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" placeholder="eg. TGSS0000451202" value="{{ assign_resource }}" required></td>
                                 {% else %}
                                 <td><span><i class="fa fa-desktop" aria-hidden="true"></i>  Enter {{ get_request_id.request_resource }} Asset Id: </span>  <input class="view-edit-team-member-input" name="asset_id" type="text" placeholder="eg. TGSS0000451202" value=" Sorry there isn't any devices avaiable for this request! " required></td>
-                                {% endif %} 
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                {% if assign_resource %}
+                                    <td style="font-size: 12px;">Note: For this request the suggested {{ get_request_id.request_resource }} assest id is {{ assign_resource }}.</td>
+                                {% else %}
+                                {% endif %}
                             </tr>
                             <tr>
                                 <td colspan="2"><span><i class="fa fa-reply-all" aria-hidden="true"></i> Reply Comments:</span> <textarea style="height: 80px; padding-top: 5px;" name="request_response" class="view-edit-team-member-input" rows="4" cols="50" placeholder="Write comments for this request.." required></textarea></td>
