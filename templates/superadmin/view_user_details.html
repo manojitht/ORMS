@@ -30,7 +30,11 @@
                     </tr>
                     <tr>
                         <td><span>User Role: </span> {{get_user.role}}</td>
-                        <td><span>User Status: </span> {{get_user.is_active}}</td>
+                        {% if get_user.is_active %}
+                            <td><span>User Status: </span> Active</td>
+                        {% else %}
+                            <td><span>User Status: </span> InActive</td>
+                        {% endif %}
                     </tr>
                     <tr>
                         <td><a class="add-resources-btn" href="{% url 'edit_user' get_user.id %}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit User </a> <a class="add-resources-btn" href="#" onclick="toggle_warning_blur()"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete User </a></td>

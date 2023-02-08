@@ -608,31 +608,34 @@ def update_user(request, uid):
     update_user.email = request.POST['email']
     get_department = request.POST['department']
     update_user.department = Department.objects.get(id=get_department)
-    get_team = request.POST['team']
-    update_user.team = Team.objects.get(id=get_team)
     update_user.role = request.POST['role']
-
-    if update_user.role == 'Superadmin':
-        update_user.is_superadmin = True
-        update_user.is_staff = True
-        update_user.is_manager = False
-        update_user.is_it_admin = False
-        update_user.save()
-        message_alert.success(request, 'User is updated successfully!')
-    elif update_user.role == 'Manager':
-        update_user.is_it_admin = False
-        update_user.is_superadmin = False
-        update_user.is_staff = False
-        update_user.is_manager = True
-        update_user.save()
-        message_alert.success(request, 'User is updated successfully!')
-    elif update_user.role == 'IT Administrator':
-        update_user.is_superadmin = False
-        update_user.is_staff = False
-        update_user.is_manager = False
-        update_user.is_it_admin = True
-        update_user.save()
-        message_alert.success(request, 'User is updated successfully!')
+    get_team = request.POST['team']
+    if get_team == '':
+        message_alert.info(request, 'Please choose the team for relative department!')
+        return redirect(edit_user, uid)
+    else:
+        update_user.team = Team.objects.get(id=get_team)
+        if update_user.role == 'Superadmin':
+            update_user.is_superadmin = True
+            update_user.is_staff = True
+            update_user.is_manager = False
+            update_user.is_it_admin = False
+            update_user.save()
+            message_alert.success(request, 'User is updated successfully!')
+        elif update_user.role == 'Manager':
+            update_user.is_it_admin = False
+            update_user.is_superadmin = False
+            update_user.is_staff = False
+            update_user.is_manager = True
+            update_user.save()
+            message_alert.success(request, 'User is updated successfully!')
+        elif update_user.role == 'IT Administrator':
+            update_user.is_superadmin = False
+            update_user.is_staff = False
+            update_user.is_manager = False
+            update_user.is_it_admin = True
+            update_user.save()
+            message_alert.success(request, 'User is updated successfully!')
 
     return redirect(superadmin_add_user)
 

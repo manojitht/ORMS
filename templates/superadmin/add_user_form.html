@@ -30,7 +30,7 @@
             <div class="and-input-box">
                 <span class="details_anu">Department Oriented: </span>
                 <select name="department" id="edit_department">
-                    <option selected>{{selected_user.department}}</option>
+                    <option selected value="{{selected_user.department.id}}">{{selected_user.department}}</option>
                     {% for department in department_names %}
                      <option value="{{department.id}}">{{ department.department_name }}</option>
                     {% endfor %}
@@ -39,7 +39,7 @@
              <div class="and-input-box">
                 <span class="details_anu">Team Oriented: </span>
                 <select name="team" id="edit_teams">
-                    <option selected>{{selected_user.team}}</option>
+                    <option selected value="{{selected_user.team.id}}">{{selected_user.team}}</option>
                 </select>
             </div>
              <div class="and-input-box">

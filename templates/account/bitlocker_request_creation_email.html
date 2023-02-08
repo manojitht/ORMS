@@ -1,0 +1,20 @@
+{% autoescape off %}
+
+Hi {{it_admin_firstname}} {{it_admin_lastname}},
+
+    The request reference ({{request_id}}) is requested bitlocker key for the resource of {{request_resource}}.
+
+    The request was created by the Manager - {{created_by}}, on behalf on their team member PS ID - {{created_for}}.
+
+    This request was falling under the category of ({{request_category}}).
+
+    The request came from the department of {{department}} & the team from {{team}}.
+
+    Currently the request is assigned to you and it was in {{request_status}}.
+
+Thank you,
+ORMS Team.
+
+Have a great day!
+
+{% endautoescape %}

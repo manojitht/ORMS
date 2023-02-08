@@ -1,0 +1,16 @@
+{% autoescape off %}
+
+Hi {{get_request.created_for.fullname}},
+
+    The request reference of ({{get_request.request_id}}) is requested for the bitlocker key for {{get_request.request_resource}} that was approved for further processing.
+
+    This request was falling under the category of ({{get_request.request_category}}) and created by your manager dated on {{get_request.created_on}}.
+
+    Currently the request was in {{resuest_status_r}} status.
+
+Thank you,
+ORMS Team.
+
+Have a great day!
+
+{% endautoescape %}

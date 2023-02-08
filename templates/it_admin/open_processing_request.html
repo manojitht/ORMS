@@ -16,7 +16,7 @@
                 <h3 style="color: black; font-weight: 400; background-color: #ffffff; padding: 5px; border-radius: 5px; margin-top: 1%; width: 90%; padding-left: 1%;">Currently viewing the request reference of <span style="color: #695CFE;">{{ get_request_id.request_id }}</span> in processing.</h3>
                 <div class="team-member-info">
                     <h1><i class="fa fa-envelope-open" aria-hidden="true"></i> {{ get_request_id.request_id }}</h1>
-                    <form action="{% url 'complete_processing_request_bitlocker' get_request_id.id user.id %}" method="POST">
+                    <form action="{% url 'complete_processing_request' get_request_id.id user.id %}" method="POST">
                         {% csrf_token %}
                         <table style="margin-top: 1%;">
                             <tr>

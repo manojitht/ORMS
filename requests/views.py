@@ -60,9 +60,12 @@ def create_request(request, userid):
         it_admin_email = request.POST['it_admin_email']
         it_admin_firstname = request.POST['it_admin_firstname']
         it_admin_lastname = request.POST['it_admin_lastname']
-        get_team_member_email = Members.objects.get(peoplesoft_id=created_for)
-        team_member_email = get_team_member_email.email
-
+        
+        if Members.objects.filter(peoplesoft_id=created_for, manager_peoplesoft_id=created_ps_id, is_active=True).exists():
+            get_team_member_email = Members.objects.get(peoplesoft_id=created_for)
+            team_member_email = get_team_member_email.email
+        else:
+            pass
         
         if request_resource == '--select resource--':
             message_alert.info(request, 'Please choose a resource!')
@@ -76,26 +79,47 @@ def create_request(request, userid):
                 asset_id=asset_id, request_category=request_category, request_status=request_status, 
                 request_decription=request_decription,
                 request_response=request_response, assigned_to=assigned_to)
-                
-                #send email functionality for request creation
-                mail_head_subject = 'Resource Request (' + request_id + ') Created For ' + request_resource + ''
-                message = render_to_string('account/request_creation_email.html', {
-                    'it_admin_firstname': it_admin_firstname,
-                    'it_admin_lastname': it_admin_lastname,
-                    'request_id': request_id,
-                    'created_for': created_for,
-                    'request_resource': request_resource,
-                    'request_category': request_category,
-                    'created_by': created_by,
-                    'request_status': request_status,
-                    'department': department,
-                    'team': team,
-                })
-                email_from = settings.EMAIL_HOST_USER
-                recipient_list = [it_admin_email,manager_email, team_member_email,]
-                send_mail(mail_head_subject, message, email_from, recipient_list)
-                requests.save()
-                message_alert.success(request, request_id + ' request is created successfully!')
+
+                if request_category == 'Bitlocker':
+                    requests.save()
+                    #send email functionality for request creation Bitlocker
+                    mail_head_subject = 'Bitlocker Key Request (' + request_id + ') Created For ' + request_resource + ''
+                    message = render_to_string('account/bitlocker_request_creation_email.html', {
+                        'it_admin_firstname': it_admin_firstname,
+                        'it_admin_lastname': it_admin_lastname,
+                        'request_id': request_id,
+                        'created_for': created_for,
+                        'request_resource': request_resource,
+                        'request_category': request_category,
+                        'created_by': created_by,
+                        'request_status': request_status,
+                        'department': department,
+                        'team': team,
+                    })
+                    email_from = settings.EMAIL_HOST_USER
+                    recipient_list = [it_admin_email,manager_email, team_member_email,]
+                    send_mail(mail_head_subject, message, email_from, recipient_list)
+                    message_alert.success(request, request_id + ' request is created successfully!')
+                else:
+                    #send email functionality for request creation
+                    mail_head_subject = 'Resource Request (' + request_id + ') Created For ' + request_resource + ''
+                    message = render_to_string('account/request_creation_email.html', {
+                        'it_admin_firstname': it_admin_firstname,
+                        'it_admin_lastname': it_admin_lastname,
+                        'request_id': request_id,
+                        'created_for': created_for,
+                        'request_resource': request_resource,
+                        'request_category': request_category,
+                        'created_by': created_by,
+                        'request_status': request_status,
+                        'department': department,
+                        'team': team,
+                    })
+                    email_from = settings.EMAIL_HOST_USER
+                    recipient_list = [it_admin_email,manager_email, team_member_email,]
+                    send_mail(mail_head_subject, message, email_from, recipient_list)
+                    requests.save()
+                    message_alert.success(request, request_id + ' request is created successfully!')
             else:
                 message_alert.info(request, created_for + ' is not your team member, please check!')
     
@@ -143,6 +167,17 @@ def manager_requests_date_sort(request, userid):
 def cancel_request(request, reqid, userid):
     get_request = Requests.objects.get(id=reqid)
     get_request.request_status = 'Cancelled'
+    resuest_status_r = 'Cancelled'
+
+    #send email functionality for request cancellation process by manager
+    mail_head_subject = 'Request (' + get_request.request_id + ') Was Cancelled For ' + get_request.request_resource + ''
+    message = render_to_string('account/request_cancellation_manager_email.html', {
+        'get_request': get_request,
+        'resuest_status_r': resuest_status_r,
+    })
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [get_request.created_for.email,]
+    send_mail(mail_head_subject, message, email_from, recipient_list)
     get_request.save()
     message_alert.success(request, get_request.request_id +  ', was cancelled successfully!')
     return redirect(list_requests_manager, userid)
@@ -170,6 +205,17 @@ def list_pending_requests_it_admin(request, userid):
 def cancel_request_it_admin(request, reqid, userid):
     get_request = Requests.objects.get(id=reqid)
     get_request.request_status = 'Cancelled'
+    resuest_status_r = 'Cancelled'
+
+    #send email functionality for request cancellation process by IT administrator
+    mail_head_subject = 'Request (' + get_request.request_id + ') Was Cancelled For ' + get_request.request_resource + ''
+    message = render_to_string('account/request_cancellation_it_admin_email.html', {
+        'get_request': get_request,
+        'resuest_status_r': resuest_status_r,
+    })
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [get_request.created_for.email,]
+    send_mail(mail_head_subject, message, email_from, recipient_list)
     get_request.save()
     message_alert.success(request, get_request.request_id +  ', was cancelled successfully!')
     return redirect(list_pending_requests_it_admin, userid)
@@ -207,16 +253,28 @@ def approve_processing_request(request, reqid, userid):
     get_request.request_status = 'Processing'
     resuest_status_r = 'Processing'
 
-    #send email functionality for request approval process
-    mail_head_subject = 'Resource Request Was Approved (' + get_request.request_id + ') For ' + get_request.request_resource + ''
-    message = render_to_string('account/request_approval_email.html', {
-        'get_request': get_request,
-        'resuest_status_r': resuest_status_r,
-    })
-    email_from = settings.EMAIL_HOST_USER
-    recipient_list = [get_request.created_for.email,]
-    send_mail(mail_head_subject, message, email_from, recipient_list)
-    get_request.save()
+    if get_request.request_category == 'Bitlocker':
+        #send email functionality for request approval process for bitlocker
+        mail_head_subject = 'Bitlocker Request Was Approved (' + get_request.request_id + ') For ' + get_request.request_resource + ''
+        message = render_to_string('account/bitlocker_request_approval_email.html', {
+            'get_request': get_request,
+            'resuest_status_r': resuest_status_r,
+        })
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [get_request.created_for.email,]
+        send_mail(mail_head_subject, message, email_from, recipient_list)
+        get_request.save()
+    else:
+        #send email functionality for request approval process
+        mail_head_subject = 'Resource Request Was Approved (' + get_request.request_id + ') For ' + get_request.request_resource + ''
+        message = render_to_string('account/request_approval_email.html', {
+            'get_request': get_request,
+            'resuest_status_r': resuest_status_r,
+        })
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [get_request.created_for.email,]
+        send_mail(mail_head_subject, message, email_from, recipient_list)
+        get_request.save()
 
     message_alert.success(request, get_request.request_id +  ', was approved successfully & assigned to your processing requests tab!')
     return redirect(list_pending_requests_it_admin, userid)
@@ -252,6 +310,7 @@ def complete_processing_request(request, reqid, userid):
     update_req = Requests.objects.get(id=reqid)
     get_user  = Account.objects.get(id=userid)
     get_user_fullname = get_user.first_name + ' ' + get_user.last_name
+    check_bitlocker = update_req.request_category
     
     if request.method == 'POST':
         update_req.asset_id = request.POST['asset_id']
@@ -260,8 +319,19 @@ def complete_processing_request(request, reqid, userid):
         resuest_status_r = "completed"
         update_req.completed_on = date.today()
 
-        if update_req.request_category == 'Bitlocker':
+        if check_bitlocker == 'Bitlocker':
             update_req.save()
+
+            #send email functionality for request completion process
+            mail_head_subject = 'Bitlocker Request Was Completed (' + update_req.request_id + ') For ' + update_req.request_resource + ''
+            message = render_to_string('account/bitlocker_request_completed_email.html', {
+                'update_req': update_req,
+                'resuest_status_r': resuest_status_r,
+            })
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [update_req.created_for.email,]
+            send_mail(mail_head_subject, message, email_from, recipient_list)
+
             message_alert.success(request, update_req.request_id + ', was completed successfully!')
         else:
             get_resource = Resource.objects.get(asset_id=update_req.asset_id)
