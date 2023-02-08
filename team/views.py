@@ -24,7 +24,7 @@ def superadmin_add_team(request):
 
         if Team.objects.filter(team_name=team_name).exists():
             message_alert.info(request, team_name + ', is already exists!')
-        elif department == '--Choose department oriented with--':
+        elif department == '--Choose department--':
             message_alert.info(request, 'Please choose a department to create a team!')
         else:
             team = Team(team_name=team_name, team_head=team_head, 

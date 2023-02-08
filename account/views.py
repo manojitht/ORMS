@@ -260,87 +260,85 @@ def add_user_page(request):
         role = request.POST['role']
         characters = string.ascii_letters + string.digits
         password_generated = ''.join(secrets.choice(characters) for i in range(10))
-
-        #password = request.POST['password']
-        if Account.objects.filter(peoplesoft_id=peoplesoft_id).exists():
-            message_alert.info(request, peoplesoft_id + ', is already exists as an user!')
-            #print(peoplesoft_id + ', is already exists as an user!')
-            return redirect('add_user_page')
-        elif Account.objects.filter(email=email).exists():
-            message_alert.info(request, 'Given email was already taken!')
-            return redirect('add_user_page')
+        if team == '':
+            message_alert.info(request, 'Please choose the team for relative department!')
+            return redirect(add_user_page)
+        elif role == '--Choose role--':
+            message_alert.info(request, 'Please choose the role for the user!')
+            return redirect(add_user_page)
         else:
-            if Account.objects.filter(email=email).exists():
+            if Account.objects.filter(peoplesoft_id=peoplesoft_id).exists():
+                message_alert.info(request, peoplesoft_id + ', is already exists as an user!')
+                return redirect('add_user_page')
+            elif Account.objects.filter(email=email).exists():
                 message_alert.info(request, 'Given email was already taken!')
                 return redirect('add_user_page')
             else:
-                if role == 'Superadmin':
-                    user  = Account.objects.create_superuser(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(id=department), team=Team.objects.get(id=team), role=role, ini_pas=password_generated, password=password_generated)
-                    #Send email to user
-                    try: 
-                        current_site = get_current_site(request)
-                        mail_head_subject = 'ORMS account creation'
-                        message = render_to_string('account/account_confirmation_email.html', {
-                            'user': user,
-                            'domain': current_site,
-                            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                            'token': default_token_generator.make_token(user),
-                        })
-                        to_email = email
-                        send_email = EmailMessage(mail_head_subject, message, to=[to_email])
-                        send_email.send()
-                        user.save()
-                        message_alert.success(request, 'Superadmin user created successfully!')
-                    except: 
-                        message_alert.info(request, 'Something went wrong!')
-                        user.delete()
-        
+                if Account.objects.filter(email=email).exists():
+                    message_alert.info(request, 'Given email was already taken!')
                     return redirect('add_user_page')
-                    #return render(request, 'superadmin/add_user_page.html')
-                elif role == 'Manager':
-                    user  = Account.objects.create_manager(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(id=department), team=Team.objects.get(id=team), role=role, ini_pas=password_generated, password=password_generated)
-                    try: 
-                        current_site = get_current_site(request)
-                        mail_head_subject = 'ORMS account creation'
-                        message = render_to_string('account/account_confirmation_email.html', {
-                            'user': user,
-                            'domain': current_site,
-                            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                            'token': default_token_generator.make_token(user),
-                        })
-                        to_email = email
-                        password_generated = 'password@123'
-                        send_email = EmailMessage(mail_head_subject, message, to=[to_email])
-                        send_email.send()
-                        user.save()
-                        message_alert.success(request, 'Manager user created successfully!')
-                    except: 
-                        message_alert.info(request, 'Something went wrong!')
-                        user.delete()
-
-                    return redirect('add_user_page')
-                    #return render(request, 'superadmin/add_user_page.html')
-                elif role == 'IT Administrator':
-                    user  = Account.objects.create_IT_admin(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(id=department), team=Team.objects.get(id=team), role=role, ini_pas=password_generated, password=password_generated)
-                    try: 
-                        current_site = get_current_site(request)
-                        mail_head_subject = 'ORMS account creation'
-                        message = render_to_string('account/account_confirmation_email.html', {
-                            'user': user,
-                            'domain': current_site,
-                            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                            'token': default_token_generator.make_token(user),
-                        })
-                        to_email = email
-                        send_email = EmailMessage(mail_head_subject, message, to=[to_email])
-                        send_email.send()
-                        user.save()
-                        message_alert.success(request, 'IT Administrator user created successfully!')
-                    except: 
-                        message_alert.info(request, 'Something went wrong!')
-                        user.delete()
-                    return redirect('add_user_page')
-                    #return render(request, 'superadmin/add_user_page.html')
+                else:
+                    if role == 'Superadmin':
+                        user  = Account.objects.create_superuser(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(id=department), team=Team.objects.get(id=team), role=role, ini_pas=password_generated, password=password_generated)
+                        #Send email to user
+                        try: 
+                            current_site = get_current_site(request)
+                            mail_head_subject = 'ORMS account creation'
+                            message = render_to_string('account/account_confirmation_email.html', {
+                                'user': user,
+                                'domain': current_site,
+                                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                                'token': default_token_generator.make_token(user),
+                            })
+                            to_email = email
+                            send_email = EmailMessage(mail_head_subject, message, to=[to_email])
+                            send_email.send()
+                            user.save()
+                            message_alert.success(request, 'Superadmin user created successfully!')
+                        except: 
+                            message_alert.info(request, 'Something went wrong!')
+                            user.delete()
+                        return redirect('add_user_page')
+                    elif role == 'Manager':
+                        user  = Account.objects.create_manager(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(id=department), team=Team.objects.get(id=team), role=role, ini_pas=password_generated, password=password_generated)
+                        try: 
+                            current_site = get_current_site(request)
+                            mail_head_subject = 'ORMS account creation'
+                            message = render_to_string('account/account_confirmation_email.html', {
+                                'user': user,
+                                'domain': current_site,
+                                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                                'token': default_token_generator.make_token(user),
+                            })
+                            to_email = email
+                            send_email = EmailMessage(mail_head_subject, message, to=[to_email])
+                            send_email.send()
+                            user.save()
+                            message_alert.success(request, 'Manager user created successfully!')
+                        except: 
+                            message_alert.info(request, 'Something went wrong!')
+                            user.delete()
+                        return redirect('add_user_page')
+                    elif role == 'IT Administrator':
+                        user  = Account.objects.create_IT_admin(peoplesoft_id=peoplesoft_id, first_name=first_name, last_name=last_name, email=email, department=Department.objects.get(id=department), team=Team.objects.get(id=team), role=role, ini_pas=password_generated, password=password_generated)
+                        try: 
+                            current_site = get_current_site(request)
+                            mail_head_subject = 'ORMS account creation'
+                            message = render_to_string('account/account_confirmation_email.html', {
+                                'user': user,
+                                'domain': current_site,
+                                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                                'token': default_token_generator.make_token(user),
+                            })
+                            to_email = email
+                            send_email = EmailMessage(mail_head_subject, message, to=[to_email])
+                            send_email.send()
+                            user.save()
+                            message_alert.success(request, 'IT Administrator user created successfully!')
+                        except: 
+                            message_alert.info(request, 'Something went wrong!')
+                            user.delete()
+                        return redirect('add_user_page')
     else:
         pass
     return render(request, 'superadmin/add_user_form.html', context)
