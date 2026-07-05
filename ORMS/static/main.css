@@ -71,7 +71,7 @@ section .login-box .login-form h2 {
     font-size: 1.5em;
     text-transform: uppercase;
     margin-bottom: 20px;
-    border-bottom: 4px solid #695CFE;
+    border-bottom: 4px solid #107CF1;
     display: inline-block;
     letter-spacing: 1px;
 }
@@ -128,7 +128,7 @@ section .login-box .login-form .input-box p {
 }
 
 section .login-box .login-form .input-box p a {
-    color: #695CFE;
+    color: #107CF1;
 }
 
 @media (max-width: 768px){
@@ -187,7 +187,7 @@ section .register-box .register-form h2 {
     font-size: 1.1em;
     text-transform: uppercase;
     margin-bottom: 20px;
-    border-bottom: 2px solid #695CFE;
+    border-bottom: 2px solid #107CF1;
     display: inline-block;
     letter-spacing: 1px;
 }
@@ -237,7 +237,7 @@ section .register-box .register-form .input-box p {
 }
 
 section .register-box .register-form .input-box p a {
-    color: #695CFE;
+    color: #107CF1;
 }
 
 @media (max-width: 768px){
@@ -271,10 +271,10 @@ section .register-box .register-form .input-box p a {
 /* ORMS Home page style */
 
 :root {
-    --body-color: #E4E9F7;
+    --body-color: #E4ECF7;
     --side-color: #fff;
-    --primary-color: #695CFE;
-    --primary-color-light: #F6F5FF;
+    --primary-color: #107CF1;
+    --primary-color-light: #F5FAFF;
     --toggle-color: #DDD;
     --text-color: #707070;
 
@@ -554,7 +554,7 @@ form .user-details .atm-input-box {
 
 .user-details .atm-input-box input:focus,
 .user-details .atm-input-box input:valid {
-    border-color: #695CFE;
+    border-color: #107CF1;
 }
 
 form .atm-button {
@@ -567,7 +567,7 @@ form .atm-button input {
     width: 100%;
     outline: none;
     color: #fff;
-    background-color: #695CFE;
+    background-color: #107CF1;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -578,7 +578,7 @@ form .atm-button input {
 }
 
 form .atm-button input:hover {
-    background-color: #5e52e0;
+    background-color: #5296E0;
 }
 
 @media (max-width: 584px){
@@ -675,7 +675,7 @@ form .atm-button input:hover {
 }
 
 .profile-card-button {
-    background-color: #695CFE;
+    background-color: #107CF1;
     color: #fff;
     border: none;
     outline: none;
@@ -690,7 +690,7 @@ form .atm-button input:hover {
 }
 
 .profile-card-button:hover {
-    background-color: #8c82f3;
+    background-color: #82B8F3;
     color: #fff;
     letter-spacing: 0.8px;
 }
@@ -722,13 +722,13 @@ form .atm-button input:hover {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: #695CFE;
+  background-color: #107CF1;
   color: rgb(255, 255, 255);
   font-weight: 500;
   font-size: 13px;
-  border-top: 1px solid #695CFE;
-  border-bottom: 1px solid #695CFE;
-  border-left: 0.5px solid #695CFE;
+  border-top: 1px solid #107CF1;
+  border-bottom: 1px solid #107CF1;
+  border-left: 0.5px solid #107CF1;
   /* border-right: 0.1px solid #000; */
 }
 
@@ -843,10 +843,10 @@ form .atm-button input:hover {
     font-weight: 400; 
     font-size: 20px; 
     text-align: center;
-    color: #393191;
+    color: #315F91;
     border-bottom: 10px solid rgb(98, 12, 168);
     border-radius: 10px;
-    background-color: #bcb6fd;
+    background-color: #B6D8FD;
     margin-bottom: 5%;
 }
 
@@ -854,10 +854,10 @@ form .atm-button input:hover {
     font-weight: 400; 
     font-size: 20px; 
     text-align: center;
-    color: #393191;
+    color: #315F91;
     border-bottom: 10px solid rgb(98, 12, 168);
     border-radius: 10px;
-    background-color: #bcb6fd;
+    background-color: #B6D8FD;
     margin-bottom: 5%;
 }
 
@@ -889,7 +889,7 @@ form .atm-button input:hover {
 }
 
 /* .r-p-textbox:focus {
-    border: 1px solid #5e52e0;
+    border: 1px solid #5296E0;
 } */
 
 #request_popup select {
@@ -1248,7 +1248,7 @@ form .atm-button input:hover {
     position: fixed;
     top: 1rem;
     right: 1rem;
-    background-color: #695CFE;
+    background-color: #107CF1;
     color: #fff;
     padding: 0.5rem 1rem;
     border-radius: 5px;
@@ -1266,7 +1266,7 @@ form .atm-button input:hover {
 }
 
 .note .tools {
-    background-color: #695CFE;
+    background-color: #107CF1;
     display: flex;
     justify-content: flex-end;
     padding: 0.5rem;
@@ -1834,7 +1834,7 @@ form .atm-button input:hover {
     width: 350px;
     padding-left: 15px;
     outline: none;
-    border: 1px solid #695CFE;
+    border: 1px solid #107CF1;
     background-color: rgb(255, 255, 255);
 }
 
@@ -1843,7 +1843,7 @@ form .atm-button input:hover {
     width: 170px;
     padding-left: 15px;
     outline: none;
-    border: 1px solid #695CFE;
+    border: 1px solid #107CF1;
     background-color: rgb(255, 255, 255);
     margin-left: 5%;
 }
@@ -1851,7 +1851,7 @@ form .atm-button input:hover {
 .search-input-btn-dt {
     height: 45px;
     width: 105px;
-    background-color: #695CFE;
+    background-color: #107CF1;
     color: #fff;
     cursor: pointer;
     border: none;
@@ -1859,7 +1859,7 @@ form .atm-button input:hover {
 }
 
 .search-input-btn-dt:hover {
-    background-color: #867cfa;
+    background-color: #7CB8FA;
 }
 
 .add-team-btn {
@@ -1902,7 +1902,7 @@ form .atm-button input:hover {
 
 .float-deletion-btn1:hover {
     background: #ffffff;
-    color: #695CFE;
+    color: #107CF1;
 }
 
 .float-deletion-btn2 {
@@ -1922,7 +1922,7 @@ form .atm-button input:hover {
 
 .float-deletion-btn2:hover {
     background: #ffffff;
-    color: #695CFE;
+    color: #107CF1;
 }
 
 .float-deletion-btn3 {
@@ -1942,7 +1942,7 @@ form .atm-button input:hover {
 
 .float-deletion-btn3:hover {
     background: #ffffff;
-    color: #695CFE;
+    color: #107CF1;
 }
 /* view team member information page styling */
 
@@ -1961,10 +1961,10 @@ form .atm-button input:hover {
     margin-left: 1%;
     font-weight: 400; 
     font-size: 25px; 
-    color: #393191;
+    color: #315F91;
     border-bottom: 10px solid rgb(98, 12, 168);
     border-radius: 10px;
-    background-color: #bcb6fd;
+    background-color: #B6D8FD;
     padding-left: 1%;
 }
 
@@ -1988,7 +1988,7 @@ form .atm-button input:hover {
 .team-member-info table {
     width: 98%;
     margin-left: 1%;
-    background-color: #e8e6ff;
+    background-color: #E6F2FF;
     border-radius: 15px;
     padding: 5px;
 }
@@ -1998,7 +1998,7 @@ form .atm-button input:hover {
 }
 
 .team-member-info td span {
-    color: #4c43ad;
+    color: #4376AD;
     font-weight: 600;
     margin-right: 2%;
     font-size: 16px;
@@ -2214,20 +2214,20 @@ form .atm-button input:hover {
     width: 50%;
     height: 40px;
     padding-left: 2%;
-    background-color: #cbc8fa;
-    border: 1px solid #cbc8fa;
+    background-color: #C8E0FA;
+    border: 1px solid #C8E0FA;
     outline: none;
     border-radius: 5px;
     width: 100%;
 }
 
 .view-edit-team-member-btn {
-    background-color: #4a41a8;
+    background-color: #4172A8;
     padding: 5px;
     font-size: 13px;
     text-decoration: none;
     color: #ffffff;
-    border: 1px solid #4a41a8;
+    border: 1px solid #4172A8;
     border-radius: 5px;
     float: right;
     transition: 0.5s;
@@ -2237,18 +2237,18 @@ form .atm-button input:hover {
 }
 
 .view-edit-team-member-btn:hover {
-    background-color: #746dcc;
-    border: 1px solid #746dcc;
+    background-color: #6D9BCC;
+    border: 1px solid #6D9BCC;
     color: #ffffff;
 }
 
 .view-edit-team-member-back-btn {
-    background-color: #4a41a8;
+    background-color: #4172A8;
     padding: 5px;
     font-size: 13px;
     text-decoration: none;
     color: #ffffff;
-    border: 1px solid #4a41a8;
+    border: 1px solid #4172A8;
     border-radius: 5px;
     float: left;
     transition: 0.5s;
@@ -2258,8 +2258,8 @@ form .atm-button input:hover {
 }
 
 .view-edit-team-member-back-btn:hover {
-    background-color: #746dcc;
-    border: 1px solid #746dcc;
+    background-color: #6D9BCC;
+    border: 1px solid #6D9BCC;
     color: #ffffff;
 }
 
@@ -2322,13 +2322,13 @@ form .atm-button input:hover {
 
 .add-resources-btn {
     margin-right: 2%;
-    background-color: #e8e6ff;
-    color: #433ba0;
+    background-color: #E6F2FF;
+    color: #3B6BA0;
     width: auto;
     height: 30px;
     font-size: 12px;
     border: none;
-    border: 1px solid #594fc4;
+    border: 1px solid #4F87C4;
     border-radius: 50px;
     cursor: pointer;
     transition: 0.5s;
@@ -2337,7 +2337,7 @@ form .atm-button input:hover {
 }
 
 .add-resources-btn:hover {
-    background-color: #594fc4;
+    background-color: #4F87C4;
     color: #ffffff;
 }
 
@@ -2414,10 +2414,10 @@ form .atm-button input:hover {
     margin-left: 1%;
     font-weight: 400; 
     font-size: 25px; 
-    color: #393191;
+    color: #315F91;
     border-bottom: 10px solid rgb(98, 12, 168);
     border-radius: 10px;
-    background-color: #bcb6fd;
+    background-color: #B6D8FD;
     padding-left: 1%;
 }
 
@@ -2434,7 +2434,7 @@ form .atm-button input:hover {
 }
 
 .requests-info td span {
-    color: #4c43ad;
+    color: #4376AD;
     font-weight: 600;
     margin-right: 2%;
     font-size: 16px;
@@ -2532,7 +2532,7 @@ form .atm-button input:hover {
     position: relative;
     font-weight: 500;
     font-size: 2.5em;
-    color: #695CFE;
+    color: #107CF1;
     transition: 0.5s;
 }
 
@@ -2582,7 +2582,7 @@ form .atm-button input:hover {
 }
 
 .card-box .analytics-card:hover {
-    background-color: #695cfe62;
+    background-color: #107CF162;
 }
 
 .card-box .analytics-card:hover .card-btn .edit-card-btn {

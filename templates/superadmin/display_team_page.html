@@ -1,72 +1,57 @@
-{% extends 'base_superadmin.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | View Team{% endblock %}
+
 {% block content %}
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bxs-group'></i> View Team</h1>
+    {% include 'message_alert.html' %}
 
-
-
-<section class="home-main">
-    <div class="full-myteam-container" id="blur">
-
-        <div class="head-container" style="margin-bottom: 3%;">
-            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/external-flaticons-flat-flat-icons/35/null/external-department-university-flaticons-flat-flat-icons-2.png"/> View Team</h1>
-            {% include 'message_alert.html' %}
-        </div>
-
-        <div class="department-card-container">
-            {% if selected_tem %}
-            <div style="margin-top: 1%;" class="team-member-info">
-                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> View Team Information: </h1>
-                <table style="margin-top: 1%;">
-                    <tr>
-                        <td><span>Team Name: </span> {{selected_tem.team_name}}</td>
-                        <td><span>Team Head: </span> {{selected_tem.team_head}}</td>
-                    </tr>
-                    <tr>
-                        <td><span>Department Oriented To: </span> {{selected_tem.department}}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><span>Team Created By: </span> {{selected_tem.created_by}}</td>
-                        <td><span>Created On: </span> {{selected_tem.created_date}}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><span>Team Description:</span> {{selected_tem.team_description}}</td>
-                    </tr>
-                    <tr>
-                        <td><a class="add-resources-btn" href="{% url 'edit_team' selected_tem.id %}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit Team </a> <a class="add-resources-btn" href="#" onclick="toggle_warning_blur()"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete Team </a></td>
-                        <td><a class="add-resources-btn" href="{% url 'superadmin_team_table' %}"><i class="fa fa-hand-o-left" aria-hidden="true"></i> Back to Teams </a></td>
-                    </tr>
-                </table>
+    {% if selected_tem %}
+    <div class="card mx-auto" style="max-width: 640px;">
+        <div class="card-body p-4">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Team name</dt><dd class="col-sm-8">{{ selected_tem.team_name }}</dd>
+                <dt class="col-sm-4">Team head</dt><dd class="col-sm-8">{{ selected_tem.team_head }}</dd>
+                <dt class="col-sm-4">Department</dt><dd class="col-sm-8">{{ selected_tem.department }}</dd>
+                <dt class="col-sm-4">Created by</dt><dd class="col-sm-8">{{ selected_tem.created_by }}</dd>
+                <dt class="col-sm-4">Created on</dt><dd class="col-sm-8">{{ selected_tem.created_date }}</dd>
+                <dt class="col-sm-4">Description</dt><dd class="col-sm-8">{{ selected_tem.team_description }}</dd>
+            </dl>
+            <div class="d-flex gap-2 mt-3">
+                <a href="{% url 'team:edit_team' selected_tem.id %}" class="btn btn-outline-primary flex-fill">
+                    <i class='bx bx-edit'></i> Edit
+                </a>
+                <button type="button" class="btn btn-outline-danger flex-fill" data-bs-toggle="modal" data-bs-target="#deleteTeamModal">
+                    <i class='bx bx-trash'></i> Delete
+                </button>
+                <a href="{% url 'team:superadmin_team_table' %}" class="btn btn-outline-secondary flex-fill">Back</a>
             </div>
         </div>
+    </div>
+
+    <div class="modal fade" id="deleteTeamModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{% url 'team:delete_team' selected_tem.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class='bx bxs-bell-ring text-warning'></i> Warning!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete the entire "{{ selected_tem.team_name }}" team?</p>
+                        <input type="hidden" name="delete_name" value="delete">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No, cancel</button>
+                        <button type="submit" class="btn btn-danger">Yes, delete</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="loader-wrapper">
-            <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-        </div>   
-        <div id="warning_popup">
-            <form action="{% url 'delete_team' selected_tem.id %}" method="POST">
-                {% csrf_token %}
-                <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
-                <h3>Are you sure that you want to delete the entire "{{selected_tem.team_name}}" team!</h3>
-                <input type="hidden" name="delete_name" value="delete">
-                <button type="submit" class="warning-btn-delete" style="background-color: rgb(204, 17, 3);" onclick="toggle_warning_blur()">Yes, delete</button>
-                <a class="warning-btn-cancel" style="background-color: rgb(2, 141, 20);" onclick="toggle_warning_blur()">No, cancel</a>
-            </form>
-        </div>  
-        {% else %}
-        {% endif %}  
-</section>
-
-
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="{% static 'script.js' %}"></script>
-<script>
-    $(window).on("load",function(){
-      $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

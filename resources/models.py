@@ -54,12 +54,12 @@ class ResourceTaken(models.Model):
     manager_peoplesoft_id = models.CharField(max_length=200, blank=True)
 
     def __str__(self):
-        return self.asset_id
+        return str(self.asset_id)
 
 class OtherAccessories(models.Model):
     peoplesoft_id = models.OneToOneField(Members, on_delete=models.CASCADE)
     other_notes = models.TextField(max_length=300, blank=True)
 
     def __str__(self):
-        return self.peoplesoft_id
+        return str(self.peoplesoft_id)
 

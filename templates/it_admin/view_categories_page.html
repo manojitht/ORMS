@@ -1,64 +1,74 @@
-{% extends 'base_it_admin.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<title>ORMS | Resource Category</title>
+{% block title %}ORMS | Resource Category{% endblock %}
 
-<section class="home-main">
-    <div class="full-myteam-container" id="blur">
-        <div class="head-container">
-            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/color/35/null/device-manager.png"/> Resource categories</h1>
-            {% include 'message_alert.html' %}
-        </div>
-        <div class="search-bar-container" style="width: 96%; text-align: center; background-color: #4ec5f5; padding: 10px; border-radius: 15px; margin-left: 2%;">
-            <form>
-                <h1 style="float: left; color: rgb(255, 255, 255); font-weight: 300; margin-left: 1%;">Categories of resources:</h1>
-                <a href="#" onclick="toggle_blur()" style="margin-right: 5px; background-color: rgb(85, 85, 85); color: #ffffff; border: 1px solid rgb(85, 85, 85);" class="add-team-btn">Category <i class='bx bx-message-square-add'></i></a>
-            </form>
-        </div>
-        <h8 style="font-size: 15px; text-align: center; color: rgb(85, 85, 85);">Total Categories Showing: {{ category_count }}</h8>
-        <div class="card-box">
-            {% for category in all_categories %}
-                <div class="analytics-card">
-                    <div>
-                        <div class="numbers">{{ category.resource_category }}</div>
-                        <div class="name">{{ category.description }}</div>
-                        <div class="card-btn"><a href="{% url 'edit_category_page' category.id %}" class="edit-card-btn">Edit Category</a> <a href="{% url 'delete_category_warning' category.id %}" class="delete-card-btn">Delete Category</a></div>
-                    </div>
-                    <div class="icon">
-                        <img src="{{ category.category_image.url }}"/>
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-category'></i> Resource Categories</h1>
+    {% include 'message_alert.html' %}
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <p class="text-muted small mb-0">Total categories showing: {{ category_count }}</p>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+            <i class='bx bx-message-square-add'></i> Add Category
+        </button>
+    </div>
+
+    <div class="row g-3">
+        {% for category in all_categories %}
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100 text-center">
+                    {% if category.category_image %}
+                        <img src="{{ category.category_image.url }}" class="card-img-top p-3" style="height: 140px; object-fit: contain;">
+                    {% else %}
+                        <img src="{% static 'images/image_placeholder.jpg' %}" class="card-img-top p-3" style="height: 140px; object-fit: contain;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="card-title">{{ category.resource_category }}</h6>
+                        <p class="text-muted small">{{ category.description }}</p>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'resources:edit_category_page' category.id %}" class="btn btn-sm btn-outline-primary flex-fill">Edit</a>
+                            <a href="{% url 'resources:delete_category_warning' category.id %}" class="btn btn-sm btn-outline-danger flex-fill">Delete</a>
+                        </div>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
-        </div> 
-        <div id="request_popup">
-            <form action="{% url 'add_category_page' %}" method="POST" enctype="multipart/form-data">
+            </div>
+        {% empty %}
+            <p class="text-muted text-center py-5">No categories yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{% url 'resources:add_category_page' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                <h2><i class="fa fa-laptop" aria-hidden="true"></i> Add New Category</h2>
-                <input name="resource_category" type="text" class="r-p-textbox" placeholder="Enter category name.." value="">
-                <textarea class="r-p-textbox" id="rp-textarea" name="description" placeholder="Write Category Description.." rows="4" cols="50" required></textarea>
-                <h3 style="font-weight: 400; font-size: 15px;">Select Category Image: <input type="file" name="category_image" accept="image/*" required></h3>
-                <input class="create-request-button" type="submit" value="Add Category">
-                <input class="close-request-button" type="button" onclick="toggle_blur()" value="Close">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class='bx bx-message-square-add'></i> Add New Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Category name</label>
+                        <input name="resource_category" type="text" class="form-control" placeholder="Enter category name.." required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" placeholder="Write category description.." rows="4" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Category image</label>
+                        <input type="file" class="form-control" name="category_image" accept="image/*" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Category</button>
+                </div>
             </form>
         </div>
-
-        <div class="loader-wrapper">
-            <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-        </div>     
-</section>
-
-
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="{% static 'script.js' %}"></script>
-<script>
-    $(window).on("load",function(){
-    $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
+    </div>
+</div>
 {% endblock %}

@@ -1,112 +1,68 @@
-{% extends 'base_superadmin.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | Departments Index{% endblock %}
+
 {% block content %}
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bxs-building'></i> Departments Index</h1>
+    {% include 'message_alert.html' %}
 
-
-
-<section class="home-main">
-    <div class="full-myteam-container" id="blur">
-        <div class="head-container" style="margin-bottom: 3%;">
-            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/external-flaticons-flat-flat-icons/35/null/external-department-university-flaticons-flat-flat-icons-2.png"/> Departments Index</h1>
-            {% include 'message_alert.html' %}
+    <form action="{% url 'department:superadmin_department_date_sort' %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
+        {% csrf_token %}
+        <div class="col">
+            <label class="form-label small mb-1">From</label>
+            <input type="date" name="from_dep" class="form-control" required>
         </div>
-        <div class="search-bar-container">
-            <form action="{% url 'superadmin_department_date_sort' %}" method="POST">
-                {% csrf_token %}
-                From: <input type="date" style="width: 140px;" name="from_dep" class="search-input-box-dt" required>
-                To: <input type="date" style="width: 140px;" name="to_dep" class="search-input-box-dt" required>
-                <input type="submit" class="search-input-btn-dt" value="Sort">
-                <a href="{% url 'add_new_department' %}" style="margin-right: 0.5%;" class="add-team-btn">Department <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
-            </form>
+        <div class="col">
+            <label class="form-label small mb-1">To</label>
+            <input type="date" name="to_dep" class="form-control" required>
         </div>
-       
-            <div class="container">
-                <table id="team_requests" class="display" style="width: 100%;">
-                    
-                        {% if get_result %}
+        <div class="col">
+            <button type="submit" class="btn btn-primary">Sort</button>
+        </div>
+        <div class="col">
+            <a href="{% url 'department:add_new_department' %}" class="btn btn-outline-primary">
+                <i class='bx bx-message-square-add'></i> Add Department
+            </a>
+        </div>
+    </form>
 
-                        <thead>
-                            <th colspan="5" style="background-color: #949494; text-align: center; color: rgb(255, 255, 255); border: 1px solid rgb(114, 113, 113);">Showing Date From: {{ from_date }} to Date To: {{ to_date }} (Total Results: {{ result_count }})</th>
-                            <tr>
-                                <th>Department Name</th>
-                                <th>Department Head</th>
-                                <th>Updated By</th>
-                                <th>Created On</th>
-                                <th>Processing Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+    {% if get_result %}
+        <p class="text-muted small">Showing {{ from_date }} to {{ to_date }} &mdash; {{ result_count }} result(s)</p>
+    {% endif %}
 
-                        {% for department in get_result %}
-                        <tr>
-                            <td><a href="{% url 'display_departments' department.id %}">{{ department.department_name }}</a></td>
-                            <td>{{ department.department_head }}</td>
-                            <td>{{ department.created_by }}</td>
-                            <td>{{ department.created_on }}</td>
-                            {% if department.is_active %}
-                                <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">On Process</h4></td>
-                            {% else %}
-                                <td><h4 style="font-weight: 400; background-color: rgb(197, 75, 27); text-align: center; border-radius: 15px; color: #fff;">Removed</h4></td>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Department Name</th>
+                    <th>Department Head</th>
+                    <th>Updated By</th>
+                    <th>Created On</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for department in get_result|default:departments_table %}
+                <tr>
+                    <td><a href="{% url 'department:display_departments' department.id %}">{{ department.department_name }}</a></td>
+                    <td>{{ department.department_head }}</td>
+                    <td>{{ department.created_by }}</td>
+                    <td>{{ department.created_on }}</td>
+                    <td>
+                        {% if department.is_active %}
+                            <span class="badge text-bg-success">On Process</span>
                         {% else %}
-
-                        <thead>
-                            <tr>
-                                <th>Department Name</th>
-                                <th>Department Head</th>
-                                <th>Updated By</th>
-                                <th>Created On</th>
-                                <th>Processing Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        {% for department in departments_table %}
-                        <tr>
-                            <td><a href="{% url 'display_departments' department.id %}">{{ department.department_name }}</a></td>
-                            <td>{{ department.department_head }}</td>
-                            <td>{{ department.created_by }}</td>
-                            <td>{{ department.created_on }}</td>
-                            {% if department.is_active %}
-                                <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">On Process</h4></td>
-                            {% else %}
-                                <td><h4 style="font-weight: 400; background-color: rgb(197, 75, 27); text-align: center; border-radius: 15px; color: #fff;">Removed</h4></td>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-
+                            <span class="badge" style="background-color:#EA580C;">Removed</span>
                         {% endif %}
-                    </tbody>
-                </table>
-            </div>
-        </div> 
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-center text-muted py-4">No departments found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    <div class="loader-wrapper">
-        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-    </div>     
-</section>
-
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<!-- datatables starting -->
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
-<!-- datatables ending -->
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="{% static 'script.js' %}"></script>
-<script>
-    $(window).on("load",function(){
-      $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
+</div>
 {% endblock %}

@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from django.contrib import messages as message_alert, auth
-from django.shortcuts import redirect, render
+from django.contrib import messages as message_alert
+from django.shortcuts import redirect
 from django.db.models import Q
 from members.models import Members
-from resource.models import Resource, ResourceTaken, OtherAccessories
+from resources.models import Resource, ResourceTaken, OtherAccessories
 from department.models import Department
 from account.models import Account
 from team.models import Team
@@ -12,11 +12,13 @@ import os
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def add_member(request):
     
     if request.method == 'POST':
@@ -43,12 +45,13 @@ def add_member(request):
             member_image=member_image, manager_name=manager_name, manager_peoplesoft_id=manager_peoplesoft_id)
             new_member.save()
             message_alert.success(request, peoplesoft_id + ' team member profile created successfully!')
-            return redirect('add_member')
+            return redirect('members:add_member')
 
     return render(request, 'manager/add_member_form.html')
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def view_team_members(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
@@ -59,6 +62,7 @@ def view_team_members(request, userid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def view_team_members_details(request, memid):
     get_member_id = Members.objects.get(id=memid)
     get_ps_id = Members.objects.get(peoplesoft_id=get_member_id.peoplesoft_id)
@@ -74,6 +78,7 @@ def view_team_members_details(request, memid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def search_team_member(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
@@ -88,11 +93,13 @@ def search_team_member(request, userid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def manager_notes_page(request):
     return render(request, 'manager/manager_notes_page.html')
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def edit_team_member(request, memid):
     get_member_id = Members.objects.get(id=memid)
     context = { 'get_member_id': get_member_id, }
@@ -100,6 +107,7 @@ def edit_team_member(request, memid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def update_team_member(request, memid):
     update_tm = Members.objects.get(id=memid)
 
@@ -116,10 +124,11 @@ def update_team_member(request, memid):
         update_tm.home_address = request.POST['home_address']
         update_tm.save()
         message_alert.success(request, 'Team member details of ' + update_tm.peoplesoft_id + ' was updated successfully!')
-    return redirect(view_team_members_details, memid)
+    return redirect('members:view_team_members_details', memid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def add_other_notes(request, memid):
     if request.method == 'POST':
         peoplesoft_id = request.POST['peoplesoft_id']
@@ -127,10 +136,11 @@ def add_other_notes(request, memid):
         add_accessories = OtherAccessories(peoplesoft_id=Members.objects.get(peoplesoft_id=peoplesoft_id), other_notes=other_notes)
         add_accessories.save()
         message_alert.success(request, 'Other notes added to ' + peoplesoft_id +' successfully!')
-    return redirect(view_team_members_details, memid)
+    return redirect('members:view_team_members_details', memid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def edit_other_notes(request, memid):
     get_oa_id = OtherAccessories.objects.get(id=memid)
     context = { 'get_oa_id': get_oa_id, }
@@ -138,6 +148,7 @@ def edit_other_notes(request, memid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def update_other_notes(request, memid, psid):
     update_oa = OtherAccessories.objects.get(id=memid)
 
@@ -145,10 +156,11 @@ def update_other_notes(request, memid, psid):
         update_oa.other_notes = request.POST['other_notes']
         update_oa.save()
         message_alert.success(request, 'Other notes was updated successfully!')
-    return redirect(view_team_members_details, psid)
+    return redirect('members:view_team_members_details', psid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def mark_returned(request, resid, memid):
     get_asset = ResourceTaken.objects.get(id=resid)
     take_asset_id = ResourceTaken.objects.get(id=get_asset.id, asset_id=get_asset.asset_id)
@@ -201,10 +213,11 @@ def mark_returned(request, resid, memid):
         elif reason_notes == '-------------':
             message_alert.info(request, 'Please choose a return reason to mark it as return!')
     
-    return redirect(view_team_members_details, memid)
+    return redirect('members:view_team_members_details', memid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def view_member_resource_info(request, memid, resid):
     get_member_id = Members.objects.get(id=memid)
     # get_ps_id = Members.objects.get(peoplesoft_id=get_member_id.peoplesoft_id)
@@ -214,6 +227,7 @@ def view_member_resource_info(request, memid, resid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def view_history_resources(request, memid):
     get_member_id = Members.objects.get(id=memid)
     get_ps_id = Members.objects.get(peoplesoft_id=get_member_id.peoplesoft_id)
@@ -234,6 +248,7 @@ def view_history_resources(request, memid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def delete_team_member(request, memid, userid):
     deleting_mem = Members.objects.get(id=memid)
     if request.method == 'POST':
@@ -241,10 +256,11 @@ def delete_team_member(request, memid, userid):
         if delete_name == 'delete':
             message_alert.success(request, deleting_mem.fullname + ' was deleted successfully!')
             deleting_mem.delete()
-    return redirect(view_team_members, userid)    
+    return redirect('members:view_team_members', userid)    
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def view_team_members_index_table(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
@@ -254,6 +270,7 @@ def view_team_members_index_table(request, userid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def date_sort_team_members_index_table(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)

@@ -1,79 +1,71 @@
-{% extends 'base_it_admin.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | View Resource{% endblock %}
+
 {% block content %}
-<title>ORMS | View Resource</title>
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-devices'></i> View Resource</h1>
 
-<section class="home-main">
-    <div class="full-myteam-container" id="blur">
-        <div class="head-container" style="margin-bottom: 2%;">
-            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/color/35/null/device-manager.png"/> View Resource</h1>
+    {% if selected_res %}
+    <div class="card mx-auto" style="max-width: 720px;">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">{{ selected_res.asset_id }}</h5>
+                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteResourceModal">
+                    <i class='bx bx-trash'></i> Delete
+                </button>
+            </div>
+
+            {% if selected_res.resource_image %}
+                <img src="{{ selected_res.resource_image.url }}" class="mb-3 rounded" style="max-height: 160px;">
+            {% else %}
+                <img src="{% static 'images/image_placeholder.jpg' %}" class="mb-3 rounded" style="max-height: 160px;">
+            {% endif %}
+
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Model name</dt><dd class="col-sm-8">{{ selected_res.model_name }}</dd>
+                <dt class="col-sm-4">Asset Id</dt><dd class="col-sm-8">{{ selected_res.asset_id }}</dd>
+                <dt class="col-sm-4">Device type</dt><dd class="col-sm-8">{{ selected_res.resource_category }}</dd>
+                <dt class="col-sm-4">Availability</dt><dd class="col-sm-8">{{ selected_res.resource_availability }}</dd>
+                <dt class="col-sm-4">Bitlocker key</dt><dd class="col-sm-8">{{ selected_res.bitlocker_key|default:"—" }}</dd>
+                <dt class="col-sm-4">Added on</dt><dd class="col-sm-8">{{ selected_res.added_on }}</dd>
+                <dt class="col-sm-4">Updated by</dt><dd class="col-sm-8">{{ selected_res.added_by }}</dd>
+                <dt class="col-sm-4">Specifications</dt><dd class="col-sm-8">{{ selected_res.resource_description }}</dd>
+            </dl>
+
+            <div class="d-flex gap-2 mt-3">
+                <a href="{% url 'resources:resources_listings_page' %}" class="btn btn-outline-secondary flex-fill">
+                    <i class='bx bx-arrow-back'></i> Back to Resources
+                </a>
+                <a href="{% url 'resources:edit_resource' selected_res.id %}" class="btn btn-primary flex-fill">
+                    <i class='bx bx-edit'></i> Edit
+                </a>
+            </div>
         </div>
-        {% if selected_res %}
-        <div class="view-device-info">
-            <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> Resource Information of ({{selected_res.asset_id}}): <a href="#" onclick="toggle_warning_blur()"><i class="fa fa-trash" aria-hidden="true"></i></a></h1>
-            <form>
-            <img src="{{ selected_res.resource_image.url }}" alt="Resource img">
-            <table>
-                <tr>
-                    <td colspan="2"><span><i class="fa fa-info-circle" aria-hidden="true"></i> Model Name:</span><br> <input class="view-edit-device-input" type="text" placeholder="Enter Asset Id.." value="{{selected_res.model_name}}" readonly></td>
-                </tr>
-                <tr>
-                    <td><span><i class="fa fa-desktop" aria-hidden="true"></i> Asset Id: </span> <input class="view-edit-device-input" type="text" placeholder="Enter Asset Id.." value="{{selected_res.asset_id}}" readonly></td>
-                    <td><span><i class="fa fa-bars" aria-hidden="true"></i> Device Type: </span> <input class="view-edit-device-input" type="text" placeholder="Enter Asset Id.." value="{{selected_res.resource_category}}" readonly></td>
-                </tr>
-                <tr>                        
-                    <td><span><i class="fa fa-bars" aria-hidden="true"></i> Availability: </span> <input class="view-edit-device-input" type="text" placeholder="Enter Asset Id.." value="{{selected_res.resource_availability}}" readonly></td>
-                    <td><span><i class="fa fa-code" aria-hidden="true"></i> Bitlocker Key: </span> <input class="view-edit-device-input" type="text" placeholder="Enter bitlocker key.." value="{{selected_res.bitlocker_key}}" readonly></td>
-                </tr>
-                <tr>
-                    <td><span><i class="fa fa-calendar" aria-hidden="true"></i> Added On: </span> {{selected_res.added_on}}</td>
-                    <td><span><i class="fa fa-user-secret" aria-hidden="true"></i> Updated By: </span> {{selected_res.added_by}}</td>
-                </tr>
-                <tr>
-                    <td colspan="2"><span><i class="fa fa-info-circle" aria-hidden="true"></i> Device Specifications:</span><br> <textarea rows="4" cols="50" readonly>{{selected_res.resource_description}}</textarea></td>
-                </tr>
-                <tr>
-                    {% if selected_res.bitlocker_key %}
-                        <td style="font-size: 12px;">Note: This Device has the bitlocker key</td>
-                    {% else %}
-                        <td style="font-size: 12px;">Note: Bitlocker key not required for this device type.</td>
-                    {% endif %}
-                </tr>
-                <tr>
-                    <td><a style="text-align: center;" class="view-edit-device-btn" href="{% url 'resources_listings_page' %}"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Back to Resources</a></td>
-                    <td><a style="text-align: center;" class="view-edit-device-btn" href="{% url 'edit_resource' selected_res.id %}"><i class="fa fa-pencil-square" aria-hidden="true"></i> Edit this {{selected_res.resource_category}}</a></td>
-                </tr>
-            </table>
-        </form>
+    </div>
+
+    <div class="modal fade" id="deleteResourceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{% url 'resources:delete_resource' selected_res.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class='bx bxs-bell-ring text-warning'></i> Warning!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete "{{ selected_res.asset_id }}"?</p>
+                        <input type="hidden" name="delete_name" value="delete">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No, cancel</button>
+                        <button type="submit" class="btn btn-danger">Yes, delete</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div> 
-    <div class="loader-wrapper">
-        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
     </div>
-    <div id="warning_popup">
-        <form action="{% url 'delete_resource' selected_res.id %}" method="POST">
-            {% csrf_token %}
-            <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
-            <h3>Are you sure that you want to delete this "{{selected_res.asset_id}}" resource?</h3>
-            <input type="hidden" name="delete_name" value="delete">
-            <button type="submit" class="warning-btn-delete" style="background-color: rgb(204, 17, 3);" onclick="toggle_warning_blur()">Yes, delete</button>
-            <a class="warning-btn-cancel" style="background-color: rgb(2, 141, 20);" onclick="toggle_warning_blur()">No, cancel</a>
-        </form>
-    </div>
-    {% else %}
     {% endif %}
-</section>
-
-
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="script.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script>
-    $(window).on("load",function(){
-      $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
+</div>
 {% endblock %}

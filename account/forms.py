@@ -1,6 +1,5 @@
 from django import forms
 from .models import Account
-from django.contrib.auth.forms import UserCreationForm
 
 
 class LoginUsers(forms.Form):

@@ -1,82 +1,66 @@
-{% extends 'base_user.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | View Resource Information{% endblock %}
+
 {% block content %}
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-devices'></i> View Resource Information</h1>
 
-<section class="home-main">
-    <div class="full-myteam-container" id="blur">
-        <div class="head-container">
-            <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/35/null/device-manager.png"/> View Resource Information</h1>
-        </div>
-        {% if get_devices_id %}
-        <div class="department-card-container">
-            {% if get_member_id %}
-                <h3 style="color: black; font-weight: 500; background-color: #ffffff; padding: 5px; border-radius: 5px; margin-top: 2%; width: 90%; padding-left: 1%;">Showing the Resource information of <span style="color: #695CFE;">{{get_devices_id.asset_id}}</span> currently.</h3>
-                <div class="device-card-info">
-                    <h1><i class="fa fa-desktop" aria-hidden="true"></i> Resource Information <a href="#"><i style="color: rgb(34, 158, 9);" class="fa fa-check-circle" aria-hidden="true"></i></a></h1>
-                    <img src="{{ get_devices_id.asset_id.resource_image.url }}" alt="resource img">
-                    <table>
-                        <tr>
-                            <td colspan="2"><span><i class="fa fa-info-circle" aria-hidden="true"></i> Model Name: </span> {{get_devices_id.asset_id.model_name}}</td>
-                        </tr>
-                        <tr>
-                            <td><span><i class="fa fa-desktop" aria-hidden="true"></i> Asset Id: </span> {{get_devices_id.asset_id}}</td>
-                            <td><span><i class="fa fa-bars" aria-hidden="true"></i> Resource Type: </span> {{get_devices_id.resource_category}}</td>
-                        </tr>
-                        <tr>
-                            <td><span><i class="fa fa-calendar" aria-hidden="true"></i> Taken On: </span> {{get_devices_id.taken_date}}</td>
-                            {% if get_devices_id.asset_id.bitlocker_key %}
-                                <td><span><i class="fa fa-code" aria-hidden="true"></i> Bitlocker Key: </span> {{ get_devices_id.asset_id.bitlocker_key }}</td>
-                            {% else %}
-                                <td><span><i class="fa fa-code" aria-hidden="true"></i> Bitlocker Key: </span> Not Specified</td>
-                            {% endif %}
-                        </tr>
-                        <tr>
-                            <td colspan="2"><span><i class="fa fa-info-circle" aria-hidden="true"></i> Resource Specifications:</span><br> <h5 style="font-weight: 400;"> {{ get_devices_id.asset_id.resource_description }}</h5></td>
-                        </tr>
-                        <tr>
-                            <td><a href="{% url 'view_team_members_details' get_member_id.id %}" class="view-res-inf-btn" style="float: left;"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back to member profile</a></td>
-                            <td><a href="#" onclick="toggle_blur()" class="view-res-inf-btn"><i class="fa fa-check" aria-hidden="true"></i> Mark returned</a></td>
-                        </tr>
-                    </table>
-                </div>
-        </div>
-        </div>
-        <div id="request_popup">
-            <form action="{% url 'mark_returned' get_devices_id.id get_member_id.id %}" method="POST">
-                {% csrf_token %}
-                <h2>Specify Reason</h2>
-                <h5 style="margin-top: 0px; color: rgb(87, 86, 86); font-weight: 400;">*Select Return Reason:</h5>
-                <select name="return_reason">
-                    <option selected>-------------</option>
-                    <option>Leaving From Company</option>
-                    <option>Resource Damaged</option>
-                    <option>Facing Software Issue</option>
-                    <option>Swaping For Highend Resource</option>
-                </select>
-                <!-- <input style="margin-bottom: 5%;" name="peoplesoft_id" type="hidden" class="r-p-textbox" value="{{get_member_id.peoplesoft_id}}"> -->
-                <input class="create-request-button" type="submit" value="Confirm">
-                <input class="close-request-button" type="button" onclick="toggle_blur()" value="Close">
-            </form>
-        </div>
+    {% if get_devices_id and get_member_id %}
+    <div class="card mx-auto" style="max-width: 720px;">
+        <div class="card-body p-4">
+            {% if get_devices_id.asset_id.resource_image %}
+                <img src="{{ get_devices_id.asset_id.resource_image.url }}" class="mb-3 rounded" style="max-height: 160px;">
             {% else %}
+                <img src="{% static 'images/image_placeholder.jpg' %}" class="mb-3 rounded" style="max-height: 160px;">
             {% endif %}
-        {% else %}
-        {% endif %}
-        <div class="loader-wrapper">
-            <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Model name</dt><dd class="col-sm-8">{{ get_devices_id.asset_id.model_name }}</dd>
+                <dt class="col-sm-4">Asset Id</dt><dd class="col-sm-8">{{ get_devices_id.asset_id }}</dd>
+                <dt class="col-sm-4">Resource type</dt><dd class="col-sm-8">{{ get_devices_id.resource_category }}</dd>
+                <dt class="col-sm-4">Taken on</dt><dd class="col-sm-8">{{ get_devices_id.taken_date }}</dd>
+                <dt class="col-sm-4">Bitlocker key</dt><dd class="col-sm-8">{{ get_devices_id.asset_id.bitlocker_key|default:"Not specified" }}</dd>
+                <dt class="col-sm-4">Specifications</dt><dd class="col-sm-8">{{ get_devices_id.asset_id.resource_description }}</dd>
+            </dl>
+            <div class="d-flex gap-2 mt-3">
+                <a href="{% url 'members:view_team_members_details' get_member_id.id %}" class="btn btn-outline-secondary flex-fill">
+                    <i class='bx bx-arrow-back'></i> Back to profile
+                </a>
+                <button type="button" class="btn btn-primary flex-fill" data-bs-toggle="modal" data-bs-target="#markReturnedModal">
+                    <i class='bx bx-check'></i> Mark Returned
+                </button>
+            </div>
         </div>
-    </div>     
-</section>
+    </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="{% static 'script.js' %}"></script>
-<script>
-    $(window).on("load",function(){
-      $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
+    <div class="modal fade" id="markReturnedModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{% url 'members:mark_returned' get_devices_id.id get_member_id.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Specify Reason</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="form-label">Select return reason</label>
+                        <select name="return_reason" class="form-select">
+                            <option selected>-------------</option>
+                            <option>Leaving From Company</option>
+                            <option>Resource Damaged</option>
+                            <option>Facing Software Issue</option>
+                            <option>Swaping For Highend Resource</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

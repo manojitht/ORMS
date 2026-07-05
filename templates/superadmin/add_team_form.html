@@ -1,103 +1,77 @@
-{% extends 'base_superadmin.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | Add Team{% endblock %}
+
 {% block content %}
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bxs-group'></i> {% if selected_tem %}Update{% else %}Add{% endif %} Team</h1>
+    {% include 'message_alert.html' %}
 
-<section class="home-main">
-
-    <div class="full-myteam-container" id="blur">
-        <div class="head-container" style="margin-bottom: 3%;">
-            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/external-flaticons-flat-flat-icons/35/null/external-department-university-flaticons-flat-flat-icons-2.png"/> Add Team</h1>
-            {% include 'message_alert.html' %}
-        </div>
-
-        {% if selected_tem %}
-
-        <div class="add-new-department-form">
-            <h1 style="font-weight: 300;"><img style="margin-bottom: -5px;" src="https://img.icons8.com/external-flaticons-flat-flat-icons/50/null/external-department-university-flaticons-flat-flat-icons-2.png"/> Update Team Form:</h1>
-             <form action="{% url 'update_team' selected_tem.id %}" method="POST">
+    <div class="card mx-auto" style="max-width: 640px;">
+        <div class="card-body p-4">
+            {% if selected_tem %}
+            <form action="{% url 'team:update_team' selected_tem.id %}" method="POST">
                 {% csrf_token %}
-                 <div class="and-input-box">
-                     <span class="details_anu">Team Name: </span>
-                     <input type="text" name="team_name" placeholder="Enter Team name.." value="{{selected_tem.team_name}}" required>
-                 </div>
-                 <div class="and-input-box">
-                     <span class="details_anu">Team Head: </span>
-                     <input type="text" name="team_head" placeholder="Enter Team head.." value="{{selected_tem.team_head}}" required>
-                 </div>
-                 <div class="and-input-box">
-                    <span class="details_anu">Department Oriented: </span>
-                    <select name="department">
-                        <option selected>{{selected_tem.department}}</option>
+                <div class="mb-3">
+                    <label class="form-label">Team name</label>
+                    <input type="text" name="team_name" class="form-control" value="{{ selected_tem.team_name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Team head</label>
+                    <input type="text" name="team_head" class="form-control" value="{{ selected_tem.team_head }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Department</label>
+                    <select name="department" class="form-select">
+                        <option selected>{{ selected_tem.department }}</option>
                         {% for department in dep_list %}
                         <option>{{ department.department_name }}</option>
                         {% endfor %}
-                      </select>
+                    </select>
                 </div>
-                 <div class="and-input-box">
-                     <span class="details_anu">Team Description: (Max: 250 words) </span>
-                     <textarea id="and-textarea" name="team_description" rows="4" cols="50" placeholder="Enter Team description here.." required>{{selected_tem.team_description}}</textarea>
-                 </div>
-                 <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
-                 <div class="and-input-box">
-                     <input class="and-submit-btn" type="submit" value="Save Changes">
-                     <a href="{% url 'superadmin_team_table' %}" class="and-back-btn">Back to team page</a>
-                 </div>
-             </form>
-        </div>
-
-        {% else %}
-
-
-        <div class="add-new-department-form">
-            <h1 style="font-weight: 300;"><img style="margin-bottom: -5px;" src="https://img.icons8.com/external-flaticons-flat-flat-icons/50/null/external-department-university-flaticons-flat-flat-icons-2.png"/> Add Team Form:</h1>
-             <form action="{% url 'superadmin_add_team' %}" method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Description (max 250 words)</label>
+                    <textarea name="team_description" class="form-control" rows="4" required>{{ selected_tem.team_description }}</textarea>
+                </div>
+                <input type="hidden" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">Save Changes</button>
+                    <a href="{% url 'team:superadmin_team_table' %}" class="btn btn-outline-secondary flex-fill">Back</a>
+                </div>
+            </form>
+            {% else %}
+            <form action="{% url 'team:superadmin_add_team' %}" method="POST">
                 {% csrf_token %}
-                 <div class="and-input-box">
-                     <span class="details_anu">Team Name: </span>
-                     <input type="text" name="team_name" placeholder="Enter Team name.." required>
-                 </div>
-                 <div class="and-input-box">
-                     <span class="details_anu">Team Head: </span>
-                     <input type="text" name="team_head" placeholder="Enter Team head.." required>
-                 </div>
-                 <div class="and-input-box">
-                    <span class="details_anu">Department Oriented: </span>
-                    <select name="department">
+                <div class="mb-3">
+                    <label class="form-label">Team name</label>
+                    <input type="text" name="team_name" class="form-control" placeholder="Enter team name.." required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Team head</label>
+                    <input type="text" name="team_head" class="form-control" placeholder="Enter team head.." required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Department</label>
+                    <select name="department" class="form-select">
                         <option selected>--Choose department--</option>
                         {% for department in department_names %}
                         <option>{{ department.department_name }}</option>
                         {% endfor %}
-                      </select>
+                    </select>
                 </div>
-                 <div class="and-input-box">
-                     <span class="details_anu">Team Description: (Max: 250 words) </span>
-                     <textarea id="and-textarea" name="team_description" rows="4" cols="50" placeholder="Enter Team description here.." required></textarea>
-                 </div>
-                 <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
-                 <div class="and-input-box">
-                     <input class="and-submit-btn" type="submit" value="Create Team">
-                     <a href="{% url 'superadmin_team_table' %}" class="and-back-btn">Back to team page</a>
-                 </div>
-             </form>
+                <div class="mb-3">
+                    <label class="form-label">Description (max 250 words)</label>
+                    <textarea name="team_description" class="form-control" rows="4" placeholder="Enter team description.." required></textarea>
+                </div>
+                <input type="hidden" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">Create Team</button>
+                    <a href="{% url 'team:superadmin_team_table' %}" class="btn btn-outline-secondary flex-fill">Back</a>
+                </div>
+            </form>
+            {% endif %}
         </div>
-
-        {% endif %}
-
-    </div> 
-    <div class="loader-wrapper">
-        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-    </div>      
-</section>
-
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="{% static 'script.js' %}"></script>
-<script>
-    $(window).on("load",function(){
-      $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
+    </div>
+</div>
 {% endblock %}

@@ -1,102 +1,61 @@
-{% extends 'base_user.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | Add Team Member{% endblock %}
+
 {% block content %}
-<title>ORMS | Add Team Member</title>
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-user-plus'></i> Add Team Member</h1>
+    {% include 'message_alert.html' %}
 
-<section class="home-main">
-
-    <div class="full-myteam-container" id="blur">
-        <div class="head-container" style="margin-bottom: 3%;">
-            <h1><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/35/000000/add-user-group-woman-man.png"/> Add Team Member</h1>
-            {% include 'message_alert.html' %}
-        </div>
-
-        <div style="margin-top: auto; margin-bottom: auto;" class="add-new-department-form">
-            <h1 style="font-weight: 300;"><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/56/000000/add-user-group-woman-man.png"/> Add New Team Member Form:</h1>
-            <form action="{% url 'add_member' %}" method="POST" enctype="multipart/form-data">
+    <div class="card mx-auto" style="max-width: 640px;">
+        <div class="card-body p-4">
+            <form action="{% url 'members:add_member' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                <table style="width: 100%;">
-                    <tr>
-                        <td>
-                            <div style="width: 95%; float: left;" class="and-input-box">
-                                <span class="details_anu">PeopleSoft Id: </span>
-                                <input type="number" name="peoplesoft_id" placeholder="Enter Peoplesoft Id.." required>
-                            </div>
-                        </td>
-                        <td>
-                            <div style="width: 95%; float: right;" class="and-input-box">
-                                <span class="details_anu">Fullname: </span>
-                                <input type="text" name="fullname" placeholder="Enter fullname.." required>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <table style="width: 100%;">
-                    <tr>
-                        <td>
-                            <div style="width: 95%; float: left;" class="and-input-box">
-                                <span class="details_anu">Position Role: </span>
-                                <input type="text" name="position" placeholder="Enter position role.." required>
-                            </div>
-                        </td>
-                        <td>
-                            <div style="width: 95%; float: right;" class="and-input-box">
-                                <span class="details_anu">Email: </span>
-                                <input type="email" name="email" placeholder="Enter email.." required>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <table style="width: 100%;">
-                    <tr>
-                        <td>
-                            <div style="width: 95%; float: left;" class="and-input-box">
-                                <span class="details_anu">Contact: </span>
-                                <input type="number" name="contact" placeholder="Enter contact number.." required>
-                            </div>
-                        </td>
-                        <td>
-                            <div style="width: 95%; float: right;" class="and-input-box">
-                                <span class="details_anu">Home Address: </span>
-                                <input type="text" name="home_address" placeholder="Enter home address.." required>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-                                                
-                <!-- manager details -->
-                <input type="hidden" class="r-p-textbox" name="manager_peoplesoft_id" value="{{ user.peoplesoft_id }}">
-                <input type="hidden" class="r-p-textbox" name="manager_name" value="{{ user.first_name }} {{ user.last_name }}">
-                <input type="hidden" class="r-p-textbox" name="department" value="{{ user.department }}">
-                <input type="hidden" class="r-p-textbox" name="team" value="{{ user.team }}">
-                Select Team Member Profile Image: <input type="file" name="member_image" accept="image/*" required>                
-                <div class="and-input-box">
-                    <input class="and-submit-btn" type="submit" value="Create Profile">
-                    <a href="{% url 'view_team_members' user.id %}" class="and-back-btn">Navigate To My Team</a>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Peoplesoft Id</label>
+                        <input type="number" name="peoplesoft_id" class="form-control" placeholder="Enter peoplesoft id.." required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Full name</label>
+                        <input type="text" name="fullname" class="form-control" placeholder="Enter full name.." required>
+                    </div>
                 </div>
-                <!-- <h4 class="alert-message-success">Profile created successfully!</h4> -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Position role</label>
+                        <input type="text" name="position" class="form-control" placeholder="Enter position role.." required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="Enter email.." required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Contact</label>
+                        <input type="number" name="contact" class="form-control" placeholder="Enter contact number.." required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Home address</label>
+                        <input type="text" name="home_address" class="form-control" placeholder="Enter home address.." required>
+                    </div>
+                </div>
+                <input type="hidden" name="manager_peoplesoft_id" value="{{ user.peoplesoft_id }}">
+                <input type="hidden" name="manager_name" value="{{ user.first_name }} {{ user.last_name }}">
+                <input type="hidden" name="department" value="{{ user.department }}">
+                <input type="hidden" name="team" value="{{ user.team }}">
+                <div class="mb-3">
+                    <label class="form-label">Team member profile image</label>
+                    <input type="file" name="member_image" class="form-control" accept="image/*" required>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">Create Profile</button>
+                    <a href="{% url 'members:view_team_members' user.id %}" class="btn btn-outline-secondary flex-fill">Back to My Team</a>
+                </div>
             </form>
-        </div>      
-    </div>  
-    
-    <div class="loader-wrapper">
-        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-    </div> 
-    
-</section>
-
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="{% static 'script.js' %}"></script>
-<script>
-    $(window).on("load",function(){
-      $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
-
+        </div>
+    </div>
+</div>
 {% endblock %}

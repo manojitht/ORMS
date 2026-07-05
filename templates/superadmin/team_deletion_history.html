@@ -1,71 +1,54 @@
-<!-- {% extends 'base_superadmin.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | Team Removal History{% endblock %}
+
 {% block content %}
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-trash'></i> Removal History</h1>
+    {% include 'message_alert.html' %}
 
-<section class="home-main">
-    <div class="full-myteam-container" id="blur">
-        <div class="head-container">
-            <h1>Removal History</h1>
-            {% include 'message_alert.html' %}
-        </div>
-        <div class="search-bar-container">
-            <table style="width: 100%; text-align: center;">
+    <ul class="nav nav-pills mb-4">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'account:users_deletion_history' %}">Users</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'department:department_deletion_history' %}">Departments</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{% url 'team:team_deletion_history' %}">Teams</a>
+        </li>
+    </ul>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
                 <tr>
-                    <td><a href="{% url 'users_deletion_history' %}" class="float-deletion-btn1">User Removal History</a></td>
-                    <td><a href="{% url 'department_deletion_history' %}" class="float-deletion-btn2">Department Removal History</a></td>
-                    <td><a href="{% url 'team_deletion_history' %}" class="float-deletion-btn3">Team Removal History</a></td> -->
-                    <!-- <td><input class="float-deletion-btn1" type="button" value="User Deletion History"></td>
-                    <td><input class="float-deletion-btn2" type="button" value="Department Deletion History"></td>
-                    <td><input class="float-deletion-btn3" type="button" value="Team Deletion History"></td> -->
-                <!-- </tr>
-            </table>
-        </div>
-       
-            <div class="container">
-                <h1 style="text-align: center; font-weight: 400; margin-bottom: 15px;">Team Removal History</h1>
-                <table id="team_requests" class="display" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Team Name</th>
-                            <th>Team Head</th>
-                            <th>Department Oriented</th>
-                            <th>Updated By</th>
-                            <th>Created On</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for team in teams %}
-                            <tr>
-                                <td>{{ team.id }}</td>
-                                <td>{{ team.team_name }}</td>
-                                <td>{{ team.team_head }}</td>
-                                <td>{{ team.department }}</td>
-                                <td>{{ team.created_by }}</td>
-                                <td>{{ team.created_date }}</td>
-                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'restore_team' team.id %}">Restore</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'permanent_delete_team' team.id %}">Delete</a></td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>                    
-            </div>
-        </div> 
+                    <th>Id</th>
+                    <th>Team Name</th>
+                    <th>Team Head</th>
+                    <th>Department</th>
+                    <th>Updated By</th>
+                    <th>Created On</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in teams %}
+                <tr>
+                    <td>{{ team.id }}</td>
+                    <td>{{ team.team_name }}</td>
+                    <td>{{ team.team_head }}</td>
+                    <td>{{ team.department }}</td>
+                    <td>{{ team.created_by }}</td>
+                    <td>{{ team.created_date }}</td>
+                    <td>&mdash;</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="text-center text-muted py-4">No removed teams.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    <div class="loader-wrapper">
-        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-    </div>      
-</section>
-
-
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="{% static 'script.js' %}"></script>
-<script>
-    $(window).on("load",function(){
-      $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-{% endblock %} -->
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account:manager_portal' user.id %}">
+                            <i class='bx bx-pie-chart-alt'></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'members:view_team_members' user.id %}">
+                            <i class='bx bx-home-circle'></i> My Team
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'members:add_member' %}">
+                            <i class='bx bx-book-add'></i> New Member
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'requests:list_requests_manager' user.id %}">
+                            <i class='bx bx-receipt'></i> My Requests
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'resources:manager_taken_resources_list_table' user.id %}">
+                            <i class='bx bx-history'></i> In &amp; Out
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'members:manager_notes_page' %}">
+                            <i class='bx bx-note'></i> My Notes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account:manager_user_profile' user.id %}">
+                            <i class='bx bx-user-circle'></i> My Profile
+                        </a>
+                    </li>

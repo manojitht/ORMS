@@ -1,169 +1,127 @@
-{% extends 'base_superadmin.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | {% if selected_user %}Edit{% else %}Add{% endif %} User{% endblock %}
+
 {% block content %}
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-user-plus'></i> {% if selected_user %}Edit User: {{ selected_user.peoplesoft_id }}{% else %}Add New User{% endif %}</h1>
+    {% include 'message_alert.html' %}
 
-<section class="home-main">
-
-    {% if selected_user %}
-
-    <div class="add-new-department-form">
-        <h1><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/35/000000/add-user-group-woman-man.png"/> Edit User: {{selected_user.peoplesoft_id}}</h1>
-         <form action="{% url 'update_user' selected_user.id %}" method="POST" id="editUserForm" data-teams-url="{% url 'ajax_load_teams' %}">
-            {% csrf_token %}
-            <div class="and-input-box">
-                 <span class="details_anu">PeopleSoft Id: (Note: In numerical format)</span>
-                 <input type="number" name="peoplesoft_id" placeholder="Enter peoplesoft ID.." value="{{selected_user.peoplesoft_id}}" required>
-             </div>
-             <div class="and-input-box">
-                 <span class="details_anu">Firstname: </span>
-                 <input type="text" name="first_name" placeholder="Enter Firstname.." value="{{selected_user.first_name}}" required>
-             </div>
-             <div class="and-input-box">
-                 <span class="details_anu">Lastname: </span>
-                 <input type="text" name="last_name" placeholder="Enter Lastname.." value="{{selected_user.last_name}}" required>
-             </div>
-             <div class="and-input-box">
-                 <span class="details_anu">Email Id: </span>
-                 <input type="email" name="email" placeholder="Enter Email Id.." value="{{selected_user.email}}" required>
-             </div>
-            <div class="and-input-box">
-                <span class="details_anu">Department Oriented: </span>
-                <select name="department" id="edit_department">
-                    <option selected value="{{selected_user.department.id}}">{{selected_user.department}}</option>
-                    {% for department in department_names %}
-                     <option value="{{department.id}}">{{ department.department_name }}</option>
-                    {% endfor %}
-                  </select>
-            </div>
-             <div class="and-input-box">
-                <span class="details_anu">Team Oriented: </span>
-                <select name="team" id="edit_teams">
-                    <option selected value="{{selected_user.team.id}}">{{selected_user.team}}</option>
-                </select>
-            </div>
-             <div class="and-input-box">
-                <span class="details_anu">Select User Role: </span>
-                <select name="role">
-                    <option selected>{{selected_user.role}}</option>
-                    <option>IT Administrator</option>
-                    <option>Manager</option>
-                    <option>Superadmin</option>
-                  </select>
-            </div>
-             <div class="and-input-box">
-                 <input class="and-submit-btn" type="submit" value="Update User">
-                 <a href="{% url 'superadmin_add_user' %}" class="and-back-btn">Back to users page</a>
-             </div>
-             {% include 'message_alert.html' %}
-         </form>
+    <div class="card mx-auto" style="max-width: 640px;">
+        <div class="card-body p-4">
+            {% if selected_user %}
+            <form action="{% url 'account:update_user' selected_user.id %}" method="POST" id="editUserForm" data-teams-url="{% url 'account:ajax_load_teams' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">PeopleSoft Id (numerical)</label>
+                    <input type="number" name="peoplesoft_id" class="form-control" value="{{ selected_user.peoplesoft_id }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Firstname</label>
+                    <input type="text" name="first_name" class="form-control" value="{{ selected_user.first_name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Lastname</label>
+                    <input type="text" name="last_name" class="form-control" value="{{ selected_user.last_name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email Id</label>
+                    <input type="email" name="email" class="form-control" value="{{ selected_user.email }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Department</label>
+                    <select name="department" id="edit_department" class="form-select">
+                        <option selected value="{{ selected_user.department.id }}">{{ selected_user.department }}</option>
+                        {% for department in department_names %}
+                        <option value="{{ department.id }}">{{ department.department_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Team</label>
+                    <select name="team" id="edit_teams" class="form-select">
+                        <option selected value="{{ selected_user.team.id }}">{{ selected_user.team }}</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">User Role</label>
+                    <select name="role" class="form-select">
+                        <option selected>{{ selected_user.role }}</option>
+                        <option>IT Administrator</option>
+                        <option>Manager</option>
+                        <option>Superadmin</option>
+                    </select>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">Update User</button>
+                    <a href="{% url 'account:superadmin_add_user' %}" class="btn btn-outline-secondary flex-fill">Back</a>
+                </div>
+            </form>
+            {% else %}
+            <form action="{% url 'account:add_user_page' %}" method="POST" id="addUserForm" data-teams-url="{% url 'account:ajax_load_teams' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">PeopleSoft Id (numerical)</label>
+                    <input type="number" name="peoplesoft_id" class="form-control" placeholder="Enter peoplesoft ID.." required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Firstname</label>
+                    <input type="text" name="first_name" class="form-control" placeholder="Enter firstname.." required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Lastname</label>
+                    <input type="text" name="last_name" class="form-control" placeholder="Enter lastname.." required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email Id</label>
+                    <input type="email" name="email" class="form-control" placeholder="Enter email id.." required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Department</label>
+                    <select name="department" id="department" class="form-select">
+                        <option value="">--Choose department--</option>
+                        {% for department in department_names %}
+                        <option value="{{ department.id }}">{{ department.department_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Team</label>
+                    <select name="team" id="teams" class="form-select"></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">User Role</label>
+                    <select name="role" class="form-select">
+                        <option selected>--Choose role--</option>
+                        <option>IT Administrator</option>
+                        <option>Manager</option>
+                        <option>Superadmin</option>
+                    </select>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">Create User</button>
+                    <a href="{% url 'account:superadmin_add_user' %}" class="btn btn-outline-secondary flex-fill">Back</a>
+                </div>
+            </form>
+            {% endif %}
+        </div>
     </div>
-
-    {% else %}
-
-    <div class="add-new-department-form">
-        <h1><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/35/000000/add-user-group-woman-man.png"/> Add New User Form:</h1>
-         <form action="{% url 'add_user_page' %}" method="POST" id="addUserForm" data-teams-url="{% url 'ajax_load_teams' %}">
-            {% csrf_token %}
-             <div class="and-input-box">
-                 <span class="details_anu">PeopleSoft Id: (Note: In numerical format)</span>
-                 <input type="number" name="peoplesoft_id" placeholder="Enter peoplesoft ID.." required>
-             </div>
-             <div class="and-input-box">
-                 <span class="details_anu">Firstname: </span>
-                 <input type="text" name="first_name" placeholder="Enter Firstname.." required>
-             </div>
-             <div class="and-input-box">
-                 <span class="details_anu">Lastname: </span>
-                 <input type="text" name="last_name" placeholder="Enter Lastname.." required>
-             </div>
-             <div class="and-input-box">
-                 <span class="details_anu">Email Id: </span>
-                 <input type="email" name="email" placeholder="Enter Email Id.." required>
-             </div>
-             <div class="and-input-box">
-                <span class="details_anu">Department Oriented: </span>
-                <select name="department" id="department">
-                    <option value="">--Choose department--</option>
-                    {% for department in department_names %}
-                        <option value="{{department.id}}">{{ department.department_name }}</option>
-                    {% endfor %}
-                  </select>
-            </div>
-             <div class="and-input-box">
-                <span class="details_anu">Team Oriented: </span>
-                <select name="team" id="teams"></select>
-            </div>
-             <div class="and-input-box">
-                <span class="details_anu">Select User Role: </span>
-                <select name="role">
-                    <option selected>--Choose role--</option>
-                    <option>IT Administrator</option>
-                    <option>Manager</option>
-                    <option>Superadmin</option>
-                  </select>
-            </div>
-             <div class="and-input-box">
-                 <input class="and-submit-btn" type="submit" value="Create User">
-                 <a href="{% url 'superadmin_add_user' %}" class="and-back-btn">Back to users page</a>
-             </div>
-             {% include 'message_alert.html' %}
-         </form>
-    </div>
-
-    {% endif %}
-
-    <div class="loader-wrapper">
-        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-    </div>
-
-</section>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-    <script src="{% static 'script.js' %}"></script>
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-    <script>
-        $(window).on("load",function(){
-          $(".loader-wrapper").fadeOut("slow");
-        });
-    </script>
-    <script>
-        // for add user form
-        $("#department").change(function () {
-          var url = $("#addUserForm").attr("data-teams-url");  // get the url of the `load_teams` view
-          var department_nameId = $(this).val();  // get the selected department ID from the HTML input
-    
-          $.ajax({                       // initialize an AJAX request
-            url: url,                    // set the url of the request (= localhost:8000/load-teams/)
-            data: {
-              'department': department_nameId       // add the department id to the GET parameters
-            },
-            success: function (data) {   // `data` is the return of the `load_teams` view function
-              $("#teams").html(data);  // replace the contents of the team input with the data that came from the server
-            }
-          });
-    
-        });
-    </script>
+</div>
 
 <script>
-    // for edit user form
-    $("#edit_department").change(function () {
-      var url = $("#editUserForm").attr("data-teams-url");  // get the url of the `load_teams` view
-      var edit_department_nameId = $(this).val();  // get the selected department ID from the HTML input
+    document.getElementById("department")?.addEventListener("change", function () {
+        const url = document.getElementById("addUserForm").dataset.teamsUrl;
+        fetch(`${url}?department=${this.value}`)
+            .then((res) => res.text())
+            .then((html) => { document.getElementById("teams").innerHTML = html; });
+    });
 
-      $.ajax({                       // initialize an AJAX request
-        url: url,                    // set the url of the request (= localhost:8000/load-teams/)
-        data: {
-          'department': edit_department_nameId       // add the department id to the GET parameters
-        },
-        success: function (data) {   // `data` is the return of the `load_teams` view function
-          $("#edit_teams").html(data);  // replace the contents of the team input with the data that came from the server
-        }
-      });
-
+    document.getElementById("edit_department")?.addEventListener("change", function () {
+        const url = document.getElementById("editUserForm").dataset.teamsUrl;
+        fetch(`${url}?department=${this.value}`)
+            .then((res) => res.text())
+            .then((html) => { document.getElementById("edit_teams").innerHTML = html; });
     });
 </script>
-
 {% endblock %}

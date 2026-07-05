@@ -1,84 +1,77 @@
-{% extends 'base_it_admin.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | Edit Resource{% endblock %}
+
 {% block content %}
-<title>ORMS | Edit Resource</title>
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-devices'></i> Edit Resource</h1>
 
-<section class="home-main">
-    <div class="full-myteam-container" id="blur">
-        <div class="head-container" style="margin-bottom: 2%;">
-            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/color/48/null/device-manager.png"/> Edit Resource</h1>
+    {% if selected_res %}
+    <div class="card mx-auto" style="max-width: 720px;">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Editing {{ selected_res.asset_id }}</h5>
+                <a href="{% url 'resources:view_resource' selected_res.id %}" class="btn btn-sm btn-outline-secondary">
+                    <i class='bx bx-arrow-back'></i> Back
+                </a>
+            </div>
+
+            {% if selected_res.resource_image %}
+                <img src="{{ selected_res.resource_image.url }}" class="mb-3 rounded" style="max-height: 160px;">
+            {% else %}
+                <img src="{% static 'images/image_placeholder.jpg' %}" class="mb-3 rounded" style="max-height: 160px;">
+            {% endif %}
+
+            <form action="{% url 'resources:update_resource' selected_res.id %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Model name</label>
+                    <input name="model_name" class="form-control" type="text" value="{{ selected_res.model_name }}" required>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Asset Id</label>
+                        <input name="asset_id" class="form-control" type="text" value="{{ selected_res.asset_id }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Resource type</label>
+                        <select name="resource_category" class="form-select">
+                            <option selected>{{ selected_res.resource_category }}</option>
+                            {% for category in resource_categories %}
+                            <option>{{ category.resource_category }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Availability</label>
+                        <select name="resource_availability" class="form-select">
+                            <option selected>{{ selected_res.resource_availability }}</option>
+                            <option>Available</option>
+                            <option>Configuration</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Bitlocker key</label>
+                        <input name="bitlocker_key" class="form-control" type="text" value="{{ selected_res.bitlocker_key }}">
+                    </div>
+                </div>
+                <p class="text-muted small">Added on {{ selected_res.added_on }} &middot; Updated by {{ selected_res.added_by }}</p>
+                <div class="mb-3">
+                    <label class="form-label">Resource specifications</label>
+                    <textarea name="resource_description" class="form-control" rows="4" required>{{ selected_res.resource_description }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Device image</label>
+                    <input name="resource_image" class="form-control" type="file" accept="image/*">
+                </div>
+                <input name="added_by" type="hidden" value="{{ user.first_name }} {{ user.last_name }}">
+                <button type="submit" class="btn btn-primary w-100">Save changes</button>
+            </form>
         </div>
-        {% if selected_res %}
-        <div class="view-device-info">
-            <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> Edit Information of ({{selected_res.asset_id}}) <a href="{% url 'view_resource' selected_res.id %}"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i></a></h1>
-            <form action="{% url 'update_resource' selected_res.id %}" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <img src="{{ selected_res.resource_image.url }}" alt="Resource img">
-            <table>
-                <tr>
-                    <td colspan="2"><span><i class="fa fa-info-circle" aria-hidden="true"></i> Model Name:</span><br> <input name="model_name" class="view-edit-device-input" type="text" placeholder="Enter Asset Id.." value="{{selected_res.model_name}}" required></td>
-                </tr>
-                <tr>
-                    <td><span><i class="fa fa-desktop" aria-hidden="true"></i> Asset Id: </span> <input name="asset_id" class="view-edit-device-input" type="text" placeholder="Enter Asset Id.." value="{{selected_res.asset_id}}" required></td>
-                    <td><span><i class="fa fa-bars" aria-hidden="true"></i> Resource Type: </span> <select name="resource_category" class="view-edit-device-select">
-                    <option selected>{{selected_res.resource_category}}</option>
-                    {% for category in resource_categories %}
-                    <option>{{ category.resource_category }}</option>
-                    {% endfor %}
-                    </select></td>
-                </tr>
-                <tr>                        
-                    <td><span><i class="fa fa-bars" aria-hidden="true"></i> Availability: </span> <select name="resource_availability" class="view-edit-device-select">
-                        <option selected>{{selected_res.resource_availability}}</option>
-                        <option>Available</option>
-                        <option>Configuration</option>
-                        </select></td>
-                    <td><span><i class="fa fa-code" aria-hidden="true"></i> Bitlocker Key: </span> <input name="bitlocker_key" class="view-edit-device-input" type="text" placeholder="Enter bitlocker key.." value="{{selected_res.bitlocker_key}}"></td>
-                </tr>
-                <tr>
-                    <td><span><i class="fa fa-calendar" aria-hidden="true"></i> Added On: </span> {{selected_res.added_on}}</td>
-                    <td><span><i class="fa fa-user-secret" aria-hidden="true"></i> Updated By: </span> {{selected_res.added_by}}</td>
-                </tr>
-                <tr>
-                    <td colspan="2"><span><i class="fa fa-info-circle" aria-hidden="true"></i> Resource Specifications:</span><br> <textarea name="resource_description" rows="4" cols="50" required>{{selected_res.resource_description}}</textarea></td>
-                </tr>
-                <tr>
-                    <td><span><i class="fa fa-picture-o" aria-hidden="true"></i> Device Image: </span> <input name="resource_image" style="background-color: #ffecc2; border: 1px solid #ffecc2;" type="file" accept="images"></td>
-                    <td> </td>
-                </tr>
-                <tr>
-                    {% if selected_res.device_type == 'Desktop' or selected_res.device_type == 'Laptop' %}
-                        <td style="font-size: 12px;">Note: This Device has the bitlocker key</td>
-                    {% else %}
-                        <td style="font-size: 12px;">Note: Bitlocker key not required for this device type.</td>
-                    {% endif %}
-                </tr>
-                <tr>
-                    <td><a style="text-align: center;" class="view-edit-device-btn" href="{% url 'view_resource' selected_res.id %}"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i> Back to page</a></td>
-                    <td><input class="view-edit-device-btn" type="submit" value="Save changes"></td>
-                </tr>
-                <input name="added_by" class="view-edit-device-input" type="hidden" placeholder="Enter Asset Id.." value="{{ user.first_name }} {{ user.last_name }}" required>
-            </table>
-        </form>
-        </div>
-        {% else %}
-        {% endif %}
-    </div> 
-    <div class="loader-wrapper">
-        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
     </div>
-        
-</section>
-
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="script.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script>
-    $(window).on("load",function(){
-      $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
+    {% endif %}
+</div>
 {% endblock %}

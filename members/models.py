@@ -1,4 +1,3 @@
-from distutils.command.upload import upload
 from django.db import models
 from department.models import Department
 from team.models import Team

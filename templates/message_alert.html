@@ -1,5 +1,15 @@
 {% if messages %}
     {% for message in messages %}
-    <h4 class="alert-{{ message.tags }}" id="message-alerts">{{ message }}</h4>
+        <div class="alert
+            {% if message.tags == 'message-success' %}alert-success
+            {% elif message.tags == 'message-info' %}alert-primary
+            {% elif message.tags == 'message-unsuccess' %}alert-danger
+            {% elif message.tags == 'message-warning' %}alert-warning
+            {% else %}alert-secondary
+            {% endif %}
+            alert-dismissible fade show" role="alert" id="message-alerts">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     {% endfor %}
 {% endif %}

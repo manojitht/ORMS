@@ -1,89 +1,69 @@
-{% extends 'base_user.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | Create Request{% endblock %}
+
 {% block content %}
-<title>ORMS | Create Request</title>
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-edit-alt'></i> Raise Request</h1>
+    {% include 'message_alert.html' %}
 
-<section class="home-main">
-    <div class="full-myteam-container" id="blur">
-        <div class="head-container" style="margin-bottom: 3%;">
-            <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/32/000000/writing-down.png"/> Raise Request</h1>
+    <div class="card mx-auto" style="max-width: 640px;">
+        <div class="card-body p-4">
+            <form action="{% url 'requests:create_request' user.id %}" method="POST">
+                {% csrf_token %}
+                {% if generated_request_id %}
+                <div class="mb-3">
+                    <label class="form-label">Request Id</label>
+                    <input type="text" class="form-control" value="RE{{ generated_request_id }}" readonly>
+                </div>
+                {% endif %}
+                <div class="mb-3">
+                    <label class="form-label">Who is this for?</label>
+                    <input name="created_for" type="number" class="form-control" placeholder="Enter peoplesoft ID of member.." required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Resource required</label>
+                    <select name="request_resource" class="form-select">
+                        <option selected>--select resource--</option>
+                        {% for request_request in request_resource_list %}
+                        <option>{{ request_request.resource_category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Request category</label>
+                    <select name="request_category" class="form-select">
+                        <option selected>--choose category--</option>
+                        <option>Request new</option>
+                        <option>Replacement</option>
+                        <option>Bitlocker</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="request_decription" class="form-control" rows="4" placeholder="Write your request here.." required></textarea>
+                </div>
+                <input type="hidden" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
+                <input type="hidden" name="created_ps_id" value="{{ user.peoplesoft_id }}">
+                <input type="hidden" name="department" value="{{ user.department }}">
+                <input type="hidden" name="team" value="{{ user.team }}">
+                <input type="hidden" name="asset_id" value="">
+                <input type="hidden" name="request_status" value="Pending">
+                <input type="hidden" name="request_response" value="">
+                <input type="hidden" name="manager_email" value="{{ user.email }}">
+                {% if assign_admin %}
+                    <input type="hidden" name="assigned_to" value="{{ assign_admin.peoplesoft_id }}">
+                    <input type="hidden" name="it_admin_email" value="{{ assign_admin.email }}">
+                    <input type="hidden" name="it_admin_firstname" value="{{ assign_admin.first_name }}">
+                    <input type="hidden" name="it_admin_lastname" value="{{ assign_admin.last_name }}">
+                {% endif %}
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">Create Request</button>
+                    <a href="{% url 'requests:list_requests_manager' user.id %}" class="btn btn-outline-secondary flex-fill">Back to Requests</a>
+                </div>
+            </form>
         </div>
-        {% include 'message_alert.html' %}
-        <div style="margin-top: auto; margin-bottom: auto;" class="department-card-container">
-            <div class="add-new-department-form">
-                <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/35/000000/writing-down.png"/> Raise a request:</h1>
-                 <form action="{% url 'create_request' user.id %}" method="POST">
-                    {% csrf_token %}
-                     <div class="and-input-box">
-                         <span class="details_anu">Request Id:</span>
-                         {% if generated_request_id %}
-                            <input type="text" name="request_id" placeholder="request id.." value="RE{{ generated_request_id }}" readonly>
-                         {% else %}
-                         {% endif %}
-                     </div>
-                     <div class="and-input-box">
-                         <span class="details_anu">*Who is for:</span>
-                         <input name="created_for" type="number" placeholder="Enter peoplesoft ID of member.." required>
-                     </div>
-                     <div class="and-input-box">
-                        <span class="details_anu">Select resource required: </span>
-                        <select name="request_resource">
-                            <option selected>--select resource--</option>
-                            {% for request_request in request_resource_list %}
-                            <option>{{ request_request.resource_category }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="and-input-box">
-                        <span class="details_anu">Select request category: </span>
-                        <select name="request_category">
-                            <option selected>--choose category--</option>
-                            <option>Request new</option>
-                            <option>Replacement</option>
-                            <option>Bitlocker</option>
-                          </select>
-                    </div>
-                     <div class="and-input-box">
-                        <span class="details_anu">Describe it here: </span>
-                        <textarea name="request_decription" id="and-textarea" name="" rows="4" cols="50" placeholder="Write your request here.." required></textarea>
-                    </div>
-                    <input type="hidden" name="created_by" value="{{ user.first_name }} {{ user.last_name }}" readonly>
-                    <input type="hidden" name="created_ps_id" value="{{ user.peoplesoft_id }}" readonly>
-                    <input type="hidden" name="department" value="{{ user.department }}" readonly>
-                    <input type="hidden" name="team" value="{{ user.team }}" readonly>
-                    <input type="hidden" name="asset_id" value="" readonly>
-                    <input type="hidden" name="request_status" value="Pending" readonly>
-                    <input type="hidden" name="request_response" value="" readonly>
-                    <input type="hidden" name="manager_email" value="{{ user.email }}" readonly>
-                    {% if assign_admin %}
-                        <input type="hidden" name="assigned_to" value="{{ assign_admin.peoplesoft_id }}" readonly>
-                        <input type="hidden" name="it_admin_email" value="{{ assign_admin.email }}" readonly>
-                        <input type="hidden" name="it_admin_firstname" value="{{ assign_admin.first_name }}" readonly>
-                        <input type="hidden" name="it_admin_lastname" value="{{ assign_admin.last_name }}" readonly>
-                    {% else %}
-                    {% endif %}
-                     <div class="and-input-box">
-                         <input class="and-submit-btn" style="background-color: rgb(93, 41, 238); border: 1px solid rgb(93, 41, 238);" type="submit" value="Create Request">
-                         <a href="{% url 'list_requests_manager' user.id %}" class="and-back-btn" style="background-color: rgb(23, 23, 24); border: 1px solid rgb(23, 23, 24);">Back to requests page</a>
-                     </div>
-                 </form>
-            </div>
-        </div>
-    </div> 
-    <div class="loader-wrapper">
-        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
     </div>
-</section>
-
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="{% static 'script.js' %}"></script>
-<script>
-    $(window).on("load",function(){
-    $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
+</div>
 {% endblock %}

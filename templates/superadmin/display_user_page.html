@@ -1,116 +1,74 @@
-{% extends 'base_superadmin.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | Users{% endblock %}
+
 {% block content %}
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bxs-group'></i> Users Management</h1>
+    {% include 'message_alert.html' %}
 
-    <section class="home-main">
-        <div class="full-myteam-container" id="blur">
-            <div class="head-container" style="margin-bottom: 1%; margin-top: 0.3%;">
-                <h1><img style="margin-bottom: -5px;" src="https://img.icons8.com/color/35/000000/add-user-group-woman-man.png"/> Users Management</h1>
-                {% include 'message_alert.html' %}
-            </div>
-            <div class="search-bar-container">
-                <form action="{% url 'superadmin_users_date_sort' %}" method="POST">
-                    {% csrf_token %}
-                    From: <input type="date" style="width: 140px;" name="from_user" class="search-input-box-dt" required>
-                    To: <input type="date" style="width: 140px;" name="to_user" class="search-input-box-dt" required>
-                    <input type="submit" class="search-input-btn-dt" value="Search">
-                    <a href="{% url 'add_user_page' %}" style="margin-right: 0.5%;" class="add-team-btn">User <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
-                </form>
-            </div>
-           
-                <div class="container">
-                    <table id="team_requests" class="display" style="width:100%">
-                        
-                            {% if get_result %}
-
-                            <thead>
-                                <th colspan="8" style="background-color: #949494; text-align: center; color: rgb(255, 255, 255); border: 1px solid rgb(114, 113, 113);">Showing Date From: {{ from_date }} to Date To: {{ to_date }} (Total Results: {{ result_count }})</th>
-                                <tr>
-                                    <th>PS Id</th>
-                                    <th>Fullname</th>
-                                    <th>Department</th>
-                                    <th>Team</th>
-                                    <th>Role</th>
-                                    <th>Created On</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                                {% for user in get_result %}
-                                    <tr>
-                                        <td>{{ user.peoplesoft_id }}</td>
-                                        <td>{{ user.first_name }} {{ user.last_name }}</td>
-                                        <td>{{ user.department }}</td>
-                                        <td>{{ user.team }}</td>
-                                        <td>{{ user.role }}</td>
-                                        <td>{{ user.date_joined }}</td>
-                                        {% if user.is_active %}
-                                            <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">Active</h4></td>
-                                        {% else %}
-                                            <td><h4 style="font-weight: 400; background-color: rgb(197, 75, 27); text-align: center; border-radius: 15px; color: #fff;">In Active</h4></td>
-                                        {% endif %}
-                                        <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; font-weight: 400;" href="{% url 'view_user_details' user.id %}">View</a></td>
-                                    </tr>
-                                {% endfor %}
-
-                            {% else %}
-
-                            <thead>
-                                <tr>
-                                    <th>PS Id</th>
-                                    <th>Fullname</th>
-                                    <th>Department</th>
-                                    <th>Team</th>
-                                    <th>Role</th>
-                                    <th>Created On</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                                {% for user in users %}
-                                    <tr>
-                                        <td>{{ user.peoplesoft_id }}</td>
-                                        <td>{{ user.first_name }} {{ user.last_name }}</td>
-                                        <td>{{ user.department }}</td>
-                                        <td>{{ user.team }}</td>
-                                        <td>{{ user.role }}</td>
-                                        <td>{{ user.date_joined }}</td>
-                                        {% if user.is_active %}
-                                            <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">Active</h4></td>
-                                        {% else %}
-                                            <td><h4 style="font-weight: 400; background-color: rgb(197, 75, 27); text-align: center; border-radius: 15px; color: #fff;">In Active</h4></td>
-                                        {% endif %}
-                                        <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; font-weight: 400;" href="{% url 'view_user_details' user.id %}">View</a></td>
-                                    </tr>
-                                {% endfor %}
-
-                            {% endif %}
-                        </tbody>
-                    </table>
-                </div>
-            </div> 
+    <form action="{% url 'account:superadmin_users_date_sort' %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
+        {% csrf_token %}
+        <div class="col">
+            <label class="form-label small mb-1">From</label>
+            <input type="date" name="from_user" class="form-control" required>
         </div>
-        <div class="loader-wrapper">
-            <!-- <span class="loader"><span class="loader-inner"></span></span> -->
-            <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-        </div>       
-    </section>
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <!-- datatables starting -->
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<!-- datatables ending -->
-    <script src="{% static 'script.js' %}"></script>
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-    <script>
-        $(window).on("load",function(){
-          $(".loader-wrapper").fadeOut("slow");
-        });
-    </script>
+        <div class="col">
+            <label class="form-label small mb-1">To</label>
+            <input type="date" name="to_user" class="form-control" required>
+        </div>
+        <div class="col">
+            <button type="submit" class="btn btn-primary">Sort</button>
+        </div>
+        <div class="col">
+            <a href="{% url 'account:add_user_page' %}" class="btn btn-outline-primary">
+                <i class='bx bx-message-square-add'></i> Add User
+            </a>
+        </div>
+    </form>
 
+    {% if get_result %}
+        <p class="text-muted small">Showing {{ from_date }} to {{ to_date }} &mdash; {{ result_count }} result(s)</p>
+    {% endif %}
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>PS Id</th>
+                    <th>Fullname</th>
+                    <th>Department</th>
+                    <th>Team</th>
+                    <th>Role</th>
+                    <th>Created On</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in get_result|default:users %}
+                <tr>
+                    <td>{{ user.peoplesoft_id }}</td>
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
+                    <td>{{ user.department }}</td>
+                    <td>{{ user.team }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.date_joined }}</td>
+                    <td>
+                        {% if user.is_active %}
+                            <span class="badge text-bg-success">Active</span>
+                        {% else %}
+                            <span class="badge" style="background-color:#EA580C;">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td><a class="btn btn-sm btn-outline-primary" href="{% url 'account:view_user_details' user.id %}">View</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8" class="text-center text-muted py-4">No users found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

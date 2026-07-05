@@ -2,6 +2,8 @@ from django.urls import path
 from .import views
 
 
+app_name = 'requests'
+
 urlpatterns = [
     path('list_requests_manager/<int:userid>/', views.list_requests_manager, name='list_requests_manager'),
     path('list_completed_requests_manager/<int:userid>/', views.list_completed_requests_manager, name='list_completed_requests_manager'),

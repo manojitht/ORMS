@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('resource', '0002_alter_resourcetaken_resource_category'),
+        ('resources', '0002_alter_resourcetaken_resource_category'),
     ]
 
     operations = [

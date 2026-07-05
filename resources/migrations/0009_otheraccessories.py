@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('members', '0002_members_date_joined'),
-        ('resource', '0008_resourcetaken_assigned_by'),
+        ('resources', '0008_resourcetaken_assigned_by'),
     ]
 
     operations = [

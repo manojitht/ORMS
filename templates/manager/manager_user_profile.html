@@ -1,90 +1,79 @@
-{% extends 'base_user.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | Manager Profile{% endblock %}
+
 {% block content %}
-<title>ORMS | Manager Profile Page</title>
-<section class="home-main">
-    <div class="full-myteam-container" id="blur">
-        <div class="head-container" style="margin-bottom: 1%;">
-            <h1><img style="margin-bottom: -8px;" src="https://img.icons8.com/color/38/null/circled-user-male-skin-type-7--v1.png"/> My User Profile</h1>
-            {% include 'message_alert.html' %}
-        </div>
-        <div class="department-card-container">
-            <div style="margin-top: 1%;" class="team-member-info">
-                {% if user %}
-                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> My User Profile: </h1>
-                    {% if user.accountprofile.home_address %}
-                        <img src="{{ user.accountprofile.profile_image.url }}" alt="user profile img"><br>
-                    {% else %}
-                        <img src="{% static 'images/image_placeholder.jpg' %}" alt="user profile img"><br>
-                        <!-- <h4 style="font-weight: 400; margin-left: 4%;">No User Profile Image</h4> -->
-                    {% endif %}  
-                <table>
-                    <tr>
-                        <td><span><i class="fa fa-user" aria-hidden="true"></i> Fullname: </span> {{user.first_name}} {{user.last_name}}</td>
-                        <td><span><i class="fa fa-id-badge" aria-hidden="true"></i> Peoplesoft Id: </span> {{user.peoplesoft_id}}</td>
-                    </tr>
-                    <tr>
-                        <td><span><i class="fa fa-briefcase" aria-hidden="true"></i> Position: </span> {{user.role}}</td>
-                        <td><span><i class="fa fa-book" aria-hidden="true"></i> Date Joined: </span> {{user.date_joined}}</td>
-                    </tr>
-                    <tr>
-                        <td><span><i class="fa fa-building" aria-hidden="true"></i> Department: </span> {{user.department}}</td>
-                        <td><span><i class="fa fa-users" aria-hidden="true"></i> Team: </span> {{user.team}}</td>
-                    </tr>
-                    <tr>
-                        <td><span><i class='bx bxs-envelope' ></i> Email: </span>  {{user.email}}</td>
-                        <td><span><i class='bx bxs-phone-call' ></i> Contact: </span> {{user.accountprofile.contact_number }}</td>
-                    </tr>
-                    <tr>
-                        <td><span><i class='fa fa-users' ></i> Number of Team Members Managing: </span> {{team_members_count}}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><span><i class='fa fa-file-text' ></i> Total Requests Created: </span> {{get_all_requests_count}}</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><span><i class="fa fa-home" aria-hidden="true"></i> Home Address:</span> {{user.accountprofile.home_address }}</td>
-                    </tr>
-                    <tr>
-                        <td><a class="add-resources-btn" href="{% url 'manager_edit_user_profile' %}"><i class="fa fa-pencil" aria-hidden="true"></i>  Edit Profile </a></td>
-                        <td><a class="add-resources-btn" onclick="toggle_blur()" href="#"><i class="fa fa-key" aria-hidden="true"></i>  Change Password </a></td>
-                    </tr>
-                </table>
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-user-circle'></i> My User Profile</h1>
+    {% include 'message_alert.html' %}
+
+    {% if user %}
+    <div class="card mx-auto" style="max-width: 720px;">
+        <div class="card-body p-4">
+            <div class="text-center mb-3">
+                {% if user.accountprofile.profile_image %}
+                    <img src="{{ user.accountprofile.profile_image.url }}" class="rounded-circle" style="width:96px; height:96px; object-fit:cover;">
+                {% else %}
+                    <img src="{% static 'images/image_placeholder.jpg' %}" class="rounded-circle" style="width:96px; height:96px; object-fit:cover;">
+                {% endif %}
             </div>
-            <div class="loader-wrapper">
-                <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-            </div> 
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Full name</dt><dd class="col-sm-8">{{ user.first_name }} {{ user.last_name }}</dd>
+                <dt class="col-sm-4">Peoplesoft Id</dt><dd class="col-sm-8">{{ user.peoplesoft_id }}</dd>
+                <dt class="col-sm-4">Position</dt><dd class="col-sm-8">{{ user.role }}</dd>
+                <dt class="col-sm-4">Date joined</dt><dd class="col-sm-8">{{ user.date_joined }}</dd>
+                <dt class="col-sm-4">Department</dt><dd class="col-sm-8">{{ user.department }}</dd>
+                <dt class="col-sm-4">Team</dt><dd class="col-sm-8">{{ user.team }}</dd>
+                <dt class="col-sm-4">Email</dt><dd class="col-sm-8">{{ user.email }}</dd>
+                <dt class="col-sm-4">Contact</dt><dd class="col-sm-8">{{ user.accountprofile.contact_number }}</dd>
+                <dt class="col-sm-4">Team members managing</dt><dd class="col-sm-8">{{ team_members_count }}</dd>
+                <dt class="col-sm-4">Requests created</dt><dd class="col-sm-8">{{ get_all_requests_count }}</dd>
+                <dt class="col-sm-4">Home address</dt><dd class="col-sm-8">{{ user.accountprofile.home_address }}</dd>
+            </dl>
+            <div class="d-flex gap-2 mt-3">
+                <a href="{% url 'account:manager_edit_user_profile' %}" class="btn btn-primary flex-fill">
+                    <i class='bx bx-edit'></i> Edit Profile
+                </a>
+                <button type="button" class="btn btn-outline-warning flex-fill" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                    <i class='bx bx-key'></i> Change Password
+                </button>
+            </div>
         </div>
-        </div> 
-        <div id="request_popup">
-            <form action="{% url 'manager_change_password' user.id %}" method="POST">
-                {% csrf_token %}
-                <h2>Change Password</h2>
-                <h5 style="margin-top: 0px; color: rgb(87, 86, 86); font-weight: 400;">*Current Password:</h5>
-                <input name="current_password" type="password" class="r-p-textbox" placeholder="current password" value="">
-                <h5 style="margin-top: 2%; color: rgb(87, 86, 86); font-weight: 400;">*New Password:</h5>
-                <input name="new_password" type="password" class="r-p-textbox" placeholder="new password" value="">
-                <h5 style="margin-top: 2%; color: rgb(87, 86, 86); font-weight: 400;">*Confirm Password:</h5>
-                <input name="confirm_password" type="password" class="r-p-textbox" placeholder="confirm password" value="">
-                <input style="margin-bottom: 5%;" name="peoplesoft_id" type="hidden" class="r-p-textbox" value="{{get_member_id.peoplesoft_id}}">
-                <input class="create-request-button" type="submit" value="Change Password">
-                <input class="close-request-button" type="button" onclick="toggle_blur()" value="Close">
-            </form>
+    </div>
+
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{% url 'account:manager_change_password' user.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change Password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Current password</label>
+                            <input name="current_password" type="password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New password</label>
+                            <input name="new_password" type="password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm password</label>
+                            <input name="confirm_password" type="password" class="form-control" required>
+                        </div>
+                        <input name="peoplesoft_id" type="hidden" value="{{ get_member_id.peoplesoft_id }}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        {% else %}
-        {% endif %}     
-</section>
-
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="{% static 'script.js' %}"></script>
-<script>
-    $(window).on("load",function(){
-      $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

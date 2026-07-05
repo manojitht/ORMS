@@ -1,5 +1,3 @@
-from tkinter import CASCADE
-from unicodedata import category
 from django.db import models
 from department.models import Department
 

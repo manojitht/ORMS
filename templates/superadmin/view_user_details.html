@@ -1,75 +1,66 @@
-{% extends 'base_superadmin.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | User Details{% endblock %}
+
 {% block content %}
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-id-card'></i> View User Details</h1>
+    {% include 'message_alert.html' %}
 
-<section class="home-main">
-    <div class="full-myteam-container" id="blur">
-
-        <div class="head-container" style="margin-bottom: 3%;">
-            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/color/35/000000/add-user-group-woman-man.png"/> View User Details</h1>
-            {% include 'message_alert.html' %}
-        </div>
-
-        <div class="department-card-container">
-            {% if get_user %}
-            <div style="margin-top: 1%;" class="team-member-info">
-                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> View User Information: </h1>
-                <table style="margin-top: 1%;">
-                    <tr>
-                        <td><span>User Name: </span> {{get_user.first_name}} {{get_user.last_name}}</td>
-                        <td><span>PeopleSoft Id: </span> {{get_user.peoplesoft_id}}</td>
-                    </tr>
-                    <tr>
-                        <td><span>Department Oriented To: </span> {{get_user.department}}</td>
-                        <td><span>Team Oriented To: </span> {{get_user.team}}</td>
-                    </tr>
-                    <tr>
-                        <td><span>User Email: </span> {{get_user.email}}</td>
-                        <td><span>Added On: </span> {{get_user.date_joined}}</td>
-                    </tr>
-                    <tr>
-                        <td><span>User Role: </span> {{get_user.role}}</td>
-                        {% if get_user.is_active %}
-                            <td><span>User Status: </span> Active</td>
-                        {% else %}
-                            <td><span>User Status: </span> InActive</td>
-                        {% endif %}
-                    </tr>
-                    <tr>
-                        <td><a class="add-resources-btn" href="{% url 'edit_user' get_user.id %}"><i class="fa fa-pencil" aria-hidden="true"></i> Edit User </a> <a class="add-resources-btn" href="#" onclick="toggle_warning_blur()"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete User </a></td>
-                        <td><a class="add-resources-btn" href="{% url 'superadmin_add_user' %}"><i class="fa fa-hand-o-left" aria-hidden="true"></i> Back to Users </a></td>
-                    </tr>
-                </table>
+    {% if get_user %}
+    <div class="card mx-auto" style="max-width: 640px;">
+        <div class="card-body p-4">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">User name</dt><dd class="col-sm-8">{{ get_user.first_name }} {{ get_user.last_name }}</dd>
+                <dt class="col-sm-4">PeopleSoft Id</dt><dd class="col-sm-8">{{ get_user.peoplesoft_id }}</dd>
+                <dt class="col-sm-4">Department</dt><dd class="col-sm-8">{{ get_user.department }}</dd>
+                <dt class="col-sm-4">Team</dt><dd class="col-sm-8">{{ get_user.team }}</dd>
+                <dt class="col-sm-4">Email</dt><dd class="col-sm-8">{{ get_user.email }}</dd>
+                <dt class="col-sm-4">Added on</dt><dd class="col-sm-8">{{ get_user.date_joined }}</dd>
+                <dt class="col-sm-4">Role</dt><dd class="col-sm-8">{{ get_user.role }}</dd>
+                <dt class="col-sm-4">Status</dt>
+                <dd class="col-sm-8">
+                    {% if get_user.is_active %}
+                        <span class="badge text-bg-success">Active</span>
+                    {% else %}
+                        <span class="badge" style="background-color:#EA580C;">Inactive</span>
+                    {% endif %}
+                </dd>
+            </dl>
+            <div class="d-flex gap-2 mt-3">
+                <a href="{% url 'account:edit_user' get_user.id %}" class="btn btn-outline-primary flex-fill">
+                    <i class='bx bx-edit'></i> Edit
+                </a>
+                <button type="button" class="btn btn-outline-danger flex-fill" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
+                    <i class='bx bx-trash'></i> Delete
+                </button>
+                <a href="{% url 'account:superadmin_add_user' %}" class="btn btn-outline-secondary flex-fill">Back</a>
             </div>
         </div>
+    </div>
+
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{% url 'account:permanent_delete_user' get_user.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class='bx bxs-bell-ring text-warning'></i> Warning!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete the selected "{{ get_user.peoplesoft_id }}" user?</p>
+                        <input type="hidden" name="delete_name" value="delete">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No, cancel</button>
+                        <button type="submit" class="btn btn-danger">Yes, delete</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="loader-wrapper">
-            <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-        </div>   
-        <div id="warning_popup">
-            <form action="{% url 'permanent_delete_user' get_user.id %}" method="POST">
-                {% csrf_token %}
-                <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
-                <h3>Are you sure that you want to delete the selected "{{get_user.peoplesoft_id}}" user!</h3>
-                <input type="hidden" name="delete_name" value="delete">
-                <button type="submit" class="warning-btn-delete" style="background-color: rgb(204, 17, 3);" onclick="toggle_warning_blur()">Yes, delete</button>
-                <a class="warning-btn-cancel" style="background-color: rgb(2, 141, 20);" onclick="toggle_warning_blur()">No, cancel</a>
-            </form>
-        </div>  
-        {% else %}
-        {% endif %}  
-</section>
-
-
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="{% static 'script.js' %}"></script>
-<script>
-    $(window).on("load",function(){
-      $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

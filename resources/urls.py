@@ -2,6 +2,8 @@ from django.urls import path
 from .import views
 
 
+app_name = 'resources'
+
 urlpatterns = [
     path('resources_list_table/', views.resources_list_table, name='resources_list_table'),
     path('returned_resources_list_table/', views.returned_resources_list_table, name='returned_resources_list_table'),
@@ -24,7 +26,6 @@ urlpatterns = [
     path('edit_category_page/<int:catid>/', views.edit_category_page, name='edit_category_page'),
     path('update_category/<int:catid>/', views.update_category, name='update_category'),
     path('delete_category_warning/<int:delcatid>/', views.delete_category_warning, name='delete_category_warning'),
-    path('delete_resource/<int:resid>/', views.delete_resource, name='delete_resource'),
     path('search_resource/', views.search_resource, name='search_resource'),
 
 

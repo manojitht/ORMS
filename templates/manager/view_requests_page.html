@@ -1,120 +1,110 @@
-{% extends 'base_user.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | Pending & Processing Requests{% endblock %}
+
 {% block content %}
-<title>ORMS | Pending & Processing Requests</title>
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-edit-alt'></i> My Requests</h1>
+    {% include 'message_alert.html' %}
 
-<section class="home-main">
-    <div class="full-myteam-container" id="blur">
-        <div class="head-container">
-            <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/32/000000/writing-down.png"/> My Requests</h1>
-            {% include 'message_alert.html' %}
-        </div>
-        <div class="search-bar-container">
-            <table style="width: 100%; text-align: center; background-color: #695CFE; padding: 10px; border-radius: 15px;">
+    <ul class="nav nav-pills mb-3">
+        <li class="nav-item">
+            <a class="nav-link active" href="{% url 'requests:list_requests_manager' user.id %}">Pending &amp; Processing</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'requests:list_completed_requests_manager' user.id %}">Completed</a>
+        </li>
+    </ul>
+
+    <a href="{% url 'requests:create_request' user.id %}" class="btn btn-primary mb-3">
+        <i class='bx bx-message-square-add'></i> Create New
+    </a>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
                 <tr>
-                    <td><a class="float-deletion-btn2" href="{% url 'list_requests_manager' user.id %}">Pending & Processing Requests <img style="margin-bottom: -3px;" src="https://img.icons8.com/color/16/000000/data-pending.png"/></a></td>
-                    <td><a class="float-deletion-btn3" href="{% url 'list_completed_requests_manager' user.id %}">Show Completed Requests <img style="margin-bottom: -3px;" src="https://img.icons8.com/color/16/000000/ok--v1.png"/></a></td>
+                    <th>Request Id</th>
+                    <th>Requested For</th>
+                    <th>Category</th>
+                    <th>Created For</th>
+                    <th>Status</th>
+                    <th>Created On</th>
+                    <th class="text-center">Actions</th>
                 </tr>
-            </table>
-        </div>
-        <div class="search-bar-container">
-            <form>
-                <a href="{% url 'create_request' user.id %}" style="float: left; margin-bottom: 10px;" class="add-team-btn">Create New <i style="font-size: 15px;" class='bx bx-message-square-add' ></i></a>
-            </form>
-        </div>
-        <div class="container">
-            <h3 style="text-align: center; font-weight: 200; margin-bottom: 15px; background-color: #000000; color: #fff; padding: 0.3%; border-radius: 5px;"><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/30/000000/data-pending.png"/> Pending & Processing Requests Listings</h3>
-            <table id="team_requests" class="display" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>Request Id</th>
-                        <th>Requested For</th>
-                        <th>Category</th>
-                        <th>Created For</th>
-                        <th>Status</th>
-                        <th>Created On</th>
-                        <th style="text-align: center;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                      {% for requests in get_requests_pending %}
-                        <tr>
-                            <td><a href="#">{{ requests.request_id }}</a></td>
-                            <td>{{ requests.request_resource }}</td>
-                            <td>{{ requests.request_category }}</td>
-                            <td>{{ requests.created_for }}</td>
-                            {% if requests.request_status == 'Pending' %}
-                                <td><h4 style="font-weight: 400; background-color: rgb(252, 215, 5); text-align: center; border-radius: 15px; color: #000;">{{ requests.request_status }}</h4></td>
-                            {% elif requests.request_status == 'Processing' %}
-                                <td><h4 style="font-weight: 400; background-color: rgb(129, 106, 214); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
-                            {% elif requests.request_status == 'Completed' %}
-                                <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
-                            {% elif requests.request_status == 'Cancelled' %}
-                                <td><h4 style="font-weight: 400; background-color: rgb(230, 78, 18); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
-                            {% endif %}
-                            <td>{{ requests.created_on }}</td>
-                            {% if requests.request_status == 'Completed' or requests.request_status == 'Cancelled' %}
-                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_selected_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'delete_request' requests.id user.id %}"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</a></td>
-                            {% else %}
-                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_selected_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(223, 126, 0);" href="{% url 'cancel_request' requests.id user.id %}"><i class='bx bxs-message-alt-x'></i> Cancel</a></td>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-                        {% for requests in get_requests_processing %}
-                        <tr>
-                            <td><a href="#">{{ requests.request_id }}</a></td>
-                            <td>{{ requests.request_resource }}</td>
-                            <td>{{ requests.request_category }}</td>
-                            <td>{{ requests.created_for }}</td>
-                            {% if requests.request_status == 'Pending' %}
-                                <td><h4 style="font-weight: 400; background-color: rgb(252, 215, 5); text-align: center; border-radius: 15px; color: #000;">{{ requests.request_status }}</h4></td>
-                            {% elif requests.request_status == 'Processing' %}
-                                <td><h4 style="font-weight: 400; background-color: rgb(129, 106, 214); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
-                            {% elif requests.request_status == 'Completed' %}
-                                <td><h4 style="font-weight: 400; background-color: rgb(54, 136, 30); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }}</h4></td>
-                            {% elif requests.request_status == 'Cancelled' %}
-                                <td><h4 style="font-weight: 400; background-color: rgb(230, 78, 18); text-align: center; border-radius: 15px; color: #fff;">{{ requests.request_status }} </h4></td>
-                            {% endif %}
-                            <td>{{ requests.created_on }}</td>
-                            {% if requests.request_status == 'Completed' or requests.request_status == 'Cancelled' %}
-                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_selected_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center;" href="{% url 'delete_request' requests.id user.id %}"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</a></td>
-                            {% else %}
-                                <td><a class="team-request-view-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(30, 124, 27); color: #fff;" href="{% url 'view_selected_request' requests.id %}"><i class='bx bxs-folder-open'></i> Open</a><br><a class="team-request-delete-button" style="text-decoration: none; width: 100%; float: left; text-align: center; background-color: rgb(223, 126, 0);" href="{% url 'cancel_request' requests.id user.id %}"><i class='bx bxs-message-alt-x'></i> Cancel</a></td>
-                            {% endif %}
-                        </tr>
-                        {% endfor %}
-                </tbody>
-            </table>                    
-        </div>
-    </div> 
-    <div class="loader-wrapper">
-        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
+            </thead>
+            <tbody>
+                {% for requests in get_requests_pending %}
+                <tr>
+                    <td>{{ requests.request_id }}</td>
+                    <td>{{ requests.request_resource }}</td>
+                    <td>{{ requests.request_category }}</td>
+                    <td>{{ requests.created_for }}</td>
+                    <td>
+                        {% if requests.request_status == 'Pending' %}
+                            <span class="badge text-bg-warning">{{ requests.request_status }}</span>
+                        {% elif requests.request_status == 'Processing' %}
+                            <span class="badge text-bg-primary">{{ requests.request_status }}</span>
+                        {% elif requests.request_status == 'Completed' %}
+                            <span class="badge text-bg-success">{{ requests.request_status }}</span>
+                        {% elif requests.request_status == 'Cancelled' %}
+                            <span class="badge" style="background-color:#EA580C;">{{ requests.request_status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ requests.created_on }}</td>
+                    <td class="d-flex gap-2 justify-content-center">
+                        <a class="btn btn-sm btn-success" href="{% url 'requests:view_selected_request' requests.id %}">
+                            <i class='bx bxs-folder-open'></i> Open
+                        </a>
+                        {% if requests.request_status == 'Completed' or requests.request_status == 'Cancelled' %}
+                            <a class="btn btn-sm btn-outline-danger" href="{% url 'requests:delete_request' requests.id user.id %}">
+                                <i class='bx bx-trash'></i> Delete
+                            </a>
+                        {% else %}
+                            <a class="btn btn-sm btn-outline-warning" href="{% url 'requests:cancel_request' requests.id user.id %}">
+                                <i class='bx bxs-message-alt-x'></i> Cancel
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                {% for requests in get_requests_processing %}
+                <tr>
+                    <td>{{ requests.request_id }}</td>
+                    <td>{{ requests.request_resource }}</td>
+                    <td>{{ requests.request_category }}</td>
+                    <td>{{ requests.created_for }}</td>
+                    <td>
+                        {% if requests.request_status == 'Pending' %}
+                            <span class="badge text-bg-warning">{{ requests.request_status }}</span>
+                        {% elif requests.request_status == 'Processing' %}
+                            <span class="badge text-bg-primary">{{ requests.request_status }}</span>
+                        {% elif requests.request_status == 'Completed' %}
+                            <span class="badge text-bg-success">{{ requests.request_status }}</span>
+                        {% elif requests.request_status == 'Cancelled' %}
+                            <span class="badge" style="background-color:#EA580C;">{{ requests.request_status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ requests.created_on }}</td>
+                    <td class="d-flex gap-2 justify-content-center">
+                        <a class="btn btn-sm btn-success" href="{% url 'requests:view_selected_request' requests.id %}">
+                            <i class='bx bxs-folder-open'></i> Open
+                        </a>
+                        {% if requests.request_status == 'Completed' or requests.request_status == 'Cancelled' %}
+                            <a class="btn btn-sm btn-outline-danger" href="{% url 'requests:delete_request' requests.id user.id %}">
+                                <i class='bx bx-trash'></i> Delete
+                            </a>
+                        {% else %}
+                            <a class="btn btn-sm btn-outline-warning" href="{% url 'requests:cancel_request' requests.id user.id %}">
+                                <i class='bx bxs-message-alt-x'></i> Cancel
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    <!-- <div id="warning_popup">
-        <h1><i class='bx bxs-bell-ring'></i>  Alert Message!</h2>
-        <h3>Are you sure want to delete the request!</h3>
-        <a href="#" class="warning-btn-delete" onclick="toggle_warning_blur()">Yes, delete</a>
-        <a href="#" class="warning-btn-cancel" onclick="toggle_warning_blur()">No, cancel</a> -->
-        <!-- <input class="create-request-button" type="button" onclick="toggle_warning_blur()" value="Yes, delete">
-        <input class="close-request-button" type="button" onclick="toggle_warning_blur()" value="No, cancel"> -->
-    <!-- </div> -->
-</section>
-
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-
-
-
-<!-- datatables starting -->
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-
-<script>
-    $(window).on("load",function(){
-    $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
+</div>
 {% endblock %}

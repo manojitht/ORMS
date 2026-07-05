@@ -1,25 +1,24 @@
-{% extends 'base_user.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
-<title>ORMS | Sticky Notes Page</title>
+{% block title %}ORMS | My Notes{% endblock %}
+
+{% block extra_head %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %}
 
-<section class="home-main">
-    <div class="full-myteam-container">
-        <div class="head-container" style="margin-bottom: 3%;">
-            <h1><img style="margin-bottom: -8px;" src="https://img.icons8.com/fluency/35/null/sticky-notes.png"/> Sticky Notes</h1>
-        </div>
-            <div class="my-notes-container">
-                <button class="add-note-btn" id="add-note-btn">
-                    + Add Note
-                </button>
-            </div>
-        </div>     
-</section>
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-note'></i> My Notes</h1>
 
-<script src="{% static 'script.js' %}"></script>
+    <button class="btn btn-primary mb-3" id="add-note-btn">
+        <i class='bx bx-plus'></i> Add Note
+    </button>
+    <div class="my-notes-container d-flex flex-wrap gap-3"></div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.2.2/marked.min.js"></script>
 <script src="{% static 'script_notes.js' %}"></script>
-
 {% endblock %}

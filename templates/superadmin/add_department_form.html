@@ -1,90 +1,59 @@
-{% extends 'base_superadmin.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | Add Department{% endblock %}
+
 {% block content %}
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bxs-building'></i> {% if selected_dep %}Update{% else %}Add{% endif %} Department</h1>
+    {% include 'message_alert.html' %}
 
-<section class="home-main">
-    <div class="full-myteam-container" id="blur">
-        <div class="head-container" style="margin-bottom: 3%;">
-            <h1><img style="margin-bottom: -9px;" src="https://img.icons8.com/external-flaticons-flat-flat-icons/35/null/external-department-university-flaticons-flat-flat-icons-2.png"/> Add Department</h1>
-            {% include 'message_alert.html' %}
-        </div>
-
-        {% if selected_dep %}
-
-        <div class="add-new-department-form">
-            <h1>Update Department Form:</h1>
-            <form action="{% url 'update_department' selected_dep.id %}" method="POST">
+    <div class="card mx-auto" style="max-width: 640px;">
+        <div class="card-body p-4">
+            {% if selected_dep %}
+            <form action="{% url 'department:update_department' selected_dep.id %}" method="POST">
                 {% csrf_token %}
-                <div class="and-input-box">
-                    <span class="details_anu">Department Name: </span>
-                    <input type="text" name="department_name" placeholder="Enter Department name.." value="{{selected_dep.department_name}}" required>
+                <div class="mb-3">
+                    <label class="form-label">Department name</label>
+                    <input type="text" name="department_name" class="form-control" value="{{ selected_dep.department_name }}" required>
                 </div>
-                <div class="and-input-box">
-                    <span class="details_anu">Department Head: </span>
-                    <input type="text" name="department_head" placeholder="Enter Department head.." value="{{selected_dep.department_head}}" required>
+                <div class="mb-3">
+                    <label class="form-label">Department head</label>
+                    <input type="text" name="department_head" class="form-control" value="{{ selected_dep.department_head }}" required>
                 </div>
-                <div class="and-input-box">
-                    <span class="details_anu">Department Description: (Max: 250 words) </span>
-                    <textarea id="and-textarea" name="department_description" rows="4" cols="50" placeholder="Enter Department description here.." required>{{selected_dep.department_description}}</textarea>
+                <div class="mb-3">
+                    <label class="form-label">Description (max 250 words)</label>
+                    <textarea name="department_description" class="form-control" rows="4" required>{{ selected_dep.department_description }}</textarea>
                 </div>
-                <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
-                <div class="and-input-box">
-                    <input class="and-submit-btn" type="submit" value="Save changes">
-                    <a href="{% url 'display_departments' selected_dep.id %}" class="and-back-btn">Back to department page</a>
+                <input type="hidden" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">Save changes</button>
+                    <a href="{% url 'department:display_departments' selected_dep.id %}" class="btn btn-outline-secondary flex-fill">Back</a>
                 </div>
             </form>
-        </div>
-
-
-        {% else %}
-
-        <div class="add-new-department-form">
-            <h1>Add New Department Form:</h1>
-            <form action="{% url 'add_new_department' %}" method="POST">
+            {% else %}
+            <form action="{% url 'department:add_new_department' %}" method="POST">
                 {% csrf_token %}
-                <div class="and-input-box">
-                    <span class="details_anu">Department Name: </span>
-                    <input type="text" name="department_name" placeholder="Enter Department name.." required>
+                <div class="mb-3">
+                    <label class="form-label">Department name</label>
+                    <input type="text" name="department_name" class="form-control" placeholder="Enter department name.." required>
                 </div>
-                <div class="and-input-box">
-                    <span class="details_anu">Department Head: </span>
-                    <input type="text" name="department_head" placeholder="Enter Department head.." required>
+                <div class="mb-3">
+                    <label class="form-label">Department head</label>
+                    <input type="text" name="department_head" class="form-control" placeholder="Enter department head.." required>
                 </div>
-                <div class="and-input-box">
-                    <span class="details_anu">Department Description: (Max: 250 words) </span>
-                    <textarea id="and-textarea" name="department_description" rows="4" cols="50" placeholder="Enter Department description here.." required></textarea>
+                <div class="mb-3">
+                    <label class="form-label">Description (max 250 words)</label>
+                    <textarea name="department_description" class="form-control" rows="4" placeholder="Enter department description.." required></textarea>
                 </div>
-                <input type="hidden" class="r-p-textbox" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
-                <div class="and-input-box">
-                    <input class="and-submit-btn" type="submit" value="Create Department">
-                    <a href="{% url 'superadmin_department_table' %}" class="and-back-btn">Back to department page</a>
+                <input type="hidden" name="created_by" value="{{ user.first_name }} {{ user.last_name }}">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">Create Department</button>
+                    <a href="{% url 'department:superadmin_department_table' %}" class="btn btn-outline-secondary flex-fill">Back</a>
                 </div>
             </form>
+            {% endif %}
         </div>
-
-        {% endif %}
-
     </div>
-    <div class="loader-wrapper">
-        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-    </div> 
-    <!-- <div id="warning_popup">
-        <h1><i class='bx bxs-bell-ring'></i>  Warning!</h2>
-        <h3>Are you sure want to delete the entire department!</h3>
-        <input class="create-request-button" type="button" onclick="toggle_warning_blur()" value="Yes, delete">
-        <input class="close-request-button" type="button" onclick="toggle_warning_blur()" value="No, cancel">
-    </div> -->
-</section>
-
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="{% static 'script.js' %}"></script>
-<script>
-    $(window).on("load",function(){
-      $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
+</div>
 {% endblock %}

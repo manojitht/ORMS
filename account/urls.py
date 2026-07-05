@@ -2,11 +2,11 @@ from django.urls import path
 from .import views
 
 
+app_name = 'account'
+
 urlpatterns = [
-    #path('register_superadmin/', views.register_superadmin, name='register_superadmin'),
     path('login_page', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
-    #path('home', views.home, name='home'),
     path('superadmin_portal', views.superadmin_portal, name='superadmin_portal'),
     path('superadmin_add_user', views.superadmin_add_user, name='superadmin_add_user'),
     path('add_user_page', views.add_user_page, name='add_user_page'),

@@ -1,0 +1,64 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ORMS{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{% static 'font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'custom.css' %}">
+
+    <!-- Favicons of ORMS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="home-body">
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg orms-navbar sticky-top">
+        <div class="container-fluid px-3 px-lg-4">
+            <a class="navbar-brand" href="{% if user.is_it_admin %}{% url 'account:it_admin_portal' user.id %}{% elif user.is_manager %}{% url 'account:manager_portal' user.id %}{% elif user.is_superadmin %}{% url 'account:superadmin_portal' %}{% endif %}">
+                <img src="{% static 'images//ORMS-logos/ORMS-1 (1).png' %}" alt="ORMS logo">
+                <span>
+                    ORMS
+                    <span class="brand-role">{{ user.first_name }} &middot; {{ user.role }}</span>
+                </span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#ormsNavbarContent" aria-controls="ormsNavbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="ormsNavbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    {% if user.is_it_admin %}
+                        {% include 'includes/nav_it_admin.html' %}
+                    {% elif user.is_manager %}
+                        {% include 'includes/nav_manager.html' %}
+                    {% elif user.is_superadmin %}
+                        {% include 'includes/nav_superadmin.html' %}
+                    {% endif %}
+                </ul>
+                <a href="{% url 'account:logout' %}" class="btn btn-outline-warning btn-sm btn-logout">
+                    <i class='bx bx-log-out'></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'script.js' %}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

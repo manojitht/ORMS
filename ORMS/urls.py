@@ -20,17 +20,14 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    
-    #fake admin site
-    path('admin/', include('admin_honeypot.urls')),
-    
+
     #admin site
     path('ormsadminsecurelogin/', admin.site.urls),
     path('', views.home, name='home'),
-    path('', include('account.urls')),
-    path('', include('department.urls')),
-    path('', include('team.urls')),
-    path('', include('resource.urls')),
-    path('', include('members.urls')),
-    path('', include('requests.urls')),
+    path('account/', include('account.urls')),
+    path('department/', include('department.urls')),
+    path('team/', include('team.urls')),
+    path('resources/', include('resources.urls')),
+    path('members/', include('members.urls')),
+    path('requests/', include('requests.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

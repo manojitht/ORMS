@@ -1,16 +1,17 @@
-from ast import keyword
-from django.db.models import Q
 from django.shortcuts import render
 from django.contrib import messages as message_alert
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from .models import Department
 from team.models import Team
+from django.contrib.auth.decorators import login_required
 
+@login_required(login_url='account:login')
 def notes_page(request):
     return render(request, 'superadmin/notes_page.html')
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def display_departments(request, depid):
     selected_dep = Department.objects.get(id=depid)
     context = { 'selected_dep': selected_dep, }
@@ -18,6 +19,7 @@ def display_departments(request, depid):
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def add_new_department(request):
     if request.method == 'POST':
         department_name = request.POST['department_name']
@@ -31,7 +33,7 @@ def add_new_department(request):
             department_description=department_description, created_by=created_by)
             department.save()
             message_alert.success(request, department_name + ' is created successfully!')
-            return redirect(superadmin_department_table)
+            return redirect('department:superadmin_department_table')
     else:
         pass
     return render(request, 'superadmin/add_department_form.html')
@@ -40,6 +42,7 @@ def add_new_department(request):
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def delete_department(request, depid):
     if request.method == 'POST':
         delete_name = request.POST['delete_name']
@@ -47,10 +50,11 @@ def delete_department(request, depid):
             dep_delete = Department.objects.get(id=depid)
             dep_delete.delete()
             message_alert.success(request, dep_delete.department_name + ' Department deleted successfully!')
-    return redirect(superadmin_department_table)
+    return redirect('department:superadmin_department_table')
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def edit_department(request, depid):
     selected_dep = Department.objects.get(id=depid)
     dep_list = Department.objects.all()
@@ -61,6 +65,7 @@ def edit_department(request, depid):
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def update_department(request, depid):
     update_dep = Department.objects.get(id=depid)
     update_dep.department_name = request.POST['department_name']
@@ -69,12 +74,13 @@ def update_department(request, depid):
     update_dep.created_by = request.POST['created_by']
     update_dep.save()
     message_alert.success(request, 'Department is updated successfully!')
-    return redirect(display_departments, depid)
+    return redirect('department:display_departments', depid)
     
     # naming convention finished.
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def superadmin_department_table(request):
     departments_table = Department.objects.all().order_by('department_name')
     context = { 'departments_table': departments_table, }
@@ -83,6 +89,7 @@ def superadmin_department_table(request):
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def superadmin_department_date_sort(request):
     if request.method == 'POST':
         from_date = request.POST['from_dep']
@@ -98,6 +105,7 @@ def superadmin_department_date_sort(request):
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def department_view_teams(request, depid):
     get_department = Department.objects.get(id=depid)
     name = Department.objects.get(department_name=get_department.department_name)
@@ -111,6 +119,7 @@ def department_view_teams(request, depid):
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def department_deletion_history(request):
     departments = Department.objects.all().filter(is_active=False)
     context = { 'departments': departments, }

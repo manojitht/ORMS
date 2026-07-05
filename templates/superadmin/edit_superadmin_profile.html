@@ -1,75 +1,80 @@
-{% extends 'base_superadmin.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | Edit Profile{% endblock %}
+
 {% block content %}
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-user-circle'></i> Edit My Profile</h1>
+    {% include 'message_alert.html' %}
 
-<section class="home-main">
-    <div class="full-myteam-container" id="blur">
-        <div class="head-container" style="margin-bottom: 1%;">
-            <h1><img style="margin-bottom: -8px;" src="https://img.icons8.com/color/38/null/circled-user-male-skin-type-7--v1.png"/> Edit User Profile</h1>
-            {% include 'message_alert.html' %}
-        </div>
-        <div class="department-card-container">
-            <div class="team-member-info">
-                {% if user %}
-                <h1><i class="fa fa-address-card-o" aria-hidden="true"></i> Edit User Profile: </h1>
-                <form action="{% url 'superadmin_update_user_profile' user.id %}" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
+    {% if user %}
+    <div class="card mx-auto" style="max-width: 720px;">
+        <div class="card-body p-4">
+            <form action="{% url 'account:superadmin_update_user_profile' user.id %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="text-center mb-3">
                     {% if user.accountprofile.profile_image %}
-                        <img src="{{user.accountprofile.profile_image.url }}" alt="user profile img"><br>
+                        <img src="{{ user.accountprofile.profile_image.url }}" class="rounded-circle" style="width:88px; height:88px; object-fit:cover;">
                     {% else %}
-                        <img src="{% static 'images/image_placeholder.jpg' %}" alt="user profile img"><br>
-                        <!-- <h4 style="font-weight: 400; margin-left: 4%;">No User Profile Image</h4> -->
-                    {% endif %} 
-                    <table style="background-color: #ffffff;">
-                        <tr>
-                            <td><span><i class="fa fa-user" aria-hidden="true"></i> Firstname: </span> <input name="first_name" class="view-edit-team-member-input" type="text" placeholder="Enter firstname.." value="{{user.first_name}}" required></td>
-                            <td><span><i class="fa fa-user" aria-hidden="true"></i> Lastname: </span> <input name="last_name" class="view-edit-team-member-input" type="text" placeholder="Enter lastname.." value="{{user.last_name}}" required></td>
-                        </tr>
-                        <tr>
-                            <td><span><i class="fa fa-briefcase" aria-hidden="true"></i> Position: </span> <input class="view-edit-team-member-input" style="background-color: rgb(206, 206, 206);" type="text" placeholder="Enter Position.." value="{{user.role}}" readonly></td>
-                            <td><span><i class="fa fa-id-badge" aria-hidden="true"></i> Peoplesoft Id: </span> <input class="view-edit-team-member-input" style="background-color: rgb(206, 206, 206);" type="text" placeholder="Enter Peoplesoft Id.." value="{{user.peoplesoft_id}}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td><span><i class="fa fa-building" aria-hidden="true"></i> Department: </span> <input class="view-edit-team-member-input" type="text" style="background-color: rgb(206, 206, 206);" placeholder="Enter Position.." value="{{user.department}}" readonly></td>
-                            <td><span><i class="fa fa-users" aria-hidden="true"></i> Team: </span> <input class="view-edit-team-member-input" type="text" style="background-color: rgb(206, 206, 206);" placeholder="Enter Peoplesoft Id.." value="{{user.team}}" readonly></td>
-                        </tr>
-                        <tr>
-                            <td><span><i class='bx bxs-envelope' ></i> Email: </span>  <input name="email" class="view-edit-team-member-input" type="email" placeholder="Enter Email Id.." value="{{user.email}}" required></td>
-                            <td><span><i class='bx bxs-phone-call' ></i> Contact: </span> <input name="contact_number" class="view-edit-team-member-input" type="text" placeholder="Enter Contact number.." value="{{user.accountprofile.contact_number}}" required></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"><span><i class="fa fa-home" aria-hidden="true"></i> Home Address:</span> <input name="home_address" class="view-edit-team-member-input" type="text" placeholder="Enter Home Address..." value="{{user.accountprofile.home_address}}" required></td>
-                        </tr>
-                        <tr>
-                            {% if user.accountprofile.profile_image %}
-                            <td><span><i class="fa fa-picture-o" aria-hidden="true"></i> Profile Image: </span> <input name="profile_image" style="background-color: #ffffff; border: 1px solid #ffffff;" type="file" accept="images"></td>
-                            {% else %}
-                            <td><span><i class="fa fa-picture-o" aria-hidden="true"></i> Profile Image: </span> <input name="profile_image" style="background-color: #ffffff; border: 1px solid #ffffff;" type="file" accept="images" required></td>
-                            {% endif %} 
-                            
-                            <td><a class="view-edit-team-member-back-btn" href="{% url 'superadmin_user_profile' %}">Back</a><input class="view-edit-team-member-btn" type="submit" value="Update Profile"></td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-            {% else %}
-            {% endif %}  
-            <div class="loader-wrapper">
-                <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-            </div> 
+                        <img src="{% static 'images/image_placeholder.jpg' %}" class="rounded-circle" style="width:88px; height:88px; object-fit:cover;">
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">First name</label>
+                        <input name="first_name" class="form-control" type="text" value="{{ user.first_name }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Last name</label>
+                        <input name="last_name" class="form-control" type="text" value="{{ user.last_name }}" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Position</label>
+                        <input class="form-control" type="text" value="{{ user.role }}" readonly>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Peoplesoft Id</label>
+                        <input class="form-control" type="text" value="{{ user.peoplesoft_id }}" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Department</label>
+                        <input class="form-control" type="text" value="{{ user.department }}" readonly>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Team</label>
+                        <input class="form-control" type="text" value="{{ user.team }}" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        <input name="email" class="form-control" type="email" value="{{ user.email }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Contact number</label>
+                        <input name="contact_number" class="form-control" type="text" value="{{ user.accountprofile.contact_number }}" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Home address</label>
+                    <input name="home_address" class="form-control" type="text" value="{{ user.accountprofile.home_address }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Profile image</label>
+                    <input name="profile_image" class="form-control" type="file" accept="image/*" {% if not user.accountprofile.profile_image %}required{% endif %}>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'account:superadmin_user_profile' %}" class="btn btn-outline-secondary flex-fill">Back</a>
+                    <button type="submit" class="btn btn-primary flex-fill">Update Profile</button>
+                </div>
+            </form>
         </div>
-        </div>    
-</section>
-
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-<script src="{% static 'script.js' %}"></script>
-<script>
-    $(window).on("load",function(){
-      $(".loader-wrapper").fadeOut("slow");
-    });
-</script>
-
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

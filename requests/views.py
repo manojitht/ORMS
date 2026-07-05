@@ -1,24 +1,24 @@
 from django.shortcuts import render
-from django.contrib import messages as message_alert, auth
-from django.shortcuts import redirect, render
-from django.db.models import Q
+from django.contrib import messages as message_alert
+from django.shortcuts import redirect
 from members.models import Members
-from resource.models import Resource, ResourceTaken, Category
+from resources.models import Resource, ResourceTaken, Category
 from department.models import Department
 from account.models import Account
 from requests.models import Requests
 from team.models import Team
-import os
 from datetime import date
 import random
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # Create your views here.
 
+@login_required(login_url='account:login')
 def list_requests_manager(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
@@ -29,6 +29,7 @@ def list_requests_manager(request, userid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def list_completed_requests_manager(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
@@ -38,6 +39,7 @@ def list_completed_requests_manager(request, userid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def create_request(request, userid):
 
     request_resource_list = Category.objects.all()
@@ -131,6 +133,7 @@ def create_request(request, userid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def view_selected_request(request, reqid):
     get_request_id = Requests.objects.get(id=reqid)
     get_member_info = Members.objects.get(peoplesoft_id=get_request_id.created_for)
@@ -139,6 +142,7 @@ def view_selected_request(request, reqid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def view_manager_completed_request(request, reqid):
     get_request_id = Requests.objects.get(id=reqid)
     get_member_info = Members.objects.get(peoplesoft_id=get_request_id.created_for)
@@ -147,6 +151,7 @@ def view_manager_completed_request(request, reqid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def manager_requests_date_sort(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
@@ -164,6 +169,7 @@ def manager_requests_date_sort(request, userid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def cancel_request(request, reqid, userid):
     get_request = Requests.objects.get(id=reqid)
     get_request.request_status = 'Cancelled'
@@ -180,19 +186,21 @@ def cancel_request(request, reqid, userid):
     send_mail(mail_head_subject, message, email_from, recipient_list)
     get_request.save()
     message_alert.success(request, get_request.request_id +  ', was cancelled successfully!')
-    return redirect(list_requests_manager, userid)
+    return redirect('requests:list_requests_manager', userid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def delete_request(request, reqid, userid):
     get_request = Requests.objects.get(id=reqid)
     get_request.is_active = False
     get_request.save()
     message_alert.success(request, get_request.request_id +  ', was deleted successfully!')
-    return redirect(list_requests_manager, userid)
+    return redirect('requests:list_requests_manager', userid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def list_pending_requests_it_admin(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
@@ -202,6 +210,7 @@ def list_pending_requests_it_admin(request, userid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def cancel_request_it_admin(request, reqid, userid):
     get_request = Requests.objects.get(id=reqid)
     get_request.request_status = 'Cancelled'
@@ -218,10 +227,11 @@ def cancel_request_it_admin(request, reqid, userid):
     send_mail(mail_head_subject, message, email_from, recipient_list)
     get_request.save()
     message_alert.success(request, get_request.request_id +  ', was cancelled successfully!')
-    return redirect(list_pending_requests_it_admin, userid)
+    return redirect('requests:list_pending_requests_it_admin', userid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def list_processing_requests_it_admin(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
@@ -231,6 +241,7 @@ def list_processing_requests_it_admin(request, userid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def list_completed_requests_it_admin(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)
@@ -240,6 +251,7 @@ def list_completed_requests_it_admin(request, userid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def view_selected_request_it_admin(request, reqid):
     get_request_id = Requests.objects.get(id=reqid)
     get_member_info = Members.objects.get(peoplesoft_id=get_request_id.created_for)
@@ -248,6 +260,7 @@ def view_selected_request_it_admin(request, reqid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def approve_processing_request(request, reqid, userid):
     get_request = Requests.objects.get(id=reqid)
     get_request.request_status = 'Processing'
@@ -277,10 +290,11 @@ def approve_processing_request(request, reqid, userid):
         get_request.save()
 
     message_alert.success(request, get_request.request_id +  ', was approved successfully & assigned to your processing requests tab!')
-    return redirect(list_pending_requests_it_admin, userid)
+    return redirect('requests:list_pending_requests_it_admin', userid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def view_selected_processing_request(request, reqid):
     global assign_resource
     get_request_id = Requests.objects.get(id=reqid)
@@ -298,6 +312,7 @@ def view_selected_processing_request(request, reqid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def view_selected_completed_request(request, reqid):
     get_request_id = Requests.objects.get(id=reqid)
     get_member_info = Members.objects.get(peoplesoft_id=get_request_id.created_for)
@@ -306,6 +321,7 @@ def view_selected_completed_request(request, reqid):
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def complete_processing_request(request, reqid, userid):
     update_req = Requests.objects.get(id=reqid)
     get_user  = Account.objects.get(id=userid)
@@ -358,12 +374,13 @@ def complete_processing_request(request, reqid, userid):
                 message_alert.success(request, update_req.request_id + ', was completed successfully!')
             else:
                 message_alert.info(request,'OOPS!, ' + get_resource.resource_category.resource_category + ' (' + update_req.asset_id + '), was under '+ get_resource.resource_availability + ' status (or) please check resource correctly!')
-                redirect(view_selected_processing_request, reqid)
+                redirect('requests:view_selected_processing_request', reqid)
 
-    return redirect(list_processing_requests_it_admin, userid)
+    return redirect('requests:list_processing_requests_it_admin', userid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def complete_processing_request_bitlocker(request, reqid, userid):
     update_req = Requests.objects.get(id=reqid)  
     
@@ -379,10 +396,11 @@ def complete_processing_request_bitlocker(request, reqid, userid):
         else:
             message_alert.error(request, update_req.request_id + ', Something went wrong on this request!')
 
-    return redirect(list_processing_requests_it_admin, userid)
+    return redirect('requests:list_processing_requests_it_admin', userid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+@login_required(login_url='account:login')
 def it_admin_completed_requests_date_sort(request, userid):
     get_user_id = Account.objects.get(id=userid)
     get_user_psid = Account.objects.get(peoplesoft_id=get_user_id.peoplesoft_id)

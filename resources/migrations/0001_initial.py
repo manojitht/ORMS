@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                 ('resource_image', models.ImageField(blank=True, null=True, upload_to='photos/resources')),
                 ('added_on', models.DateField(auto_now_add=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('resource_category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='resource.category')),
+                ('resource_category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='resources.category')),
             ],
             options={
                 'verbose_name': 'resource',
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
                 ('taken_date', models.DateField(auto_now_add=True)),
                 ('returned_date', models.DateField(blank=True, null=True)),
                 ('is_active', models.BooleanField(default=True)),
-                ('asset_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='resource.resource')),
+                ('asset_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='resources.resource')),
                 ('department', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='department.department')),
                 ('peoplesoft_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='members.members')),
                 ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='team.team')),

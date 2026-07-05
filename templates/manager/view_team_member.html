@@ -1,102 +1,49 @@
-
-{% extends 'base_user.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
+{% block title %}ORMS | My Team{% endblock %}
+
 {% block content %}
-<title>ORMS | My Team</title>
+<div class="container-fluid px-4">
+    <h1 class="orms-page-header"><i class='bx bx-group'></i> {{ user.team }}</h1>
+    {% include 'message_alert.html' %}
 
-    <section class="home-main">
-        <div class="full-myteam-container">
-            <div class="head-container">
-                <h1><img style="margin-bottom: -10px;" src="https://img.icons8.com/color/32/000000/conference.png"/> {{ user.team }}</h1>
-                {% include 'message_alert.html' %}
-            </div>
-            <div class="search-bar-container" style="width: 100%; text-align: center; padding: 10px; border-radius: 15px;">
-                <form action="{% url 'search_team_member' user.id %}" method="GET">
-                    <input style="margin-left: 1%; float: left; border-top-left-radius: 15px; border-bottom-left-radius: 15px; border: 1px solid #fff;" type="text" class="search-input-box-dt" name="keyword" placeholder="Search by name or ps id.." required>
-                    <input style="float: left; background-color: rgb(255, 217, 0); border-top-right-radius: 15px; border-bottom-right-radius: 15px; color: black;" type="submit" class="search-input-btn-dt" value="Search 🔎">
-                    <a href="{% url 'view_team_members_index_table' user.id %}" style="margin-right: 5px; background-color: rgb(24, 24, 24);" class="add-team-btn">Member Index <i class='bx bx-table' ></i></a>
-                </form>
-            </div>
-            {% if search_team_member %}
-                <h8 style="font-size: 15px; text-align: center; color: rgb(85, 85, 85);">Searched for: {{ keyword }}, (Total results found: {{ search_count }})</h8>
-            {% elif team_members %}
-                <h8 style="font-size: 15px; text-align: center; color: rgb(85, 85, 85);">Total Team Members: {{ tm_count }}</h8>
-            {% else %}
-                <h8 style="font-size: 15px; text-align: center; color: rgb(85, 85, 85);">Searched for: {{ keyword }}, (Total results found: {{ search_count }})</h8>
-            {% endif %}
-                <div style="justify-content: center;" class="card-container">
+    <form action="{% url 'members:search_team_member' user.id %}" method="GET" class="d-flex gap-2 mb-2 flex-wrap">
+        <input type="text" class="form-control" style="max-width: 320px;" name="keyword" placeholder="Search by name or ps id.." required>
+        <button type="submit" class="btn btn-warning"><i class='bx bx-search'></i> Search</button>
+        <a href="{% url 'members:view_team_members_index_table' user.id %}" class="btn btn-outline-secondary ms-auto">
+            <i class='bx bx-table'></i> Member Index
+        </a>
+    </form>
 
-                    {% if search_team_member %}
-                        {% for team_member in search_team_member %}
-                            <div class="profile-card">
-                                <table style="width: 100%; height: 100%;">
-                                    <tr>
-                                        <td><img src="{{ team_member.member_image.url }}" class="profile-card-pic"></td>
-                                    </tr>
-                                    <tr>
-                                        <td><h1><i class="fa fa-user" aria-hidden="true"></i> {{ team_member.fullname }}</h1></td>
-                                    </tr>
-                                    <tr>
-                                        <td><h2><i class="fa fa-id-badge" aria-hidden="true"></i> {{ team_member.peoplesoft_id }}</h2></td>
-                                    </tr>
-                                    <tr>
-                                        <td><p><i class="fa fa-briefcase" aria-hidden="true"></i> {{ team_member.position }}</p></td>
-                                    </tr>
-                                    <tr>
-                                        <td><p><i class="fa fa-building" aria-hidden="true"></i> {{ team_member.department }}</p></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="height: 70px;"><a href="{% url 'view_team_members_details' team_member.id %}" class="profile-card-button">View details <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></a></td>
-                                    </tr>
-                                </table>
-                            </div>
-                        {% endfor %}
-                    {% elif team_members %}
-                        {% for team_member in team_members %}
-                        <div class="profile-card">
-                            <table style="width: 100%; height: 100%;">
-                                <tr>
-                                    <td><img src="{{ team_member.member_image.url }}" class="profile-card-pic"></td>
-                                </tr>
-                                <tr>
-                                    <td><h1><i class="fa fa-user" aria-hidden="true"></i> {{ team_member.fullname }}</h1></td>
-                                </tr>
-                                <tr>
-                                    <td><h2><i class="fa fa-id-badge" aria-hidden="true"></i> {{ team_member.peoplesoft_id }}</h2></td>
-                                </tr>
-                                <tr>
-                                    <td><p><i class="fa fa-briefcase" aria-hidden="true"></i> {{ team_member.position }}</p></td>
-                                </tr>
-                                <tr>
-                                    <td><p><i class="fa fa-building" aria-hidden="true"></i> {{ team_member.department }}</p></td>
-                                </tr>
-                                <tr>
-                                    <td style="height: 70px;"><a href="{% url 'view_team_members_details' team_member.id %}" class="profile-card-button">View details <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></a></td>
-                                </tr>
-                            </table>
-                        </div>
-                        {% endfor %}
+    {% if search_team_member %}
+        <p class="text-muted small">Searched for: {{ keyword }} &mdash; {{ search_count }} result(s) found</p>
+    {% elif team_members %}
+        <p class="text-muted small">Total team members: {{ tm_count }}</p>
+    {% endif %}
+
+    <div class="row g-3">
+        {% for team_member in search_team_member|default:team_members %}
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100 text-center">
+                    {% if team_member.member_image %}
+                        <img src="{{ team_member.member_image.url }}" class="card-img-top p-3" style="height: 140px; object-fit: contain; border-radius: 50%;">
                     {% else %}
-                    <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_scgyykem.json"  background="#E4E9F7"  speed="1"  style="width: 35%; height: 60%; margin-left: auto; margin-right: auto;" loop   autoplay></lottie-player>
+                        <img src="{% static 'images/image_placeholder.jpg' %}" class="card-img-top p-3" style="height: 140px; object-fit: contain; border-radius: 50%;">
                     {% endif %}
+                    <div class="card-body">
+                        <h6 class="card-title mb-1">{{ team_member.fullname }}</h6>
+                        <p class="text-muted small mb-1">{{ team_member.peoplesoft_id }}</p>
+                        <p class="text-muted small mb-2">{{ team_member.position }} &middot; {{ team_member.department }}</p>
+                        <a href="{% url 'members:view_team_members_details' team_member.id %}" class="btn btn-sm btn-outline-primary w-100">
+                            View details <i class='bx bx-right-arrow-alt'></i>
+                        </a>
+                    </div>
                 </div>
-            </div> 
-            <div class="loader-wrapper">
-                <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_vpbloexe.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>
-            </div> 
-        </div> 
-    </section>
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-    <script src="{% static 'script.js' %}"></script>
-    <script>
-        $(window).on("load",function(){
-        $(".loader-wrapper").fadeOut("slow");
-        });
-    </script>
-
-
+            </div>
+        {% empty %}
+            <p class="text-muted text-center py-5">No team members yet.</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
