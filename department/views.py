@@ -91,6 +91,7 @@ def superadmin_department_table(request):
 
 @login_required(login_url='account:login')
 def superadmin_department_date_sort(request):
+    get_result, from_date, to_date, result_count = None, None, None, 0
     if request.method == 'POST':
         from_date = request.POST['from_dep']
         to_date = request.POST['to_dep']
@@ -99,7 +100,7 @@ def superadmin_department_date_sort(request):
             result_count = get_result.count()
         else:
             message_alert.info(request, 'Please select the date fields properly!')
-    context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, }
+    context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, 'departments_table': None, }
     return render(request, 'superadmin/department_table_view.html', context)
     # naming convention finished.
 

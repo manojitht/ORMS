@@ -2,11 +2,12 @@ from django.urls import path
 from .import views
 
 
-app_name = 'members'
+app_name = 'employees'
 
 urlpatterns = [
     path('add_member/', views.add_member, name='add_member'),
     path('view_team_members/<int:userid>/', views.view_team_members, name='view_team_members'),
+    path('export_team_members_csv/<int:userid>/', views.export_team_members_csv, name='export_team_members_csv'),
     path('manager_notes_page/', views.manager_notes_page, name='manager_notes_page'),
     path('search_team_member/<int:userid>/', views.search_team_member, name='search_team_member'),
     path('view_team_members_details/<int:memid>/', views.view_team_members_details, name='view_team_members_details'),

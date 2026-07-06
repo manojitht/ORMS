@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Add Department{% endblock %}
+{% block title %}Sukhra | Add Department{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bxs-building'></i> {% if selected_dep %}Update{% else %}Add{% endif %} Department</h1>
+    <h1 class="page-header"><i data-lucide="building-2"></i> {% if selected_dep %}Update{% else %}Add{% endif %} Department</h1>
     {% include 'message_alert.html' %}
 
     <div class="card mx-auto" style="max-width: 640px;">

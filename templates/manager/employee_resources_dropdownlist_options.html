@@ -1,0 +1,6 @@
+<option value="">-- select a resource --</option>
+{% for rt in resources_taken %}
+    <option value="{{ rt.id }}">{{ rt.asset_id.resource_category }} — {{ rt.asset_id.asset_id }} ({{ rt.asset_id.model_name }})</option>
+{% empty %}
+    <option value="">No currently assigned resources found</option>
+{% endfor %}

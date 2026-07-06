@@ -1,0 +1,11 @@
+{% extends 'account/emails/base_email.html' %}
+{% block heading %}Your request was cancelled{% endblock %}
+{% block body %}
+<p style="margin:0 0 16px 0;">Hi {{ get_request.created_for.fullname }},</p>
+<p style="margin:0 0 20px 0;">Your request for <strong>{{ get_request.resource_label }}</strong> was cancelled by the IT Administrator handling it.</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B; width:40%;">Request Id</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600; font-family:'SFMono-Regular',Consolas,monospace;">{{ get_request.request_id }}</td></tr>
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B;">Category</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600;">{{ get_request.request_category }}</td></tr>
+<tr><td style="padding:8px 0; color:#64748B;">Status</td><td style="padding:8px 0;"><span style="background-color:#FEE2E2; color:#B91C1C; font-size:13px; font-weight:600; padding:3px 10px; border-radius:999px;">{{ resuest_status_r }}</span></td></tr>
+</table>
+{% endblock %}

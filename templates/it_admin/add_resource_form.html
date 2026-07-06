@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Add Resource{% endblock %}
+{% block title %}Sukhra | Add Resource{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-devices'></i> Add Resource</h1>
+    <h1 class="page-header"><i data-lucide="laptop"></i> Add Resource</h1>
     {% include 'message_alert.html' %}
 
     <div class="card mx-auto" style="max-width: 640px;">
@@ -18,10 +18,10 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Resource type</label>
-                    <select name="resource_category" class="form-select">
-                        <option selected>--Choose Resource Type--</option>
+                    <select name="resource_category" id="resource_category_select" class="form-select">
+                        <option selected value="">--Choose Resource Type--</option>
                         {% for category in resource_categories %}
-                        <option>{{ category.resource_category }}</option>
+                        <option value="{{ category.id }}">{{ category.resource_category }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -29,10 +29,15 @@
                     <label class="form-label">Model name</label>
                     <input type="text" name="model_name" class="form-control" placeholder="Enter model name.." required>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Bitlocker key</label>
-                    <input type="text" name="bitlocker_key" class="form-control" placeholder="Enter the bitlocker key (if applicable)..">
+                <div id="attribute-fields">
+                {% for key, label in all_attribute_defs %}
+                    <div class="mb-3 attribute-field d-none" data-key="{{ key }}">
+                        <label class="form-label">{{ label }}</label>
+                        <input type="text" name="attr__{{ key }}" class="form-control" disabled>
+                    </div>
+                {% endfor %}
                 </div>
+                <script id="category-schema-data" type="application/json">{{ category_schema_json|safe }}</script>
                 <div class="mb-3">
                     <label class="form-label">Resource availability</label>
                     <select name="resource_availability" class="form-select">
@@ -57,4 +62,23 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var select = document.getElementById('resource_category_select');
+    var schemaEl = document.getElementById('category-schema-data');
+    if (!select || !schemaEl) return;
+    var schema = JSON.parse(schemaEl.textContent);
+    function sync() {
+        var keys = schema[select.value] || [];
+        document.querySelectorAll('.attribute-field').forEach(function (field) {
+            var show = keys.indexOf(field.dataset.key) !== -1;
+            field.classList.toggle('d-none', !show);
+            var input = field.querySelector('input');
+            if (input) input.disabled = !show;
+        });
+    }
+    select.addEventListener('change', sync);
+    sync();
+});
+</script>
 {% endblock %}

@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | View Team Member{% endblock %}
+{% block title %}Sukhra | View Team Member{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-id-card'></i> View Team Member</h1>
+    <h1 class="page-header"><i data-lucide="id-card"></i> View Team Member</h1>
     {% include 'message_alert.html' %}
 
     {% if get_member_id %}
@@ -13,14 +13,14 @@
         <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="mb-0">{{ get_member_id.fullname }}</h5>
-                <a href="{% url 'members:edit_team_member' get_member_id.id %}" class="btn btn-sm btn-outline-primary">
-                    <i class='bx bx-edit'></i> Edit
+                <a href="{% url 'employees:edit_team_member' get_member_id.id %}" class="btn btn-sm btn-outline-primary">
+                    <i data-lucide="pencil"></i> Edit
                 </a>
             </div>
             {% if get_member_id.member_image %}
-                <img src="{{ get_member_id.member_image.url }}" class="rounded-circle mb-3" style="width:88px; height:88px; object-fit:cover;">
+                <img src="{{ get_member_id.member_image.url }}" class="avatar-img mb-3" style="--avatar-size: 88px;">
             {% else %}
-                <img src="{% static 'images/image_placeholder.jpg' %}" class="rounded-circle mb-3" style="width:88px; height:88px; object-fit:cover;">
+                <div class="mb-3">{% include 'includes/avatar.html' with name=get_member_id.fullname size=88 %}</div>
             {% endif %}
             <dl class="row mb-0">
                 <dt class="col-sm-4">Peoplesoft Id</dt><dd class="col-sm-8">{{ get_member_id.peoplesoft_id }}</dd>
@@ -33,16 +33,16 @@
                 <dt class="col-sm-4">Home address</dt><dd class="col-sm-8">{{ get_member_id.home_address }}</dd>
             </dl>
             <div class="d-flex gap-2 mt-3">
-                <a href="{% url 'members:view_team_members' user.id %}" class="btn btn-outline-secondary flex-fill">Back</a>
+                <a href="{% url 'employees:view_team_members' user.id %}" class="btn btn-outline-secondary flex-fill">Back</a>
                 <button type="button" class="btn btn-outline-primary flex-fill" data-bs-toggle="modal" data-bs-target="#notesModal">
-                    <i class='bx bx-note'></i> Add Notes
+                    <i data-lucide="sticky-note"></i> Add Notes
                 </button>
-                <a href="{% url 'members:view_history_resources' get_member_id.id %}" class="btn btn-outline-primary flex-fill">
-                    <i class='bx bx-history'></i> View History
+                <a href="{% url 'employees:view_history_resources' get_member_id.id %}" class="btn btn-outline-primary flex-fill">
+                    <i data-lucide="history"></i> View History
                 </a>
                 {% if not device_count %}
                 <button type="button" class="btn btn-outline-danger flex-fill" data-bs-toggle="modal" data-bs-target="#deleteMemberModal">
-                    <i class='bx bx-trash'></i> Delete
+                    <i data-lucide="trash-2"></i> Delete
                 </button>
                 {% endif %}
             </div>
@@ -57,10 +57,10 @@
                     <div class="card-body">
                         <h6 class="card-title">{{ get_devices.asset_id }}</h6>
                         <p class="text-muted small mb-1">Model: {{ get_devices.asset_id.model_name }}</p>
-                        <p class="text-muted small mb-1">Type: {{ get_devices.resource_category }}</p>
+                        <p class="text-muted small mb-1">Type: {{ get_devices.asset_id.resource_category }}</p>
                         <p class="text-muted small mb-2">Taken on: {{ get_devices.taken_date }}</p>
-                        <a href="{% url 'members:view_member_resource_info' get_member_id.id get_devices.id %}" class="btn btn-sm btn-outline-primary w-100">
-                            View Resource <i class='bx bx-right-arrow-alt'></i>
+                        <a href="{% url 'employees:view_member_resource_info' get_member_id.id get_devices.id %}" class="btn btn-sm btn-outline-primary w-100">
+                            View Resource <i data-lucide="arrow-right"></i>
                         </a>
                     </div>
                 </div>
@@ -81,9 +81,9 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 {% if get_oa %}
-                <form action="{% url 'members:update_other_notes' get_oa.id get_member_id.id %}" method="POST">
+                <form action="{% url 'employees:update_other_notes' get_oa.id get_member_id.id %}" method="POST">
                 {% else %}
-                <form action="{% url 'members:add_other_notes' get_member_id.id %}" method="POST">
+                <form action="{% url 'employees:add_other_notes' get_member_id.id %}" method="POST">
                 {% endif %}
                     {% csrf_token %}
                     <div class="modal-header">
@@ -106,10 +106,10 @@
     <div class="modal fade" id="deleteMemberModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{% url 'members:delete_team_member' get_member_id.id user.id %}" method="POST">
+                <form action="{% url 'employees:delete_team_member' get_member_id.id user.id %}" method="POST">
                     {% csrf_token %}
                     <div class="modal-header">
-                        <h5 class="modal-title"><i class='bx bxs-bell-ring text-warning'></i> Warning!</h5>
+                        <h5 class="modal-title"><i data-lucide="triangle-alert" class="text-warning"></i> Warning!</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">

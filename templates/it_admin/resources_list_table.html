@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Resource Listings Index{% endblock %}
+{% block title %}Sukhra | Resource Listings Index{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-devices'></i> Resources Table</h1>
+    <h1 class="page-header"><i data-lucide="laptop"></i> Resources Table</h1>
 
     <form action="{% url 'resources:resources_date_sort' %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
         {% csrf_token %}
@@ -22,7 +22,12 @@
         </div>
         <div class="col">
             <a href="{% url 'resources:resources_listings_page' %}" class="btn btn-outline-secondary">
-                <i class='bx bx-arrow-back'></i> Back
+                <i data-lucide="arrow-left"></i> Back
+            </a>
+        </div>
+        <div class="col">
+            <a href="{% url 'resources:export_resources_csv' %}" class="btn btn-outline-secondary">
+                <i data-lucide="download"></i> Download CSV
             </a>
         </div>
     </form>
@@ -51,13 +56,13 @@
                     <td>{{ device.added_on }}</td>
                     <td>
                         {% if device.resource_availability == 'Available' %}
-                            <span class="badge text-bg-success">Available</span>
+                            <span class="status-pill status-pill--good">Available</span>
                         {% elif device.resource_availability == 'Configuration' %}
-                            <span class="badge text-bg-warning">Configuration</span>
+                            <span class="status-pill status-pill--warn">Configuration</span>
                         {% elif device.resource_availability == 'Reserved' %}
-                            <span class="badge" style="background-color:#EA580C;">Reserved</span>
+                            <span class="status-pill status-pill--muted">Reserved</span>
                         {% elif device.resource_availability == 'Taken' %}
-                            <span class="badge text-bg-danger">Taken</span>
+                            <span class="status-pill status-pill--info">Taken</span>
                         {% endif %}
                     </td>
                 </tr>

@@ -1,65 +1,266 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Dashboard{% endblock %}
+{% block title %}Sukhra | Dashboard{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-grid-alt'></i> My Dashboard</h1>
+    <h1 class="page-header"><i data-lucide="layout-dashboard"></i> My Dashboard</h1>
 
     <div class="alert alert-primary d-flex align-items-center mb-4" role="alert">
-        <span>Hi there&#128075; <strong>{{ user.first_name }}</strong>, welcome to your ORMS dashboard.</span>
+        <span>Hi there&#128075; <strong>{{ user.first_name }}</strong>, welcome to your Sukhra dashboard.</span>
     </div>
 
     <div class="row g-4">
         <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-primary">{{ get_total_managers_count }}</div>
-                <div class="text-muted small">Total Managers</div>
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="user-round"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_total_managers_count }}</div>
+                    <div class="stat-tile__label">Total Managers</div>
+                </div>
             </div></div>
         </div>
         <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-primary">{{ get_total_administrators_count }}</div>
-                <div class="text-muted small">Total IT Administrators</div>
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="shield"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_total_administrators_count }}</div>
+                    <div class="stat-tile__label">Total IT Administrators</div>
+                </div>
             </div></div>
         </div>
         <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-primary">{{ get_total_departments }}</div>
-                <div class="text-muted small">Total Departments</div>
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="building-2"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_total_departments }}</div>
+                    <div class="stat-tile__label">Total Departments</div>
+                </div>
             </div></div>
         </div>
         <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-primary">{{ get_total_teams }}</div>
-                <div class="text-muted small">Total Teams</div>
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="users"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_total_teams }}</div>
+                    <div class="stat-tile__label">Total Teams</div>
+                </div>
             </div></div>
         </div>
         <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-warning">{{ get_total_users_month_count }}</div>
-                <div class="text-muted small">Users added this month</div>
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--mustard"><i data-lucide="user-plus"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_total_users_month_count }}</div>
+                    <div class="stat-tile__label">Users added this month</div>
+                </div>
             </div></div>
         </div>
         <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-warning">{{ get_total_department_month_count }}</div>
-                <div class="text-muted small">Departments added this month</div>
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--mustard"><i data-lucide="calendar-plus"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_total_department_month_count }}</div>
+                    <div class="stat-tile__label">Departments added this month</div>
+                </div>
             </div></div>
         </div>
         <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-warning">{{ get_total_teams_month_count }}</div>
-                <div class="text-muted small">Teams added this month</div>
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--mustard"><i data-lucide="calendar-plus"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_total_teams_month_count }}</div>
+                    <div class="stat-tile__label">Teams added this month</div>
+                </div>
             </div></div>
         </div>
         <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-primary">{{ get_total_superadmins_count }}</div>
-                <div class="text-muted small">Total Superadmins</div>
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="crown"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_total_superadmins_count }}</div>
+                    <div class="stat-tile__label">Total Superadmins</div>
+                </div>
             </div></div>
         </div>
     </div>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted small text-uppercase mb-3">Org composition</h6>
+                    <div style="height: 260px;">
+                        <canvas id="orgCompositionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted small text-uppercase mb-3">User growth (last 6 months)</h6>
+                    <div style="height: 260px;">
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted small text-uppercase mb-3">Devices by category (company-wide)</h6>
+                    <div style="height: 260px;">
+                        <canvas id="companyDevicesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted small text-uppercase mb-3">Devices by status (company-wide)</h6>
+                    <div style="height: 260px;">
+                        <canvas id="companyDeviceStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted small text-uppercase mb-3">Tickets by status (company-wide)</h6>
+                    <div style="height: 260px;">
+                        <canvas id="ticketStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    var orgCtx = document.getElementById('orgCompositionChart').getContext('2d');
+    new Chart(orgCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Managers', 'IT Administrators', 'Superadmins'],
+            datasets: [{
+                data: [{{ get_total_managers_count }}, {{ get_total_administrators_count }}, {{ get_total_superadmins_count }}],
+                backgroundColor: ['#0284C7', '#E3A61B', '#0D9488'],
+                borderWidth: 0,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } },
+        }
+    });
+
+    var growthCtx = document.getElementById('userGrowthChart').getContext('2d');
+    new Chart(growthCtx, {
+        type: 'line',
+        data: {
+            labels: [{% for label in user_growth_labels %} '{{ label|escapejs }}', {% endfor %}],
+            datasets: [{
+                label: 'Users added',
+                data: [{% for count in user_growth_counts %} '{{ count }}', {% endfor %}],
+                borderColor: '#0284C7',
+                backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: '#0284C7',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#E4EBF2' } },
+                x: { grid: { display: false } },
+            },
+        }
+    });
+
+    var devicesCtx = document.getElementById('companyDevicesChart').getContext('2d');
+    new Chart(devicesCtx, {
+        type: 'bar',
+        data: {
+            labels: [{% for category in category_list %} '{{ category|escapejs }}', {% endfor %}],
+            datasets: [{
+                label: 'Devices',
+                data: [{% for count in category_count_list %} '{{ count }}', {% endfor %}],
+                backgroundColor: '#0284C7',
+                borderRadius: 4,
+                maxBarThickness: 40,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#E4EBF2' } },
+                x: { grid: { display: false } },
+            },
+        }
+    });
+
+    var deviceStatusCtx = document.getElementById('companyDeviceStatusChart').getContext('2d');
+    new Chart(deviceStatusCtx, {
+        type: 'bar',
+        data: {
+            labels: [{% for category in category_list %} '{{ category|escapejs }}', {% endfor %}],
+            datasets: [
+                { data: [{% for count in available_resource_list %} '{{ count }}', {% endfor %}], label: 'Available', backgroundColor: '#15803D', borderRadius: 4 },
+                { data: [{% for count in taken_resource_list %} '{{ count }}', {% endfor %}], label: 'Taken', backgroundColor: '#0284C7', borderRadius: 4 },
+                { data: [{% for count in configuration_resource_list %} '{{ count }}', {% endfor %}], label: 'Configuration', backgroundColor: '#E3A61B', borderRadius: 4 },
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } },
+            scales: {
+                x: { stacked: true, grid: { display: false } },
+                y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#E4EBF2' } },
+            },
+        }
+    });
+
+    var ticketStatusCtx = document.getElementById('ticketStatusChart').getContext('2d');
+    new Chart(ticketStatusCtx, {
+        type: 'bar',
+        data: {
+            labels: [{% for label in ticket_status_labels %} '{{ label|escapejs }}', {% endfor %}],
+            datasets: [{
+                label: 'Tickets',
+                data: [{% for count in ticket_status_counts %} '{{ count }}', {% endfor %}],
+                backgroundColor: ['#E3A61B', '#0284C7', '#15803D', '#64748B'],
+                borderRadius: 4,
+                maxBarThickness: 60,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#E4EBF2' } },
+                x: { grid: { display: false } },
+            },
+        }
+    });
+</script>
 {% endblock %}

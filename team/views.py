@@ -109,12 +109,13 @@ def superadmin_team_table(request):
 
 @login_required(login_url='account:login')
 def superadmin_team_date_sort(request):
+    get_result, from_date, to_date, result_count = None, None, None, 0
     if request.method == 'POST':
         from_date = request.POST['from_tem']
         to_date = request.POST['to_tem']
         get_result =  Team.objects.filter(created_date__gte=from_date, created_date__lte=to_date)
         result_count = get_result.count()
-    context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, }
+    context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, 'teams_table': None, }
     return render(request, 'superadmin/team_table_view.html', context)
 
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

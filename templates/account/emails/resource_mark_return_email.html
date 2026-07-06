@@ -1,0 +1,12 @@
+{% extends 'account/emails/base_email.html' %}
+{% block heading %}Resource returned{% endblock %}
+{% block body %}
+<p style="margin:0 0 16px 0;">Hi {{ get_asset.peoplesoft_id.fullname }},</p>
+<p style="margin:0 0 20px 0;"><strong>{{ asset_id }}</strong> was marked returned by your manager, {{ get_asset.peoplesoft_id.manager_name }}.</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B; width:40%;">Asset Id</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600; font-family:'SFMono-Regular',Consolas,monospace;">{{ asset_id }}</td></tr>
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B;">Return reason</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600;">{{ get_asset.reason_notes }}</td></tr>
+<tr><td style="padding:8px 0; color:#64748B;">Returned on</td><td style="padding:8px 0; color:#0F1B2A; font-weight:600;">{{ get_asset.returned_date }}</td></tr>
+</table>
+<p style="margin:20px 0 0 0;">Keep this email for your records.</p>
+{% endblock %}

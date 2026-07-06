@@ -2,24 +2,34 @@
 
 Hi {{update_req.created_for.fullname}},
 
-    The request reference of ({{update_req.request_id}}) is requested for the resource of {{update_req.request_resource}} was completed successfully. 
-    
+{% if update_req.request_category == 'Support' %}
+    The support request reference of ({{update_req.request_id}}) regarding {{update_req.resource_label}} was completed successfully.
+{% else %}
+    The request reference of ({{update_req.request_id}}) is requested for the resource of {{update_req.resource_label}} was completed successfully.
+{% endif %}
+
     This request was falling under the category of ({{update_req.request_category}}) and created by your manager dated on {{update_req.created_on}}.
 
     This request was completed on {{update_req.completed_on}}.
 
     The Resource Asset details follows below,
 
-    Resource Requested - {{update_req.request_resource}}
+    Resource Requested - {{update_req.resource_label}}
 
     Resource Asset Id - {{update_req.asset_id}}
+{% if resource_attributes %}
+    The following details were also included with this resource,
+{% for attr in resource_attributes %}
+    {{ attr.label }} - {{ attr.value }}
+{% endfor %}
+{% endif %}
 
     Currently the request was in {{resuest_status_r}} status.
 
     You may come and show this email for evidence purpose and collect the allocated resource from your manager.
 
 Thank you,
-ORMS Team.
+Sukhra Team.
 
 Have a great day!
 

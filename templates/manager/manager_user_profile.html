@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Manager Profile{% endblock %}
+{% block title %}Sukhra | Manager Profile{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-user-circle'></i> My User Profile</h1>
+    <h1 class="page-header"><i data-lucide="circle-user"></i> My User Profile</h1>
     {% include 'message_alert.html' %}
 
     {% if user %}
@@ -13,9 +13,9 @@
         <div class="card-body p-4">
             <div class="text-center mb-3">
                 {% if user.accountprofile.profile_image %}
-                    <img src="{{ user.accountprofile.profile_image.url }}" class="rounded-circle" style="width:96px; height:96px; object-fit:cover;">
+                    <img src="{{ user.accountprofile.profile_image.url }}" class="avatar-img" style="--avatar-size: 96px;">
                 {% else %}
-                    <img src="{% static 'images/image_placeholder.jpg' %}" class="rounded-circle" style="width:96px; height:96px; object-fit:cover;">
+                    {% include 'includes/avatar.html' with name=user.first_name|add:' '|add:user.last_name size=96 %}
                 {% endif %}
             </div>
             <dl class="row mb-0">
@@ -33,10 +33,10 @@
             </dl>
             <div class="d-flex gap-2 mt-3">
                 <a href="{% url 'account:manager_edit_user_profile' %}" class="btn btn-primary flex-fill">
-                    <i class='bx bx-edit'></i> Edit Profile
+                    <i data-lucide="pencil"></i> Edit Profile
                 </a>
                 <button type="button" class="btn btn-outline-warning flex-fill" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-                    <i class='bx bx-key'></i> Change Password
+                    <i data-lucide="key"></i> Change Password
                 </button>
             </div>
         </div>

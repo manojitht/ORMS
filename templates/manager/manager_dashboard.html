@@ -1,73 +1,111 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Dashboard{% endblock %}
+{% block title %}Sukhra | Dashboard{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-grid-alt'></i> My Dashboard</h1>
+    <h1 class="page-header"><i data-lucide="layout-dashboard"></i> My Dashboard</h1>
 
     <div class="alert alert-primary d-flex align-items-center mb-4" role="alert">
-        <span>Hi there&#128075; <strong>{{ user.first_name }}</strong>, welcome to your ORMS dashboard.</span>
+        <span>Hi there&#128075; <strong>{{ user.first_name }}</strong>, welcome to your Sukhra dashboard.</span>
     </div>
 
     <div class="row g-4 mb-4">
-        <div class="col-lg-6">
-            <div class="card h-100"><div class="card-body"><canvas id="myChart"></canvas></div></div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="users"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ team_members_count }}</div>
+                    <div class="stat-tile__label">Total team members</div>
+                </div>
+            </div></div>
         </div>
-        <div class="col-lg-6">
-            <div class="card h-100"><div class="card-body"><canvas id="myBarChart"></canvas></div></div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--mustard"><i data-lucide="user-plus"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_count_members_month }}</div>
+                    <div class="stat-tile__label">Members added this month</div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="receipt"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_all_requests_count }}</div>
+                    <div class="stat-tile__label">Total requests created</div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--mustard"><i data-lucide="clock"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_all_pending_requests_count }}</div>
+                    <div class="stat-tile__label">Requests pending</div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="laptop"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_all_resources_taken_count }}</div>
+                    <div class="stat-tile__label">Resources taken by your team</div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="undo-2"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_all_resources_returned_count }}</div>
+                    <div class="stat-tile__label">Resources returned by your team</div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--mustard"><i data-lucide="calendar-check"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_count_members_week }}</div>
+                    <div class="stat-tile__label">Members added this week</div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--mustard"><i data-lucide="calendar-clock"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ get_count_members_today }}</div>
+                    <div class="stat-tile__label">Members added today</div>
+                </div>
+            </div></div>
         </div>
     </div>
 
     <div class="row g-4">
-        <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-primary">{{ team_members_count }}</div>
-                <div class="text-muted small">Total team members</div>
-            </div></div>
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted small text-uppercase mb-3">Devices obtained by your team</h6>
+                    <div style="height: 260px;">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-primary">{{ get_count_members_today }}</div>
-                <div class="text-muted small">Members added today</div>
-            </div></div>
-        </div>
-        <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-primary">{{ get_count_members_week }}</div>
-                <div class="text-muted small">Members added this week</div>
-            </div></div>
-        </div>
-        <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-primary">{{ get_count_members_month }}</div>
-                <div class="text-muted small">Members added this month</div>
-            </div></div>
-        </div>
-        <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-primary">{{ get_all_requests_count }}</div>
-                <div class="text-muted small">Total requests created</div>
-            </div></div>
-        </div>
-        <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-warning">{{ get_all_pending_requests_count }}</div>
-                <div class="text-muted small">Requests pending</div>
-            </div></div>
-        </div>
-        <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-primary">{{ get_all_resources_taken_count }}</div>
-                <div class="text-muted small">Resources taken by your team</div>
-            </div></div>
-        </div>
-        <div class="col-md-6 col-xl-3">
-            <div class="card h-100"><div class="card-body">
-                <div class="fs-2 fw-bold text-primary">{{ get_all_resources_returned_count }}</div>
-                <div class="text-muted small">Resources returned by your team</div>
-            </div></div>
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="text-muted small text-uppercase mb-3">Requests created for devices</h6>
+                    <div style="height: 260px;">
+                        <canvas id="myBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -76,26 +114,25 @@
 <script>
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {
-        type: 'polarArea',
+        type: 'bar',
         data: {
-            labels: [{% for category in category_list %} '{{ category }}', {% endfor %}],
+            labels: [{% for category in category_list %} '{{ category|escapejs }}', {% endfor %}],
             datasets: [{
-                label: '# of Count',
+                label: 'Devices',
                 data: [{% for count in category_count_list %} '{{ count }}', {% endfor %}],
-                backgroundColor: [
-                    'rgba(14, 165, 233, 0.5)', 'rgba(227, 166, 27, 0.5)', 'rgba(22, 163, 74, 0.5)',
-                    'rgba(2, 132, 199, 0.5)', 'rgba(185, 134, 15, 0.5)', 'rgba(12, 74, 110, 0.5)',
-                ],
-                borderColor: [
-                    'rgba(14, 165, 233, 1)', 'rgba(227, 166, 27, 1)', 'rgba(22, 163, 74, 1)',
-                    'rgba(2, 132, 199, 1)', 'rgba(185, 134, 15, 1)', 'rgba(12, 74, 110, 1)',
-                ],
-                borderWidth: 1
+                backgroundColor: '#0284C7',
+                borderRadius: 4,
+                maxBarThickness: 40,
             }]
         },
         options: {
-            plugins: { title: { display: true, text: 'Piechart of total devices obtained by your team' } },
             responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#E4EBF2' } },
+                x: { grid: { display: false } },
+            },
         }
     });
 
@@ -103,19 +140,23 @@
     var myChart2 = new Chart(myBarChart, {
         type: 'bar',
         data: {
-            labels: [{% for category in category_list %} '{{ category }}', {% endfor %}],
+            labels: [{% for category in category_list %} '{{ category|escapejs }}', {% endfor %}],
             datasets: [{
                 data: [{% for count in request_list %} '{{ count }}', {% endfor %}],
-                label: 'Count of Requests',
-                backgroundColor: ['rgba(14, 165, 233, 0.3)'],
-                borderColor: ['rgba(14, 165, 233, 1)'],
-                borderWidth: 1
+                label: 'Requests',
+                backgroundColor: '#0284C7',
+                borderRadius: 4,
+                maxBarThickness: 40,
             }]
         },
         options: {
-            plugins: { title: { display: true, text: 'Barchart of requests created for devices' } },
             responsive: true,
-            scales: { x: { stacked: true }, y: { stacked: true } }
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#E4EBF2' } },
+                x: { grid: { display: false } },
+            },
         }
     });
 </script>

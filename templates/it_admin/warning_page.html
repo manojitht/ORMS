@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Confirm Delete{% endblock %}
+{% block title %}Sukhra | Confirm Delete{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
     {% if get_cat %}
     <div class="card mx-auto" style="max-width: 560px;">
         <div class="card-body p-4 text-center">
-            <i class='bx bxs-bell-ring text-warning' style="font-size: 2.5rem;"></i>
+            <i data-lucide="triangle-alert" class="text-warning" style="font-size: 2.5rem;"></i>
             <h5 class="mt-2">Delete "{{ get_cat.resource_category }}"?</h5>
             <p class="text-muted">This will permanently remove the category. Click "Delete Category" to confirm, or "Back to Categories" to cancel.</p>
             <form action="{% url 'resources:add_resource_page' %}" method="POST">

@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Resource Category{% endblock %}
+{% block title %}Sukhra | Resource Category{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-category'></i> Resource Categories</h1>
+    <h1 class="page-header"><i data-lucide="shapes"></i> Resource Categories</h1>
     {% include 'message_alert.html' %}
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <p class="text-muted small mb-0">Total categories showing: {{ category_count }}</p>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-            <i class='bx bx-message-square-add'></i> Add Category
+            <i data-lucide="message-square-plus"></i> Add Category
         </button>
     </div>
 
@@ -22,7 +22,7 @@
                     {% if category.category_image %}
                         <img src="{{ category.category_image.url }}" class="card-img-top p-3" style="height: 140px; object-fit: contain;">
                     {% else %}
-                        <img src="{% static 'images/image_placeholder.jpg' %}" class="card-img-top p-3" style="height: 140px; object-fit: contain;">
+                        {% include 'includes/media_placeholder.html' with icon='shapes' height=140 %}
                     {% endif %}
                     <div class="card-body">
                         <h6 class="card-title">{{ category.resource_category }}</h6>
@@ -46,7 +46,7 @@
             <form action="{% url 'resources:add_category_page' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class='bx bx-message-square-add'></i> Add New Category</h5>
+                    <h5 class="modal-title"><i data-lucide="message-square-plus"></i> Add New Category</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -62,6 +62,15 @@
                         <label class="form-label">Category image</label>
                         <input type="file" class="form-control" name="category_image" accept="image/*" required>
                     </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="tracks_physical_asset" id="add_tracks_physical_asset" checked>
+                        <label class="form-check-label" for="add_tracks_physical_asset">Tracks a physical asset (requires an Asset ID)</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Custom attributes (optional)</label>
+                        <div id="add-attribute-rows"></div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="add-attribute-row">+ Add attribute</button>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
@@ -71,4 +80,17 @@
         </div>
     </div>
 </div>
+<script>
+document.getElementById('add-attribute-row')?.addEventListener('click', function () {
+    var row = document.createElement('div');
+    row.className = 'd-flex gap-2 mb-2 attribute-row';
+    row.innerHTML = '<input name="attr_key[]" class="form-control" placeholder="key, e.g. bitlocker_key">' +
+        '<input name="attr_label[]" class="form-control" placeholder="Label, e.g. BitLocker Key">' +
+        '<button type="button" class="btn btn-outline-danger remove-row">&times;</button>';
+    document.getElementById('add-attribute-rows').appendChild(row);
+});
+document.getElementById('add-attribute-rows')?.addEventListener('click', function (e) {
+    if (e.target.classList.contains('remove-row')) e.target.closest('.attribute-row').remove();
+});
+</script>
 {% endblock %}

@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load resource_extras %}
 
-{% block title %}ORMS | View Resource Information{% endblock %}
+{% block title %}Sukhra | View Resource Information{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-devices'></i> View Resource Information</h1>
+    <h1 class="page-header"><i data-lucide="laptop"></i> View Resource Information</h1>
 
     {% if get_devices_id and get_member_id %}
     <div class="card mx-auto" style="max-width: 720px;">
@@ -13,22 +14,24 @@
             {% if get_devices_id.asset_id.resource_image %}
                 <img src="{{ get_devices_id.asset_id.resource_image.url }}" class="mb-3 rounded" style="max-height: 160px;">
             {% else %}
-                <img src="{% static 'images/image_placeholder.jpg' %}" class="mb-3 rounded" style="max-height: 160px;">
+                {% include 'includes/media_placeholder.html' with icon='laptop' height=160 extra_class='mb-3' %}
             {% endif %}
             <dl class="row mb-0">
                 <dt class="col-sm-4">Model name</dt><dd class="col-sm-8">{{ get_devices_id.asset_id.model_name }}</dd>
                 <dt class="col-sm-4">Asset Id</dt><dd class="col-sm-8">{{ get_devices_id.asset_id }}</dd>
-                <dt class="col-sm-4">Resource type</dt><dd class="col-sm-8">{{ get_devices_id.resource_category }}</dd>
+                <dt class="col-sm-4">Resource type</dt><dd class="col-sm-8">{{ get_devices_id.asset_id.resource_category }}</dd>
                 <dt class="col-sm-4">Taken on</dt><dd class="col-sm-8">{{ get_devices_id.taken_date }}</dd>
-                <dt class="col-sm-4">Bitlocker key</dt><dd class="col-sm-8">{{ get_devices_id.asset_id.bitlocker_key|default:"Not specified" }}</dd>
+                {% for attr in get_devices_id.asset_id.resource_category.attribute_schema %}
+                <dt class="col-sm-4">{{ attr.label }}</dt><dd class="col-sm-8">{{ get_devices_id.asset_id.attribute_values|dict_get:attr.key|default:"Not specified" }}</dd>
+                {% endfor %}
                 <dt class="col-sm-4">Specifications</dt><dd class="col-sm-8">{{ get_devices_id.asset_id.resource_description }}</dd>
             </dl>
             <div class="d-flex gap-2 mt-3">
-                <a href="{% url 'members:view_team_members_details' get_member_id.id %}" class="btn btn-outline-secondary flex-fill">
-                    <i class='bx bx-arrow-back'></i> Back to profile
+                <a href="{% url 'employees:view_team_members_details' get_member_id.id %}" class="btn btn-outline-secondary flex-fill">
+                    <i data-lucide="arrow-left"></i> Back to profile
                 </a>
                 <button type="button" class="btn btn-primary flex-fill" data-bs-toggle="modal" data-bs-target="#markReturnedModal">
-                    <i class='bx bx-check'></i> Mark Returned
+                    <i data-lucide="check"></i> Mark Returned
                 </button>
             </div>
         </div>
@@ -37,7 +40,7 @@
     <div class="modal fade" id="markReturnedModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{% url 'members:mark_returned' get_devices_id.id get_member_id.id %}" method="POST">
+                <form action="{% url 'employees:mark_returned' get_devices_id.id get_member_id.id %}" method="POST">
                     {% csrf_token %}
                     <div class="modal-header">
                         <h5 class="modal-title">Specify Reason</h5>

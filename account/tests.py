@@ -8,11 +8,15 @@ from django.utils.http import urlsafe_base64_encode
 from factories import (
     DEFAULT_PASSWORD,
     AccountFactory,
+    CategoryFactory,
+    CompanyFactory,
     DepartmentFactory,
     ITAdminAccountFactory,
     ManagerAccountFactory,
+    ResourceFactory,
     SuperAdminAccountFactory,
     TeamFactory,
+    TicketFactory,
 )
 
 from .models import Account
@@ -22,15 +26,16 @@ class AccountManagerTests(TestCase):
     """Covers the custom MyManagerAccount methods used by account creation views."""
 
     def _base_kwargs(self, **overrides):
+        company = CompanyFactory()
         kwargs = dict(
             peoplesoft_id='PS000001',
             first_name='Test',
             last_name='User',
             email='test.user@example.com',
-            department=DepartmentFactory(),
-            team=TeamFactory(),
-            role='Manager',
+            department=DepartmentFactory(company=company),
+            team=TeamFactory(company=company),
             ini_pas='Initial@123',
+            company=company,
             password='SecretPass1!',
         )
         kwargs.update(overrides)
@@ -69,6 +74,57 @@ class AccountManagerTests(TestCase):
     def test_account_str_is_peoplesoft_id(self):
         user = Account.objects.create_user(**self._base_kwargs())
         self.assertEqual(str(user), user.peoplesoft_id)
+
+
+class RolePropertyTests(TestCase):
+    """role is computed from the is_*/boolean flags, not stored separately --
+    covers the fix for a real bug where update_user used to set booleans from
+    an unvalidated role string, silently zeroing all permissions on a typo.
+    """
+
+    def test_role_property_returns_superadmin(self):
+        user = SuperAdminAccountFactory()
+        self.assertEqual(user.role, 'Superadmin')
+
+    def test_role_property_returns_it_administrator(self):
+        user = ITAdminAccountFactory()
+        self.assertEqual(user.role, 'IT Administrator')
+
+    def test_role_property_returns_manager(self):
+        user = ManagerAccountFactory()
+        self.assertEqual(user.role, 'Manager')
+
+    def test_role_property_returns_empty_string_when_no_flag_set(self):
+        user = AccountFactory()
+        self.assertEqual(user.role, '')
+
+    def test_role_property_is_read_only(self):
+        user = AccountFactory()
+        with self.assertRaises(AttributeError):
+            user.role = 'Manager'
+
+    def test_update_user_rejects_invalid_role_without_touching_permissions(self):
+        superadmin = SuperAdminAccountFactory()
+        target = ManagerAccountFactory(company=superadmin.company)
+        self.client.force_login(superadmin)
+
+        response = self.client.post(reverse('account:update_user', args=[target.id]), {
+            'peoplesoft_id': target.peoplesoft_id,
+            'first_name': target.first_name,
+            'last_name': target.last_name,
+            'email': target.email,
+            'department': target.department_id,
+            'role': 'Not A Real Role',
+            'team': target.team_id,
+        })
+
+        target.refresh_from_db()
+        self.assertRedirects(response, reverse('account:edit_user', args=[target.id]))
+        # The bug: an unvalidated role string used to fall through to setting
+        # every boolean to False. Confirm the manager is still a manager.
+        self.assertTrue(target.is_manager)
+        self.assertFalse(target.is_superadmin)
+        self.assertFalse(target.is_it_admin)
 
 
 class LoginFlowTests(TestCase):
@@ -197,6 +253,24 @@ class PortalSmokeTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('get_total_managers_count', response.context)
 
+    def test_superadmin_portal_includes_chart_data(self):
+        superadmin = SuperAdminAccountFactory()
+        category = CategoryFactory(company=superadmin.company)
+        ResourceFactory(company=superadmin.company, resource_category=category, resource_availability='Available')
+        TicketFactory(company=superadmin.company, requested_category=category, request_status='Pending')
+        self.client.force_login(superadmin)
+        response = self.client.get(reverse('account:superadmin_portal'))
+        self.assertEqual(response.status_code, 200)
+        # Org composition + user growth trend
+        self.assertIn('user_growth_labels', response.context)
+        self.assertEqual(len(response.context['user_growth_labels']), 6)
+        self.assertEqual(len(response.context['user_growth_counts']), 6)
+        # Company-wide ticket status rollup
+        self.assertEqual(response.context['ticket_status_labels'], ['Pending', 'Processing', 'Completed', 'Cancelled'])
+        self.assertEqual(response.context['ticket_status_counts'][0], 1)  # the seeded Pending ticket
+        # Company-wide resource breakdown (shared helper also used by it_admin_portal)
+        self.assertIn(category.resource_category, response.context['category_list'])
+
     def test_superadmin_profile_returns_200_without_photo(self):
         # Regression test: superadmin_user_profile.html used to call
         # user.accountprofile.profile_image.url unconditionally, crashing with
@@ -205,3 +279,26 @@ class PortalSmokeTests(TestCase):
         self.client.force_login(superadmin)
         response = self.client.get(reverse('account:superadmin_user_profile'))
         self.assertEqual(response.status_code, 200)
+
+
+class ExportUsersCsvTests(TestCase):
+    def test_returns_csv_with_seeded_user(self):
+        superadmin = SuperAdminAccountFactory()
+        manager = ManagerAccountFactory(company=superadmin.company, peoplesoft_id='PS900001')
+        self.client.force_login(superadmin)
+
+        response = self.client.get(reverse('account:export_users_csv'))
+
+        self.assertEqual(response['Content-Type'], 'text/csv')
+        body = response.content.decode()
+        self.assertIn('PS Id', body.splitlines()[0])
+        self.assertIn(manager.peoplesoft_id, body)
+
+    def test_excludes_other_companies_users(self):
+        superadmin = SuperAdminAccountFactory()
+        other_company_manager = ManagerAccountFactory(peoplesoft_id='PS900099')
+        self.client.force_login(superadmin)
+
+        response = self.client.get(reverse('account:export_users_csv'))
+
+        self.assertNotIn(other_company_manager.peoplesoft_id, response.content.decode())

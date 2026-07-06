@@ -1,18 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | My Notes{% endblock %}
-
-{% block extra_head %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-{% endblock %}
+{% block title %}Sukhra | My Notes{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-note'></i> My Notes</h1>
+    <h1 class="page-header"><i data-lucide="sticky-note"></i> My Notes</h1>
 
     <button class="btn btn-primary mb-3" id="add-note-btn">
-        <i class='bx bx-plus'></i> Add Note
+        <i data-lucide="plus"></i> Add Note
     </button>
     <div class="my-notes-container d-flex flex-wrap gap-3"></div>
 </div>

@@ -1,4 +1,4 @@
-"""ORMS URL Configuration
+"""Sukhra URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.0/topics/http/urls/
@@ -24,10 +24,11 @@ urlpatterns = [
     #admin site
     path('ormsadminsecurelogin/', admin.site.urls),
     path('', views.home, name='home'),
+    path('companies/', include('companies.urls')),
     path('account/', include('account.urls')),
     path('department/', include('department.urls')),
     path('team/', include('team.urls')),
     path('resources/', include('resources.urls')),
-    path('members/', include('members.urls')),
-    path('requests/', include('requests.urls')),
+    path('employees/', include('employees.urls')),
+    path('tickets/', include('tickets.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

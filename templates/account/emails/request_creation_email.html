@@ -1,0 +1,20 @@
+{% extends 'account/emails/base_email.html' %}
+{% block heading %}New {{ request_category }} request{% endblock %}
+{% block body %}
+<p style="margin:0 0 16px 0;">Hi {{ it_admin_firstname }} {{ it_admin_lastname }},</p>
+<p style="margin:0 0 20px 0;">
+{% if request_category == 'Support' %}
+A support request has come in regarding <strong>{{ resource_label }}</strong>, already assigned to this employee.
+{% else %}
+A new request has come in for <strong>{{ resource_label }}</strong>.
+{% endif %}
+It's assigned to you and waiting in your queue.
+</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B; width:40%;">Request Id</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600; font-family:'SFMono-Regular',Consolas,monospace;">{{ request_id }}</td></tr>
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B;">Created by</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600;">{{ created_by }} (for PS ID {{ created_for }})</td></tr>
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B;">Department / Team</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600;">{{ department }} / {{ team }}</td></tr>
+<tr><td style="padding:8px 0; color:#64748B;">Status</td><td style="padding:8px 0;"><span style="background-color:#FDF3D9; color:#8A6208; font-size:13px; font-weight:600; padding:3px 10px; border-radius:999px;">{{ request_status }}</span></td></tr>
+</table>
+{% endblock %}
+{% block footer_note %}Sent because this request was assigned to you.{% endblock %}

@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load resource_extras %}
 
-{% block title %}ORMS | View Resource{% endblock %}
+{% block title %}Sukhra | View Resource{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-devices'></i> View Resource</h1>
+    <h1 class="page-header"><i data-lucide="laptop"></i> View Resource</h1>
 
     {% if selected_res %}
     <div class="card mx-auto" style="max-width: 720px;">
@@ -13,14 +14,14 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="mb-0">{{ selected_res.asset_id }}</h5>
                 <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteResourceModal">
-                    <i class='bx bx-trash'></i> Delete
+                    <i data-lucide="trash-2"></i> Delete
                 </button>
             </div>
 
             {% if selected_res.resource_image %}
                 <img src="{{ selected_res.resource_image.url }}" class="mb-3 rounded" style="max-height: 160px;">
             {% else %}
-                <img src="{% static 'images/image_placeholder.jpg' %}" class="mb-3 rounded" style="max-height: 160px;">
+                {% include 'includes/media_placeholder.html' with icon='laptop' height=160 extra_class='mb-3' %}
             {% endif %}
 
             <dl class="row mb-0">
@@ -28,7 +29,9 @@
                 <dt class="col-sm-4">Asset Id</dt><dd class="col-sm-8">{{ selected_res.asset_id }}</dd>
                 <dt class="col-sm-4">Device type</dt><dd class="col-sm-8">{{ selected_res.resource_category }}</dd>
                 <dt class="col-sm-4">Availability</dt><dd class="col-sm-8">{{ selected_res.resource_availability }}</dd>
-                <dt class="col-sm-4">Bitlocker key</dt><dd class="col-sm-8">{{ selected_res.bitlocker_key|default:"—" }}</dd>
+                {% for attr in selected_res.resource_category.attribute_schema %}
+                <dt class="col-sm-4">{{ attr.label }}</dt><dd class="col-sm-8">{{ selected_res.attribute_values|dict_get:attr.key|default:"—" }}</dd>
+                {% endfor %}
                 <dt class="col-sm-4">Added on</dt><dd class="col-sm-8">{{ selected_res.added_on }}</dd>
                 <dt class="col-sm-4">Updated by</dt><dd class="col-sm-8">{{ selected_res.added_by }}</dd>
                 <dt class="col-sm-4">Specifications</dt><dd class="col-sm-8">{{ selected_res.resource_description }}</dd>
@@ -36,10 +39,10 @@
 
             <div class="d-flex gap-2 mt-3">
                 <a href="{% url 'resources:resources_listings_page' %}" class="btn btn-outline-secondary flex-fill">
-                    <i class='bx bx-arrow-back'></i> Back to Resources
+                    <i data-lucide="arrow-left"></i> Back to Resources
                 </a>
                 <a href="{% url 'resources:edit_resource' selected_res.id %}" class="btn btn-primary flex-fill">
-                    <i class='bx bx-edit'></i> Edit
+                    <i data-lucide="pencil"></i> Edit
                 </a>
             </div>
         </div>
@@ -51,7 +54,7 @@
                 <form action="{% url 'resources:delete_resource' selected_res.id %}" method="POST">
                     {% csrf_token %}
                     <div class="modal-header">
-                        <h5 class="modal-title"><i class='bx bxs-bell-ring text-warning'></i> Warning!</h5>
+                        <h5 class="modal-title"><i data-lucide="triangle-alert" class="text-warning"></i> Warning!</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">

@@ -6,25 +6,26 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ORMS | Login</title>
+    <title>Sukhra | Login</title>
     <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
-    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="{% static 'custom.css' %}">
-    <link rel="stylesheet" href="{% static 'welcome_page.css' %}">
+    <link rel="stylesheet" href="{% static 'design-system.css' %}">
 
-    <!-- Favicons of ORMS -->
+    <!-- Favicons of Sukhra -->
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}">
     <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
 </head>
 <body class="welcome-body">
-    <section class="login-hero d-flex align-items-center justify-content-center">
+    <section class="auth-hero d-flex align-items-center justify-content-center">
+        <div class="grid-backdrop"></div>
         <div class="login-card">
             <div class="text-center mb-4">
-                <img src="{% static 'images//ORMS-logos/ORMS-1 (1).png' %}" alt="ORMS logo" class="login-logo mb-3">
+                <div class="d-flex justify-content-center mb-3">
+                    {% include 'includes/logo.html' with size=56 %}
+                </div>
                 <h1 class="login-title">Welcome back</h1>
-                <p class="login-subtitle">Sign in to your ORMS account</p>
+                <p class="login-subtitle">Sign in to your Sukhra account</p>
             </div>
 
             {% include 'message_alert.html' %}
@@ -47,8 +48,15 @@
                 <p class="text-center mt-3 mb-0">
                     <a href="{% url 'account:forgot_password' %}">Forgot your password?</a>
                 </p>
+                <p class="text-center mt-2 mb-0">
+                    New company? <a href="{% url 'companies:signup' %}">Set up your workspace</a>
+                </p>
             </form>
         </div>
     </section>
+
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="{% static 'script.js' %}"></script>
 </body>
 </html>

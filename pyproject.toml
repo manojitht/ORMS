@@ -1,7 +1,7 @@
 [project]
-name = "orms"
+name = "sukhra"
 version = "0.1.0"
-description = "Office Resources Management System"
+description = "Sukhra — office resources & ticket management, built for multiple companies"
 requires-python = ">=3.11,<3.12"
 dependencies = [
     "django>=4.2,<4.3",
@@ -30,5 +30,5 @@ line-length = 110
 select = ["F", "E"]
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "ORMS.settings.dev"
+DJANGO_SETTINGS_MODULE = "sukhra.settings.dev"
 python_files = ["tests.py", "test_*.py"]

@@ -10,17 +10,19 @@ from django.contrib.auth import login as permit_user
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from department.models import Department
-from members.models import Members
-from requests.models import Requests
+from employees.models import Employee
+from tickets.models import Ticket
 from resources.models import Category, Resource, ResourceTaken
 from team.models import Team
+
+from sukhra.csv_utils import csv_response
 
 from .forms import LoginUsers
 from .models import Account, AccountProfile
@@ -34,6 +36,37 @@ ROLE_ACCOUNT_CREATORS = {
 }
 
 
+def _company_resource_breakdown():
+    """Per-category resource counts, and per-category breakdown by
+    availability status, company-wide (not scoped to one admin/manager) --
+    feeds the resource charts on both the IT Admin and Superadmin dashboards.
+    """
+    get_categories = Category.objects.filter(is_active=True)
+    category_list = []
+    category_count_list = []
+    available_resource_list = []
+    taken_resource_list = []
+    configuration_resource_list = []
+    for category in get_categories:
+        category_list.append(category.resource_category)
+        category_count_list.append(
+            Resource.objects.filter(resource_category=category.id, is_active=True).count())
+        available_resource_list.append(Resource.objects.filter(
+            resource_category=category.id, resource_availability='Available', is_active=True).count())
+        taken_resource_list.append(Resource.objects.filter(
+            resource_category=category.id, resource_availability='Taken', is_active=True).count())
+        configuration_resource_list.append(Resource.objects.filter(
+            resource_category=category.id, resource_availability='Configuration', is_active=True).count())
+    return {
+        'get_categories_count': get_categories.count(),
+        'category_list': category_list,
+        'category_count_list': category_count_list,
+        'available_resource_list': available_resource_list,
+        'taken_resource_list': taken_resource_list,
+        'configuration_resource_list': configuration_resource_list,
+    }
+
+
 def _generate_temporary_password(length=10):
     alphabet = string.ascii_letters + string.digits
     return ''.join(secrets.choice(alphabet) for _ in range(length))
@@ -45,13 +78,17 @@ def _send_account_creation_email(request, user):
     an account the owner has no way to activate."""
     try:
         current_site = get_current_site(request)
-        message = render_to_string('account/account_confirmation_email.html', {
+        context = {
             'user': user,
             'domain': current_site,
             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
             'token': default_token_generator.make_token(user),
-        })
-        EmailMessage('ORMS account creation', message, to=[user.email]).send()
+        }
+        text_body = render_to_string('account/account_confirmation_email.html', context)
+        html_body = render_to_string('account/emails/account_confirmation_email.html', context)
+        email = EmailMultiAlternatives('Sukhra account creation', text_body, to=[user.email])
+        email.attach_alternative(html_body, 'text/html')
+        email.send()
         return True
     except Exception:
         user.delete()
@@ -133,11 +170,12 @@ def login(request):
 
 @login_required(login_url='account:login')
 def superadmin_portal(request):
-    get_total_managers_count = Account.objects.filter(is_active=True, role='Manager').count()
-    get_total_administrators_count = Account.objects.filter(is_active=True, role='IT Administrator').count()
-    get_total_superadmins_count = Account.objects.filter(is_active=True, role='Superadmin').count()
+    company = request.user.company
+    get_total_managers_count = Account.objects.filter(company=company, is_active=True, is_manager=True).count()
+    get_total_administrators_count = Account.objects.filter(company=company, is_active=True, is_it_admin=True).count()
+    get_total_superadmins_count = Account.objects.filter(company=company, is_active=True, is_superadmin=True).count()
     get_total_users_month_count = Account.objects.filter(
-        is_active=True, date_joined__gte=datetime.now() - timedelta(days=30)).count()
+        company=company, is_active=True, date_joined__gte=datetime.now() - timedelta(days=30)).count()
 
     get_total_departments = Department.objects.filter(is_active=True).count()
     get_total_department_month_count = Department.objects.filter(
@@ -145,6 +183,33 @@ def superadmin_portal(request):
     get_total_teams = Team.objects.filter(is_active=True).count()
     get_total_teams_month_count = Team.objects.filter(
         is_active=True, created_date__gte=datetime.now() - timedelta(days=30)).count()
+
+    # Company-wide ticket volume by status, for the "Tickets by status" chart.
+    ticket_status_labels = ['Pending', 'Processing', 'Completed', 'Cancelled']
+    ticket_status_counts = [
+        Ticket.objects.filter(is_active=True, request_status=status).count()
+        for status in ticket_status_labels
+    ]
+
+    # Accounts added per month over the last 6 months, for the user-growth
+    # trend line chart -- the stat tiles above only show point-in-time counts.
+    # Build the last 6 (year, month) pairs walking backwards from this month.
+    user_growth_labels = []
+    user_growth_counts = []
+    today = datetime.now()
+    year, month = today.year, today.month
+    months = []
+    for _ in range(6):
+        months.append((year, month))
+        month -= 1
+        if month == 0:
+            month = 12
+            year -= 1
+    months.reverse()
+    for y, m in months:
+        user_growth_labels.append(date(y, m, 1).strftime('%b %Y'))
+        user_growth_counts.append(Account.objects.filter(
+            company=company, is_active=True, date_joined__year=y, date_joined__month=m).count())
 
     context = {
         'get_total_managers_count': get_total_managers_count,
@@ -155,76 +220,55 @@ def superadmin_portal(request):
         'get_total_department_month_count': get_total_department_month_count,
         'get_total_teams': get_total_teams,
         'get_total_teams_month_count': get_total_teams_month_count,
+        'ticket_status_labels': ticket_status_labels,
+        'ticket_status_counts': ticket_status_counts,
+        'user_growth_labels': user_growth_labels,
+        'user_growth_counts': user_growth_counts,
     }
+    context.update(_company_resource_breakdown())
     return render(request, 'superadmin/superadmin_home.html', context)
 
 
 @login_required(login_url='account:login')
 def it_admin_portal(request, userid):
-    account = Account.objects.get(id=userid)
+    account = Account.objects.get(id=userid, company=request.user.company)
 
-    completed_requests_count = Requests.objects.filter(
+    completed_requests_count = Ticket.objects.filter(
         assigned_to=account, request_status='Completed', is_active=True).count()
-    processing_requests_count = Requests.objects.filter(
+    processing_requests_count = Ticket.objects.filter(
         assigned_to=account, request_status='Processing', is_active=True).count()
-    pending_requests_count = Requests.objects.filter(
+    pending_requests_count = Ticket.objects.filter(
         assigned_to=account, request_status='Pending', is_active=True).count()
-
-    get_categories = Category.objects.filter(is_active=True)
-    get_categories_count = get_categories.count()
-
-    # Per-category resource counts, and per-category breakdown by
-    # availability status, feeding the dashboard's charts.
-    category_list = []
-    category_count_list = []
-    available_resource_list = []
-    taken_resource_list = []
-    configuration_resource_list = []
-    for category in get_categories:
-        category_list.append(category.resource_category)
-        category_count_list.append(
-            Resource.objects.filter(resource_category=category.id, is_active=True).count())
-        available_resource_list.append(Resource.objects.filter(
-            resource_category=category.id, resource_availability='Available', is_active=True).count())
-        taken_resource_list.append(Resource.objects.filter(
-            resource_category=category.id, resource_availability='Taken', is_active=True).count())
-        configuration_resource_list.append(Resource.objects.filter(
-            resource_category=category.id, resource_availability='Configuration', is_active=True).count())
 
     context = {
         'completed_requests_count': completed_requests_count,
         'processing_requests_count': processing_requests_count,
         'pending_requests_count': pending_requests_count,
-        'get_categories_count': get_categories_count,
-        'category_list': category_list,
-        'category_count_list': category_count_list,
-        'available_resource_list': available_resource_list,
-        'taken_resource_list': taken_resource_list,
-        'configuration_resource_list': configuration_resource_list,
     }
+    context.update(_company_resource_breakdown())
     return render(request, 'it_admin/it_administrator_dashboard.html', context)
 
 
 @login_required(login_url='account:login')
 def manager_portal(request, userid):
-    account = Account.objects.get(id=userid)
+    account = Account.objects.get(id=userid, company=request.user.company)
     team = Team.objects.get(team_name=account.team)
 
-    team_members_count = Members.objects.filter(
+    team_members_count = Employee.objects.filter(
         manager_peoplesoft_id=account, is_active=True).order_by('peoplesoft_id').count()
-    get_all_requests_count = Requests.objects.filter(created_ps_id=account, is_active=True).count()
-    get_all_pending_requests_count = Requests.objects.filter(
+    get_all_requests_count = Ticket.objects.filter(created_ps_id=account, is_active=True).count()
+    get_all_pending_requests_count = Ticket.objects.filter(
         created_ps_id=account, request_status='Pending', is_active=True).count()
     get_all_resources_taken_count = ResourceTaken.objects.filter(
         team=team, resource_status='Taken', is_active=True).count()
     get_all_resources_returned_count = ResourceTaken.objects.filter(
         team=team, resource_status='Returned', is_active=True).count()
 
-    get_count_members_today = Members.objects.filter(
+    get_count_members_today = Employee.objects.filter(
         manager_peoplesoft_id=account, date_joined__gte=date.today()).count()
-    get_count_members_week = Members.objects.filter(
+    get_count_members_week = Employee.objects.filter(
         manager_peoplesoft_id=account, date_joined__gte=datetime.now() - timedelta(days=7)).count()
-    get_count_members_month = Members.objects.filter(
+    get_count_members_month = Employee.objects.filter(
         manager_peoplesoft_id=account, date_joined__gte=datetime.now() - timedelta(days=30)).count()
 
     # Per-category counts feeding the dashboard's charts: resources
@@ -236,9 +280,9 @@ def manager_portal(request, userid):
     for category in get_categories:
         category_list.append(category.resource_category)
         category_count_list.append(ResourceTaken.objects.filter(
-            resource_category=category.resource_category, resource_status='Taken', is_active=True).count())
-        request_list.append(Requests.objects.filter(
-            request_resource=category.resource_category, created_ps_id=account, is_active=True).count())
+            asset_id__resource_category=category, resource_status='Taken', is_active=True).count())
+        request_list.append(Ticket.objects.filter(
+            requested_category=category, created_ps_id=account, is_active=True).count())
 
     context = {
         'team_members_count': team_members_count,
@@ -283,7 +327,7 @@ def add_user_page(request):
     if Account.objects.filter(peoplesoft_id=peoplesoft_id).exists():
         message_alert.info(request, f'{peoplesoft_id}, is already exists as an user!')
         return redirect('account:add_user_page')
-    if Account.objects.filter(email=email).exists():
+    if Account.objects.filter(company=request.user.company, email=email).exists():
         message_alert.info(request, 'Given email was already taken!')
         return redirect('account:add_user_page')
 
@@ -296,9 +340,9 @@ def add_user_page(request):
         email=email,
         department=Department.objects.get(id=department),
         team=Team.objects.get(id=team),
-        role=role,
         ini_pas=password_generated,
         password=password_generated,
+        company=request.user.company,
     )
 
     if _send_account_creation_email(request, user):
@@ -311,10 +355,10 @@ def add_user_page(request):
 
 @login_required(login_url='account:login')
 def manager_user_profile(request, userid):
-    account = Account.objects.get(id=userid)
-    team_members_count = Members.objects.filter(
+    account = Account.objects.get(id=userid, company=request.user.company)
+    team_members_count = Employee.objects.filter(
         manager_peoplesoft_id=account, is_active=True).order_by('peoplesoft_id').count()
-    get_all_requests_count = Requests.objects.filter(created_ps_id=account, is_active=True).count()
+    get_all_requests_count = Ticket.objects.filter(created_ps_id=account, is_active=True).count()
 
     context = {
         'team_members_count': team_members_count,
@@ -330,7 +374,7 @@ def manager_edit_user_profile(request):
 
 @login_required(login_url='account:login')
 def manager_update_user_profile(request, userid):
-    account = Account.objects.get(id=userid)
+    account = Account.objects.get(id=userid, company=request.user.company)
     _update_account_profile(request, account)
     return redirect('account:manager_user_profile', userid)
 
@@ -347,15 +391,15 @@ def superadmin_edit_user_profile(request):
 
 @login_required(login_url='account:login')
 def superadmin_update_user_profile(request, userid):
-    account = Account.objects.get(id=userid)
+    account = Account.objects.get(id=userid, company=request.user.company)
     _update_account_profile(request, account)
     return redirect('account:superadmin_user_profile')
 
 
 @login_required(login_url='account:login')
 def it_admin_user_profile(request, userid):
-    account = Account.objects.get(id=userid)
-    completed_requests_count = Requests.objects.filter(
+    account = Account.objects.get(id=userid, company=request.user.company)
+    completed_requests_count = Ticket.objects.filter(
         assigned_to=account, request_status='Completed', is_active=True).count()
     count_resources = Resource.objects.filter(is_active=True).count()
 
@@ -373,7 +417,7 @@ def it_admin_edit_user_profile(request):
 
 @login_required(login_url='account:login')
 def it_admin_update_user_profile(request, userid):
-    account = Account.objects.get(id=userid)
+    account = Account.objects.get(id=userid, company=request.user.company)
     _update_account_profile(request, account)
     return redirect('account:it_admin_user_profile', userid)
 
@@ -381,11 +425,23 @@ def it_admin_update_user_profile(request, userid):
 @login_required(login_url='account:login')
 def superadmin_add_user(request):
     context = {
-        'users': Account.objects.all(),
+        'users': Account.objects.filter(company=request.user.company),
         'department_names': Department.objects.filter(is_active=True),
         'team_names': Team.objects.filter(is_active=True),
     }
     return render(request, 'superadmin/display_user_page.html', context)
+
+
+@login_required(login_url='account:login')
+def export_users_csv(request):
+    users = Account.objects.filter(company=request.user.company)
+    rows = (
+        (u.peoplesoft_id, f'{u.first_name} {u.last_name}', u.department, u.team, u.role,
+         u.date_joined, 'Active' if u.is_active else 'Inactive')
+        for u in users
+    )
+    return csv_response('users.csv',
+        ('PS Id', 'Fullname', 'Department', 'Team', 'Role', 'Created On', 'Status'), rows)
 
 
 def activate(request, uidb64, token):
@@ -407,14 +463,14 @@ def activate(request, uidb64, token):
 
 @login_required(login_url='account:login')
 def view_user_details(request, uid):
-    context = {'get_user': Account.objects.get(id=uid)}
+    context = {'get_user': Account.objects.get(id=uid, company=request.user.company)}
     return render(request, 'superadmin/view_user_details.html', context)
 
 
 @login_required(login_url='account:login')
 def edit_user(request, uid):
     context = {
-        'selected_user': Account.objects.get(id=uid),
+        'selected_user': Account.objects.get(id=uid, company=request.user.company),
         'team_names': Team.objects.filter(is_active=True),
         'department_names': Department.objects.filter(is_active=True),
     }
@@ -423,13 +479,17 @@ def edit_user(request, uid):
 
 @login_required(login_url='account:login')
 def update_user(request, uid):
-    account = Account.objects.get(id=uid)
+    account = Account.objects.get(id=uid, company=request.user.company)
     account.peoplesoft_id = request.POST['peoplesoft_id']
     account.first_name = request.POST['first_name']
     account.last_name = request.POST['last_name']
     account.email = request.POST['email']
     account.department = Department.objects.get(id=request.POST['department'])
-    account.role = request.POST['role']
+
+    role = request.POST['role']
+    if role not in ROLE_ACCOUNT_CREATORS:
+        message_alert.info(request, 'Please choose a valid role for the user!')
+        return redirect('account:edit_user', uid)
 
     team = request.POST['team']
     if team == '':
@@ -437,10 +497,10 @@ def update_user(request, uid):
         return redirect('account:edit_user', uid)
 
     account.team = Team.objects.get(id=team)
-    account.is_superadmin = account.role == 'Superadmin'
-    account.is_manager = account.role == 'Manager'
-    account.is_it_admin = account.role == 'IT Administrator'
-    account.is_staff = account.role == 'Superadmin'
+    account.is_superadmin = role == 'Superadmin'
+    account.is_manager = role == 'Manager'
+    account.is_it_admin = role == 'IT Administrator'
+    account.is_staff = role == 'Superadmin'
     account.save()
     message_alert.success(request, 'User is updated successfully!')
 
@@ -449,29 +509,31 @@ def update_user(request, uid):
 
 @login_required(login_url='account:login')
 def superadmin_users_date_sort(request):
-    context = {}
+    context = {'users': None}
     if request.method == 'POST':
         from_date = request.POST['from_user']
         to_date = request.POST['to_user']
-        get_result = Account.objects.filter(date_joined__gte=from_date, date_joined__lte=to_date)
+        get_result = Account.objects.filter(
+            company=request.user.company, date_joined__gte=from_date, date_joined__lte=to_date)
         context = {
             'get_result': get_result,
             'from_date': from_date,
             'to_date': to_date,
             'result_count': get_result.count(),
+            'users': None,
         }
     return render(request, 'superadmin/display_user_page.html', context)
 
 
 @login_required(login_url='account:login')
 def users_deletion_history(request):
-    context = {'users': Account.objects.filter(is_active=False)}
+    context = {'users': Account.objects.filter(company=request.user.company, is_active=False)}
     return render(request, 'superadmin/user_deletion_history.html', context)
 
 
 @login_required(login_url='account:login')
 def remove_user_access(request, uid):
-    account = Account.objects.get(id=uid)
+    account = Account.objects.get(id=uid, company=request.user.company)
     account.is_active = False
     account.save()
     message_alert.success(request, 'User access removed successfully!')
@@ -480,7 +542,7 @@ def remove_user_access(request, uid):
 
 @login_required(login_url='account:login')
 def restore_user(request, uid):
-    account = Account.objects.get(id=uid)
+    account = Account.objects.get(id=uid, company=request.user.company)
     account.is_active = True
     account.save()
     message_alert.success(request, 'User access restored successfully!')
@@ -490,7 +552,7 @@ def restore_user(request, uid):
 @login_required(login_url='account:login')
 def permanent_delete_user(request, uid):
     if request.method == 'POST' and request.POST.get('delete_name') == 'delete':
-        Account.objects.get(id=uid).delete()
+        Account.objects.get(id=uid, company=request.user.company).delete()
         message_alert.success(request, 'User permanently deleted successfully!')
     return redirect('account:superadmin_add_user')
 
@@ -511,13 +573,17 @@ def forgot_password(request):
 
         user = Account.objects.get(email__exact=email)
         current_site = get_current_site(request)
-        message = render_to_string('account/reset_password_email.html', {
+        context = {
             'user': user,
             'domain': current_site,
             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
             'token': default_token_generator.make_token(user),
-        })
-        EmailMessage('ORMS Reset Password Link', message, to=[email]).send()
+        }
+        text_body = render_to_string('account/reset_password_email.html', context)
+        html_body = render_to_string('account/emails/reset_password_email.html', context)
+        email_message = EmailMultiAlternatives('Sukhra Reset Password Link', text_body, to=[email])
+        email_message.attach_alternative(html_body, 'text/html')
+        email_message.send()
         message_alert.success(request, 'Reset password link has been sent to your email successfully!')
         return redirect('account:login')
 
@@ -565,7 +631,7 @@ def load_teams(request):
 
 @login_required(login_url='account:login')
 def manager_change_password(request, userid):
-    account = Account.objects.get(id=userid)
+    account = Account.objects.get(id=userid, company=request.user.company)
     if request.method == 'POST':
         _process_password_change(request, account)
     return redirect('account:manager_user_profile', userid)
@@ -573,7 +639,7 @@ def manager_change_password(request, userid):
 
 @login_required(login_url='account:login')
 def it_admin_change_password(request, userid):
-    account = Account.objects.get(id=userid)
+    account = Account.objects.get(id=userid, company=request.user.company)
     if request.method == 'POST':
         _process_password_change(request, account)
     return redirect('account:it_admin_user_profile', userid)
@@ -581,7 +647,7 @@ def it_admin_change_password(request, userid):
 
 @login_required(login_url='account:login')
 def superadmin_change_password(request, userid):
-    account = Account.objects.get(id=userid)
+    account = Account.objects.get(id=userid, company=request.user.company)
     if request.method == 'POST':
         _process_password_change(request, account)
     return redirect('account:superadmin_user_profile')

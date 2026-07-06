@@ -1,18 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | My Team{% endblock %}
+{% block title %}Sukhra | My Team{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-group'></i> {{ user.team }}</h1>
+    <h1 class="page-header"><i data-lucide="users"></i> {{ user.team }}</h1>
     {% include 'message_alert.html' %}
 
-    <form action="{% url 'members:search_team_member' user.id %}" method="GET" class="d-flex gap-2 mb-2 flex-wrap">
+    <form action="{% url 'employees:search_team_member' user.id %}" method="GET" class="d-flex gap-2 mb-2 flex-wrap">
         <input type="text" class="form-control" style="max-width: 320px;" name="keyword" placeholder="Search by name or ps id.." required>
-        <button type="submit" class="btn btn-warning"><i class='bx bx-search'></i> Search</button>
-        <a href="{% url 'members:view_team_members_index_table' user.id %}" class="btn btn-outline-secondary ms-auto">
-            <i class='bx bx-table'></i> Member Index
+        <button type="submit" class="btn btn-warning"><i data-lucide="search"></i> Search</button>
+        <a href="{% url 'employees:view_team_members_index_table' user.id %}" class="btn btn-outline-secondary ms-auto">
+            <i data-lucide="table"></i> Member Index
+        </a>
+        <a href="{% url 'employees:export_team_members_csv' user.id %}" class="btn btn-outline-secondary">
+            <i data-lucide="download"></i> Download CSV
         </a>
     </form>
 
@@ -27,16 +30,16 @@
             <div class="col-sm-6 col-md-4 col-lg-3">
                 <div class="card h-100 text-center">
                     {% if team_member.member_image %}
-                        <img src="{{ team_member.member_image.url }}" class="card-img-top p-3" style="height: 140px; object-fit: contain; border-radius: 50%;">
+                        <img src="{{ team_member.member_image.url }}" class="avatar-img mx-auto mt-3" style="--avatar-size: 96px;">
                     {% else %}
-                        <img src="{% static 'images/image_placeholder.jpg' %}" class="card-img-top p-3" style="height: 140px; object-fit: contain; border-radius: 50%;">
+                        <div class="mt-3">{% include 'includes/avatar.html' with name=team_member.fullname size=96 %}</div>
                     {% endif %}
                     <div class="card-body">
                         <h6 class="card-title mb-1">{{ team_member.fullname }}</h6>
                         <p class="text-muted small mb-1">{{ team_member.peoplesoft_id }}</p>
                         <p class="text-muted small mb-2">{{ team_member.position }} &middot; {{ team_member.department }}</p>
-                        <a href="{% url 'members:view_team_members_details' team_member.id %}" class="btn btn-sm btn-outline-primary w-100">
-                            View details <i class='bx bx-right-arrow-alt'></i>
+                        <a href="{% url 'employees:view_team_members_details' team_member.id %}" class="btn btn-sm btn-outline-primary w-100">
+                            View details <i data-lucide="arrow-right"></i>
                         </a>
                     </div>
                 </div>

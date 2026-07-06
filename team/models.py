@@ -1,9 +1,11 @@
 from django.db import models
 from department.models import Department
 
-# Create your models here.
-class Team(models.Model):
-    team_name = models.CharField(max_length=200, unique=True)
+from companies.models import TenantModel
+
+
+class Team(TenantModel):
+    team_name = models.CharField(max_length=200)
     team_head = models.CharField(max_length=200)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     team_description = models.TextField(max_length=255, blank=True)
@@ -14,6 +16,7 @@ class Team(models.Model):
     class Meta:
         verbose_name = 'team'
         verbose_name_plural = 'teams'
+        unique_together = ('company', 'team_name')
 
     def __str__(self):
         return self.team_name

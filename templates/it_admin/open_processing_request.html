@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Processing Request{% endblock %}
+{% block title %}Sukhra | Processing Request{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-envelope-open'></i> View Processing Request</h1>
+    <h1 class="page-header"><i data-lucide="mail-open"></i> View Processing Request</h1>
     {% include 'message_alert.html' %}
 
     {% if get_request_id %}
     <div class="card mx-auto" style="max-width: 720px;">
         <div class="card-body p-4">
             <h5 class="mb-3">{{ get_request_id.request_id }}</h5>
-            <form action="{% url 'requests:complete_processing_request' get_request_id.id user.id %}" method="POST">
+            <form action="{% url 'tickets:complete_processing_request' get_request_id.id user.id %}" method="POST">
                 {% csrf_token %}
                 <dl class="row mb-0">
                     {% if get_member_info %}
@@ -21,20 +21,24 @@
                     <dt class="col-sm-4">Created by</dt><dd class="col-sm-8">{{ get_request_id.created_by }}</dd>
                     <dt class="col-sm-4">Department</dt><dd class="col-sm-8">{{ get_request_id.department }}</dd>
                     <dt class="col-sm-4">Team</dt><dd class="col-sm-8">{{ get_request_id.team }}</dd>
-                    <dt class="col-sm-4">Resource required</dt><dd class="col-sm-8">{{ get_request_id.request_resource }}</dd>
+                    <dt class="col-sm-4">Resource required</dt><dd class="col-sm-8">{{ get_request_id.resource_label }}</dd>
                     <dt class="col-sm-4">Request category</dt><dd class="col-sm-8">{{ get_request_id.request_category }}</dd>
                     <dt class="col-sm-4">Created on</dt><dd class="col-sm-8">{{ get_request_id.created_on }}</dd>
                     <dt class="col-sm-4">Description</dt><dd class="col-sm-8">{{ get_request_id.request_decription }}</dd>
                 </dl>
 
-                {% if get_request_id.request_category == 'Bitlocker' %}
+                {% if get_request_id.request_category == 'Support' %}
                 <div class="mb-3">
-                    <label class="form-label">Bitlocker key of {{ get_request_id.request_resource }}</label>
-                    <input class="form-control" name="asset_id" type="text" placeholder="e.g. TGS20222022" required>
+                    <label class="form-label">Regarding</label>
+                    <p class="form-control-plaintext mb-0">
+                        {{ get_request_id.regarding_resource_taken.asset_id.resource_category }}
+                        ({{ get_request_id.regarding_resource_taken.asset_id.asset_id }})
+                    </p>
+                    <div class="form-text">Stored attributes for this resource will be included in the completion email automatically.</div>
                 </div>
-                {% elif get_request_id.request_category == 'Request new' or get_request_id.request_category == 'Replacement' %}
+                {% else %}
                 <div class="mb-3">
-                    <label class="form-label">{{ get_request_id.request_resource }} Asset Id</label>
+                    <label class="form-label">{{ get_request_id.resource_label }} Asset Id</label>
                     {% if assign_resource %}
                         <input class="form-control" name="asset_id" type="text" value="{{ assign_resource }}" required>
                         <div class="form-text">Suggested asset id for this request: {{ assign_resource }}</div>
@@ -49,7 +53,7 @@
                     <textarea class="form-control" name="request_response" rows="4" placeholder="Write comments for this request.." required></textarea>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{% url 'requests:list_processing_requests_it_admin' user.id %}" class="btn btn-outline-secondary flex-fill">Back</a>
+                    <a href="{% url 'tickets:list_processing_requests_it_admin' user.id %}" class="btn btn-outline-secondary flex-fill">Back</a>
                     <button type="submit" class="btn btn-primary flex-fill">Complete Request</button>
                 </div>
             </form>

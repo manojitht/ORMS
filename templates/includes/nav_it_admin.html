@@ -1,30 +1,30 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'account:it_admin_portal' user.id %}">
-                            <i class='bx bx-line-chart'></i> Dashboard
+                            <i data-lucide="line-chart"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'resources:view_resource_categories' %}">
-                            <i class='bx bx-category'></i> Categories
+                            <i data-lucide="shapes"></i> Categories
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'resources:resources_listings_page' %}">
-                            <i class='bx bx-devices'></i> Resources
+                            <i data-lucide="laptop"></i> Resources
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'resources:returned_resources_list_table' %}">
-                            <i class='bx bx-history'></i> In &amp; Outs
+                            <i data-lucide="history"></i> In &amp; Outs
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'requests:list_pending_requests_it_admin' user.id %}">
-                            <i class='bx bx-columns'></i> Requests
+                        <a class="nav-link" href="{% url 'tickets:list_pending_requests_it_admin' user.id %}">
+                            <i data-lucide="columns-3"></i> Requests
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'account:it_admin_user_profile' user.id %}">
-                            <i class='bx bx-user-circle'></i> My Profile
+                            <i data-lucide="circle-user"></i> My Profile
                         </a>
                     </li>

@@ -6,6 +6,7 @@ app_name = 'resources'
 
 urlpatterns = [
     path('resources_list_table/', views.resources_list_table, name='resources_list_table'),
+    path('export_resources_csv/', views.export_resources_csv, name='export_resources_csv'),
     path('returned_resources_list_table/', views.returned_resources_list_table, name='returned_resources_list_table'),
     path('taken_resources_list_table/', views.taken_resources_list_table, name='taken_resources_list_table'),
     path('resources_listings_page/', views.resources_listings_page, name='resources_listings_page'),

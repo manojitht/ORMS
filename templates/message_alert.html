@@ -1,15 +1,23 @@
 {% if messages %}
+<div class="toast-container position-fixed top-0 end-0 p-3">
     {% for message in messages %}
-        <div class="alert
-            {% if message.tags == 'message-success' %}alert-success
-            {% elif message.tags == 'message-info' %}alert-primary
-            {% elif message.tags == 'message-unsuccess' %}alert-danger
-            {% elif message.tags == 'message-warning' %}alert-warning
-            {% else %}alert-secondary
-            {% endif %}
-            alert-dismissible fade show" role="alert" id="message-alerts">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="toast align-items-center border-0
+            {% if message.tags == 'message-success' %}toast-success
+            {% elif message.tags == 'message-info' %}toast-info
+            {% elif message.tags == 'message-unsuccess' %}toast-danger
+            {% elif message.tags == 'message-warning' %}toast-warning
+            {% else %}toast-secondary
+            {% endif %}"
+            role="alert" aria-live="assertive" aria-atomic="true"
+            data-bs-autohide="true" data-bs-delay="5000">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-2">
+                    <i data-lucide="{% if message.tags == "message-success" %}circle-check{% elif message.tags == "message-info" %}info{% elif message.tags == "message-unsuccess" %}circle-x{% elif message.tags == "message-warning" %}circle-alert{% else %}message-circle{% endif %}"></i>
+                    <span>{{ message }}</span>
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
         </div>
     {% endfor %}
+</div>
 {% endif %}

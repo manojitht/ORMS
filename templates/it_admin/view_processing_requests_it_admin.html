@@ -1,22 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Processing Request Listings{% endblock %}
+{% block title %}Sukhra | Processing Request Listings{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-columns'></i> Requests Incidents</h1>
+    <h1 class="page-header"><i data-lucide="columns-3"></i> Requests Incidents</h1>
     {% include 'message_alert.html' %}
 
     <ul class="nav nav-pills mb-3">
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'requests:list_pending_requests_it_admin' user.id %}">Pending</a>
+            <a class="nav-link" href="{% url 'tickets:list_pending_requests_it_admin' user.id %}">Pending</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" href="{% url 'requests:list_processing_requests_it_admin' user.id %}">Processing</a>
+            <a class="nav-link active" href="{% url 'tickets:list_processing_requests_it_admin' user.id %}">Processing</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'requests:list_completed_requests_it_admin' user.id %}">Completed</a>
+            <a class="nav-link" href="{% url 'tickets:list_completed_requests_it_admin' user.id %}">Completed</a>
         </li>
     </ul>
 
@@ -38,24 +38,24 @@
                 {% for requests in get_requests %}
                 <tr>
                     <td>{{ requests.request_id }}</td>
-                    <td>{{ requests.request_resource }}</td>
+                    <td>{{ requests.resource_label }}</td>
                     <td>{{ requests.request_category }}</td>
                     <td>{{ requests.created_for }}</td>
                     <td>
                         {% if requests.request_status == 'Pending' %}
-                            <span class="badge text-bg-warning">{{ requests.request_status }}</span>
+                            <span class="status-pill status-pill--warn">{{ requests.request_status }}</span>
                         {% elif requests.request_status == 'Processing' %}
-                            <span class="badge text-bg-primary">{{ requests.request_status }}</span>
+                            <span class="status-pill status-pill--info">{{ requests.request_status }}</span>
                         {% elif requests.request_status == 'Completed' %}
-                            <span class="badge text-bg-success">{{ requests.request_status }}</span>
+                            <span class="status-pill status-pill--good">{{ requests.request_status }}</span>
                         {% elif requests.request_status == 'Cancelled' %}
-                            <span class="badge" style="background-color:#EA580C;">{{ requests.request_status }}</span>
+                            <span class="status-pill status-pill--muted">{{ requests.request_status }}</span>
                         {% endif %}
                     </td>
                     <td>{{ requests.created_on }}</td>
                     <td class="text-center">
-                        <a class="btn btn-sm btn-success" href="{% url 'requests:view_selected_processing_request' requests.id %}">
-                            <i class='bx bxs-folder-open'></i> Open
+                        <a class="btn btn-sm btn-success" href="{% url 'tickets:view_selected_processing_request' requests.id %}">
+                            <i data-lucide="folder-open"></i> Open
                         </a>
                     </td>
                 </tr>

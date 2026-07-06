@@ -9,6 +9,7 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('superadmin_portal', views.superadmin_portal, name='superadmin_portal'),
     path('superadmin_add_user', views.superadmin_add_user, name='superadmin_add_user'),
+    path('export_users_csv/', views.export_users_csv, name='export_users_csv'),
     path('add_user_page', views.add_user_page, name='add_user_page'),
     path('view_user_details/<int:uid>/', views.view_user_details, name='view_user_details'),
     path('edit_user/<int:uid>/', views.edit_user, name='edit_user'),

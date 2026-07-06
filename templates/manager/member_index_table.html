@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Team Members Index{% endblock %}
+{% block title %}Sukhra | Team Members Index{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-group'></i> Team Members Index</h1>
+    <h1 class="page-header"><i data-lucide="users"></i> Team Members Index</h1>
 
-    <form action="{% url 'members:date_sort_team_members_index_table' user.id %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
+    <form action="{% url 'employees:date_sort_team_members_index_table' user.id %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
         {% csrf_token %}
         <div class="col">
             <label class="form-label small mb-1">From</label>
@@ -21,8 +21,8 @@
             <button type="submit" class="btn btn-primary">Search</button>
         </div>
         <div class="col">
-            <a href="{% url 'members:view_team_members' user.id %}" class="btn btn-outline-secondary">
-                <i class='bx bx-arrow-back'></i> Back
+            <a href="{% url 'employees:view_team_members' user.id %}" class="btn btn-outline-secondary">
+                <i data-lucide="arrow-left"></i> Back
             </a>
         </div>
     </form>

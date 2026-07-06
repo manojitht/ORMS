@@ -3,10 +3,16 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from department.models import Department
 from team.models import Team
 
-# Create your models here.
+from companies.models import TenantModel
 
-class MyManagerAccount(BaseUserManager): #the MyManagerAccount extracts from the BaseUserManager class
-    def create_user(self, peoplesoft_id, first_name, last_name, email, department, team, role, ini_pas, password=None):
+# Account is both the auth user model (needs unrestricted lookups for
+# login/password-reset, which happen before any company context exists)
+# and a tenant-scoped resource once authenticated. Rather than auto-scope
+# reads like TenantManager does for every other model (which would break
+# authentication), `objects` here stays unscoped and every authenticated
+# view that queries Account explicitly filters by `company=` itself.
+class MyManagerAccount(BaseUserManager):
+    def create_user(self, peoplesoft_id, first_name, last_name, email, department, team, ini_pas, company, password=None):
         if not peoplesoft_id:
             raise ValueError('User should have a peoplesoft id')
 
@@ -20,14 +26,14 @@ class MyManagerAccount(BaseUserManager): #the MyManagerAccount extracts from the
             email = self.normalize_email(email), #the normalize email makes the caps letter into small letter
             department = department,
             team = team,
-            role = role,
             ini_pas = ini_pas,
+            company = company,
         )
         user.set_password(password)
         user.save(using=self._db) #saving details on database
         return user
 
-    def create_manager(self, peoplesoft_id, first_name, last_name, email, department, team, role, ini_pas, password=None):
+    def create_manager(self, peoplesoft_id, first_name, last_name, email, department, team, ini_pas, company, password=None):
         if not peoplesoft_id:
             raise ValueError('User should have a peoplesoft id')
 
@@ -41,8 +47,8 @@ class MyManagerAccount(BaseUserManager): #the MyManagerAccount extracts from the
             email = self.normalize_email(email), #the normalize email makes the caps letter into small letter
             department = department,
             team = team,
-            role = role,
             ini_pas = ini_pas,
+            company = company,
         )
         user.is_manager = True
         user.is_active = False
@@ -50,7 +56,7 @@ class MyManagerAccount(BaseUserManager): #the MyManagerAccount extracts from the
         user.save(using=self._db) #saving details on database
         return user
 
-    def create_IT_admin(self, peoplesoft_id, first_name, last_name, email, department, team, role, ini_pas, password=None):
+    def create_IT_admin(self, peoplesoft_id, first_name, last_name, email, department, team, ini_pas, company, password=None):
         if not peoplesoft_id:
             raise ValueError('User should have a peoplesoft id')
 
@@ -64,8 +70,8 @@ class MyManagerAccount(BaseUserManager): #the MyManagerAccount extracts from the
             email = self.normalize_email(email), #the normalize email makes the caps letter into small letter
             department = department,
             team = team,
-            role = role,
             ini_pas = ini_pas,
+            company = company,
         )
         user.is_it_admin = True
         user.is_active = False
@@ -73,7 +79,7 @@ class MyManagerAccount(BaseUserManager): #the MyManagerAccount extracts from the
         user.save(using=self._db) #saving details on database
         return user
 
-    def create_superuser(self, peoplesoft_id, first_name, last_name, email, department, team, role, ini_pas, password):
+    def create_superuser(self, peoplesoft_id, first_name, last_name, email, department, team, ini_pas, company, password):
         user = self.create_user(
             peoplesoft_id = peoplesoft_id,
             first_name = first_name,
@@ -82,25 +88,28 @@ class MyManagerAccount(BaseUserManager): #the MyManagerAccount extracts from the
             department = department,
             team = team,
             password = password,
-            role = role,
             ini_pas = ini_pas,
+            company = company,
         )
         user.is_superadmin = True
         user.is_staff = True
         user.save(using=self._db) #saving details on database
         return user
 
-class Account(AbstractBaseUser):
+class Account(AbstractBaseUser, TenantModel):
+    # peoplesoft_id stays globally unique (not per-company): Django hard-requires
+    # USERNAME_FIELD to be globally unique (auth.E003), so login is peoplesoft_id +
+    # password exactly as before — no company selector needed, since peoplesoft_id
+    # alone already disambiguates which company an account belongs to.
     peoplesoft_id = models.CharField(max_length=8, unique=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100,unique=True)
+    email = models.EmailField(max_length=100)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    role = models.CharField(max_length=100)
     ini_pas = models.CharField(max_length=100)
 
-    
+
     #must have fields
     date_joined = models.DateField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)
@@ -111,15 +120,34 @@ class Account(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'peoplesoft_id'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'email', 'department', 'team', 'role', 'ini_pas']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'email', 'department', 'team', 'ini_pas', 'company']
 
     objects = MyManagerAccount()
+
+    class Meta:
+        unique_together = ('company', 'email')
 
     def __str__(self):
         return self.peoplesoft_id
 
+    @property
+    def role(self):
+        """Computed from the boolean flags rather than stored separately --
+        a stored role string that had to be kept in sync by hand was a real
+        drift risk (an unvalidated write could set the label without the
+        matching permission, or vice versa). This makes the booleans the
+        single source of truth.
+        """
+        if self.is_superadmin:
+            return 'Superadmin'
+        if self.is_it_admin:
+            return 'IT Administrator'
+        if self.is_manager:
+            return 'Manager'
+        return ''
+
     def has_perm(self, perm, obj=None):
-        return self.is_superadmin    
+        return self.is_superadmin
 
     def has_module_perms(self, add_label):
         return True

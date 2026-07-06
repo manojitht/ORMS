@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Edit Profile{% endblock %}
+{% block title %}Sukhra | Edit Profile{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-user-circle'></i> Edit My Profile</h1>
+    <h1 class="page-header"><i data-lucide="circle-user"></i> Edit My Profile</h1>
     {% include 'message_alert.html' %}
 
     {% if user %}
@@ -15,9 +15,9 @@
                 {% csrf_token %}
                 <div class="text-center mb-3">
                     {% if user.accountprofile.profile_image %}
-                        <img src="{{ user.accountprofile.profile_image.url }}" class="rounded-circle" style="width:88px; height:88px; object-fit:cover;">
+                        <img src="{{ user.accountprofile.profile_image.url }}" class="avatar-img" style="--avatar-size: 88px;">
                     {% else %}
-                        <img src="{% static 'images/image_placeholder.jpg' %}" class="rounded-circle" style="width:88px; height:88px; object-fit:cover;">
+                        {% include 'includes/avatar.html' with name=user.first_name|add:' '|add:user.last_name size=88 %}
                     {% endif %}
                 </div>
                 <div class="row">

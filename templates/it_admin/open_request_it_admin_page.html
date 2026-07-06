@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Pending Request{% endblock %}
+{% block title %}Sukhra | Pending Request{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-envelope-open'></i> View Pending Request</h1>
+    <h1 class="page-header"><i data-lucide="mail-open"></i> View Pending Request</h1>
 
     {% if get_request_id %}
     <div class="card mx-auto" style="max-width: 720px;">
@@ -18,19 +18,19 @@
                 <dt class="col-sm-4">Created by</dt><dd class="col-sm-8">{{ get_request_id.created_by }}</dd>
                 <dt class="col-sm-4">Department</dt><dd class="col-sm-8">{{ get_request_id.department }}</dd>
                 <dt class="col-sm-4">Team</dt><dd class="col-sm-8">{{ get_request_id.team }}</dd>
-                <dt class="col-sm-4">Resource required</dt><dd class="col-sm-8">{{ get_request_id.request_resource }}</dd>
+                <dt class="col-sm-4">Resource required</dt><dd class="col-sm-8">{{ get_request_id.resource_label }}</dd>
                 <dt class="col-sm-4">Request category</dt><dd class="col-sm-8">{{ get_request_id.request_category }}</dd>
                 <dt class="col-sm-4">Created on</dt><dd class="col-sm-8">{{ get_request_id.created_on }}</dd>
                 <dt class="col-sm-4">Status</dt>
                 <dd class="col-sm-8">
                     {% if get_request_id.request_status == 'Pending' %}
-                        <span class="badge text-bg-warning">{{ get_request_id.request_status }}</span>
+                        <span class="status-pill status-pill--warn">{{ get_request_id.request_status }}</span>
                     {% elif get_request_id.request_status == 'Processing' %}
-                        <span class="badge text-bg-primary">{{ get_request_id.request_status }}</span>
+                        <span class="status-pill status-pill--info">{{ get_request_id.request_status }}</span>
                     {% elif get_request_id.request_status == 'Completed' %}
-                        <span class="badge text-bg-success">{{ get_request_id.request_status }}</span>
+                        <span class="status-pill status-pill--good">{{ get_request_id.request_status }}</span>
                     {% elif get_request_id.request_status == 'Cancelled' %}
-                        <span class="badge" style="background-color:#EA580C;">{{ get_request_id.request_status }}</span>
+                        <span class="status-pill status-pill--muted">{{ get_request_id.request_status }}</span>
                     {% endif %}
                 </dd>
                 <dt class="col-sm-4">Description</dt><dd class="col-sm-8">{{ get_request_id.request_decription }}</dd>
@@ -39,8 +39,8 @@
                 {% endif %}
             </dl>
             <div class="d-flex gap-2 mt-3">
-                <a href="{% url 'requests:list_pending_requests_it_admin' user.id %}" class="btn btn-outline-secondary flex-fill">Back</a>
-                <a href="{% url 'requests:approve_processing_request' get_request_id.id user.id %}" class="btn btn-primary flex-fill">Approve &amp; Process</a>
+                <a href="{% url 'tickets:list_pending_requests_it_admin' user.id %}" class="btn btn-outline-secondary flex-fill">Back</a>
+                <a href="{% url 'tickets:approve_processing_request' get_request_id.id user.id %}" class="btn btn-primary flex-fill">Approve &amp; Process</a>
             </div>
         </div>
     </div>

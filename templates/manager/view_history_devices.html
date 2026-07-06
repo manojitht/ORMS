@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load resource_extras %}
 
-{% block title %}ORMS | History Devices{% endblock %}
+{% block title %}Sukhra | History Devices{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-time-five'></i> History Devices</h1>
+    <h1 class="page-header"><i data-lucide="clock"></i> History Devices</h1>
 
     {% if get_devices_id %}
         {% if get_member_id %}
@@ -18,13 +19,15 @@
                     {% if get_devices.asset_id.resource_image %}
                         <img src="{{ get_devices.asset_id.resource_image.url }}" class="card-img-top p-3" style="height: 140px; object-fit: contain;">
                     {% else %}
-                        <img src="{% static 'images/image_placeholder.jpg' %}" class="card-img-top p-3" style="height: 140px; object-fit: contain;">
+                        {% include 'includes/media_placeholder.html' with icon='laptop' height=140 %}
                     {% endif %}
                     <div class="card-body">
                         <h6 class="card-title">{{ get_devices.asset_id }}</h6>
-                        <p class="text-muted small mb-1">{{ get_devices.resource_category }} &middot; {{ get_devices.asset_id.model_name }}</p>
+                        <p class="text-muted small mb-1">{{ get_devices.asset_id.resource_category }} &middot; {{ get_devices.asset_id.model_name }}</p>
                         <p class="text-muted small mb-1">Taken: {{ get_devices.taken_date }} &middot; Returned: {{ get_devices.returned_date }}</p>
-                        <p class="text-muted small mb-1">Bitlocker key: {{ get_devices.asset_id.bitlocker_key|default:"Not required" }}</p>
+                        {% for attr in get_devices.asset_id.resource_category.attribute_schema %}
+                        <p class="text-muted small mb-1">{{ attr.label }}: {{ get_devices.asset_id.attribute_values|dict_get:attr.key|default:"Not required" }}</p>
+                        {% endfor %}
                         <p class="text-muted small mb-0">Return reason: {{ get_devices.reason_notes|default:"Not specified" }}</p>
                     </div>
                 </div>

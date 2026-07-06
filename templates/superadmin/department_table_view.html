@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Departments Index{% endblock %}
+{% block title %}Sukhra | Departments Index{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bxs-building'></i> Departments Index</h1>
+    <h1 class="page-header"><i data-lucide="building-2"></i> Departments Index</h1>
     {% include 'message_alert.html' %}
 
     <form action="{% url 'department:superadmin_department_date_sort' %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
@@ -23,7 +23,7 @@
         </div>
         <div class="col">
             <a href="{% url 'department:add_new_department' %}" class="btn btn-outline-primary">
-                <i class='bx bx-message-square-add'></i> Add Department
+                <i data-lucide="message-square-plus"></i> Add Department
             </a>
         </div>
     </form>
@@ -52,9 +52,9 @@
                     <td>{{ department.created_on }}</td>
                     <td>
                         {% if department.is_active %}
-                            <span class="badge text-bg-success">On Process</span>
+                            <span class="status-pill status-pill--good">On Process</span>
                         {% else %}
-                            <span class="badge" style="background-color:#EA580C;">Removed</span>
+                            <span class="status-pill status-pill--muted">Removed</span>
                         {% endif %}
                     </td>
                 </tr>

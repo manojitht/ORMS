@@ -1,0 +1,21 @@
+{% extends 'account/emails/base_email.html' %}
+{% block heading %}Welcome to Sukhra{% endblock %}
+{% block body %}
+<p style="margin:0 0 16px 0;">Hi {{ user.first_name }} {{ user.last_name }},</p>
+<p style="margin:0 0 20px 0;">Your account has been created as a <strong>{{ user.role }}</strong>. Here are your details:</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse; margin-bottom:8px;">
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B; width:40%;">Department</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600;">{{ user.department }}</td></tr>
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B;">Team</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600;">{{ user.team }}</td></tr>
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B;">PeopleSoft ID</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600; font-family:'SFMono-Regular',Consolas,monospace;">{{ user.peoplesoft_id }}</td></tr>
+<tr><td style="padding:8px 0; color:#64748B;">Temporary password</td><td style="padding:8px 0; color:#0F1B2A; font-weight:600; font-family:'SFMono-Regular',Consolas,monospace;">{{ user.ini_pas }}</td></tr>
+</table>
+<p style="margin:20px 0 0 0;">Activate your account below, log in with the credentials above, then head to <strong>My Profile</strong> to set your own password &mdash; that last step is mandatory.</p>
+{% endblock %}
+{% block cta %}
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px;">
+<tr><td style="border-radius:8px; background-color:#0284C7;">
+<a href="http://{{ domain }}{% url 'account:activate' uidb64=uid token=token %}" style="display:inline-block; padding:12px 24px; font-size:15px; font-weight:600; color:#ffffff; text-decoration:none;">Activate your account</a>
+</td></tr>
+</table>
+{% endblock %}
+{% block footer_note %}If you weren't expecting this email, you can safely ignore it.{% endblock %}

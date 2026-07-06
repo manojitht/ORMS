@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | User Details{% endblock %}
+{% block title %}Sukhra | User Details{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-id-card'></i> View User Details</h1>
+    <h1 class="page-header"><i data-lucide="id-card"></i> View User Details</h1>
     {% include 'message_alert.html' %}
 
     {% if get_user %}
@@ -22,18 +22,18 @@
                 <dt class="col-sm-4">Status</dt>
                 <dd class="col-sm-8">
                     {% if get_user.is_active %}
-                        <span class="badge text-bg-success">Active</span>
+                        <span class="status-pill status-pill--good">Active</span>
                     {% else %}
-                        <span class="badge" style="background-color:#EA580C;">Inactive</span>
+                        <span class="status-pill status-pill--muted">Inactive</span>
                     {% endif %}
                 </dd>
             </dl>
             <div class="d-flex gap-2 mt-3">
                 <a href="{% url 'account:edit_user' get_user.id %}" class="btn btn-outline-primary flex-fill">
-                    <i class='bx bx-edit'></i> Edit
+                    <i data-lucide="pencil"></i> Edit
                 </a>
                 <button type="button" class="btn btn-outline-danger flex-fill" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
-                    <i class='bx bx-trash'></i> Delete
+                    <i data-lucide="trash-2"></i> Delete
                 </button>
                 <a href="{% url 'account:superadmin_add_user' %}" class="btn btn-outline-secondary flex-fill">Back</a>
             </div>
@@ -46,7 +46,7 @@
                 <form action="{% url 'account:permanent_delete_user' get_user.id %}" method="POST">
                     {% csrf_token %}
                     <div class="modal-header">
-                        <h5 class="modal-title"><i class='bx bxs-bell-ring text-warning'></i> Warning!</h5>
+                        <h5 class="modal-title"><i data-lucide="triangle-alert" class="text-warning"></i> Warning!</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">

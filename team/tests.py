@@ -2,7 +2,7 @@ from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 
-from factories import DepartmentFactory, SuperAdminAccountFactory, TeamFactory
+from factories import CompanyFactory, DepartmentFactory, SuperAdminAccountFactory, TeamFactory
 
 
 class TeamModelTests(TestCase):
@@ -10,15 +10,21 @@ class TeamModelTests(TestCase):
         team = TeamFactory(team_name='Platform')
         self.assertEqual(str(team), 'Platform')
 
-    def test_team_name_must_be_unique(self):
-        TeamFactory(team_name='Platform')
+    def test_team_name_must_be_unique_within_a_company(self):
+        company = CompanyFactory()
+        TeamFactory(company=company, team_name='Platform')
         with self.assertRaises(IntegrityError):
             with transaction.atomic():
-                TeamFactory(team_name='Platform')
+                TeamFactory(company=company, team_name='Platform')
+
+    def test_team_name_can_repeat_across_companies(self):
+        TeamFactory(team_name='Platform')
+        TeamFactory(team_name='Platform')
 
     def test_team_belongs_to_department(self):
-        department = DepartmentFactory(department_name='Engineering')
-        team = TeamFactory(department=department)
+        company = CompanyFactory()
+        department = DepartmentFactory(company=company, department_name='Engineering')
+        team = TeamFactory(company=company, department=department)
         self.assertEqual(team.department, department)
 
     def test_is_active_defaults_to_true(self):
@@ -30,14 +36,15 @@ class TeamViewSmokeTests(TestCase):
     """Confirms the team:* URL namespace resolves and renders end to end."""
 
     def setUp(self):
-        self.client.force_login(SuperAdminAccountFactory())
+        self.superadmin = SuperAdminAccountFactory()
+        self.client.force_login(self.superadmin)
 
     def test_superadmin_team_table_returns_200(self):
         response = self.client.get(reverse('team:superadmin_team_table'))
         self.assertEqual(response.status_code, 200)
 
     def test_display_team_returns_200(self):
-        team = TeamFactory()
+        team = TeamFactory(company=self.superadmin.company)
         response = self.client.get(reverse('team:display_team', args=[team.id]))
         self.assertEqual(response.status_code, 200)
 

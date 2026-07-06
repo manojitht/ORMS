@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | {% if selected_user %}Edit{% else %}Add{% endif %} User{% endblock %}
+{% block title %}Sukhra | {% if selected_user %}Edit{% else %}Add{% endif %} User{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-user-plus'></i> {% if selected_user %}Edit User: {{ selected_user.peoplesoft_id }}{% else %}Add New User{% endif %}</h1>
+    <h1 class="page-header"><i data-lucide="user-plus"></i> {% if selected_user %}Edit User: {{ selected_user.peoplesoft_id }}{% else %}Add New User{% endif %}</h1>
     {% include 'message_alert.html' %}
 
     <div class="card mx-auto" style="max-width: 640px;">

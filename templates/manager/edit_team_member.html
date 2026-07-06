@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Edit Team Member{% endblock %}
+{% block title %}Sukhra | Edit Team Member{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-edit'></i> Edit Team Member Profile</h1>
+    <h1 class="page-header"><i data-lucide="pencil"></i> Edit Team Member Profile</h1>
     {% include 'message_alert.html' %}
 
     {% if get_member_id %}
     <div class="card mx-auto" style="max-width: 720px;">
         <div class="card-body p-4">
-            <form action="{% url 'members:update_team_member' get_member_id.id %}" method="POST" enctype="multipart/form-data">
+            <form action="{% url 'employees:update_team_member' get_member_id.id %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="text-center mb-3">
                     {% if get_member_id.member_image %}
-                        <img src="{{ get_member_id.member_image.url }}" class="rounded-circle" style="width:88px; height:88px; object-fit:cover;">
+                        <img src="{{ get_member_id.member_image.url }}" class="avatar-img" style="--avatar-size: 88px;">
                     {% else %}
-                        <img src="{% static 'images/image_placeholder.jpg' %}" class="rounded-circle" style="width:88px; height:88px; object-fit:cover;">
+                        {% include 'includes/avatar.html' with name=get_member_id.fullname size=88 %}
                     {% endif %}
                 </div>
                 <div class="row">
@@ -59,7 +59,7 @@
                     <input name="member_image" class="form-control" type="file" accept="image/*">
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{% url 'members:view_team_members_details' get_member_id.id %}" class="btn btn-outline-secondary flex-fill">Back</a>
+                    <a href="{% url 'employees:view_team_members_details' get_member_id.id %}" class="btn btn-outline-secondary flex-fill">Back</a>
                     <button type="submit" class="btn btn-primary flex-fill">Save changes</button>
                 </div>
             </form>

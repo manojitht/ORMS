@@ -2,7 +2,11 @@
 
 Hi {{it_admin_firstname}} {{it_admin_lastname}},
 
-    The request reference ({{request_id}}) is requested for the resource of {{request_resource}}.
+{% if request_category == 'Support' %}
+    The request reference ({{request_id}}) is a support request regarding {{resource_label}} already assigned to this employee.
+{% else %}
+    The request reference ({{request_id}}) is requested for the resource of {{resource_label}}.
+{% endif %}
 
     The request was created by the Manager - {{created_by}}, on behalf on their team member PS ID - {{created_for}}.
 
@@ -13,7 +17,7 @@ Hi {{it_admin_firstname}} {{it_admin_lastname}},
     Currently the request is assigned to you and it was in {{request_status}}.
 
 Thank you,
-ORMS Team.
+Sukhra Team.
 
 Have a great day!
 

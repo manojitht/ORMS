@@ -1,23 +1,23 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Completed Requests{% endblock %}
+{% block title %}Sukhra | Completed Requests{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-edit-alt'></i> My Requests</h1>
+    <h1 class="page-header"><i data-lucide="square-pen"></i> My Requests</h1>
     {% include 'message_alert.html' %}
 
     <ul class="nav nav-pills mb-3">
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'requests:list_requests_manager' user.id %}">Pending &amp; Processing</a>
+            <a class="nav-link" href="{% url 'tickets:list_requests_manager' user.id %}">Pending &amp; Processing</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link active" href="{% url 'requests:list_completed_requests_manager' user.id %}">Completed</a>
+            <a class="nav-link active" href="{% url 'tickets:list_completed_requests_manager' user.id %}">Completed</a>
         </li>
     </ul>
 
-    <form action="{% url 'requests:manager_requests_date_sort' user.id %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
+    <form action="{% url 'tickets:manager_requests_date_sort' user.id %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
         {% csrf_token %}
         <div class="col">
             <label class="form-label small mb-1">From</label>
@@ -29,6 +29,11 @@
         </div>
         <div class="col">
             <button type="submit" class="btn btn-primary">Sort</button>
+        </div>
+        <div class="col">
+            <a href="{% url 'tickets:export_manager_completed_requests_csv' user.id %}" class="btn btn-outline-secondary">
+                <i data-lucide="download"></i> Download CSV
+            </a>
         </div>
     </form>
 
@@ -49,28 +54,28 @@
                 {% for requests in get_result|default:get_requests_completed %}
                 <tr>
                     <td>{{ requests.request_id }}</td>
-                    <td>{{ requests.request_resource }}</td>
+                    <td>{{ requests.resource_label }}</td>
                     <td>{{ requests.request_category }}</td>
                     <td>{{ requests.created_for }}</td>
                     <td>
                         {% if requests.request_status == 'Pending' %}
-                            <span class="badge text-bg-warning">{{ requests.request_status }}</span>
+                            <span class="status-pill status-pill--warn">{{ requests.request_status }}</span>
                         {% elif requests.request_status == 'Processing' %}
-                            <span class="badge text-bg-primary">{{ requests.request_status }}</span>
+                            <span class="status-pill status-pill--info">{{ requests.request_status }}</span>
                         {% elif requests.request_status == 'Completed' %}
-                            <span class="badge text-bg-success">{{ requests.request_status }}</span>
+                            <span class="status-pill status-pill--good">{{ requests.request_status }}</span>
                         {% elif requests.request_status == 'Cancelled' %}
-                            <span class="badge" style="background-color:#EA580C;">{{ requests.request_status }}</span>
+                            <span class="status-pill status-pill--muted">{{ requests.request_status }}</span>
                         {% endif %}
                     </td>
                     <td>{{ requests.created_on }}</td>
                     <td class="d-flex gap-2 justify-content-center">
-                        <a class="btn btn-sm btn-success" href="{% url 'requests:view_manager_completed_request' requests.id %}">
-                            <i class='bx bxs-folder-open'></i> Open
+                        <a class="btn btn-sm btn-success" href="{% url 'tickets:view_manager_completed_request' requests.id %}">
+                            <i data-lucide="folder-open"></i> Open
                         </a>
                         {% if requests.request_status != 'Completed' and requests.request_status != 'Cancelled' %}
-                            <a class="btn btn-sm btn-outline-warning" href="{% url 'requests:cancel_request' requests.id user.id %}">
-                                <i class='bx bxs-message-alt-x'></i> Cancel
+                            <a class="btn btn-sm btn-outline-warning" href="{% url 'tickets:cancel_request' requests.id user.id %}">
+                                <i data-lucide="message-square-x"></i> Cancel
                             </a>
                         {% endif %}
                     </td>

@@ -1,43 +1,49 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Create Request{% endblock %}
+{% block title %}Sukhra | Create Request{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-edit-alt'></i> Raise Request</h1>
+    <h1 class="page-header"><i data-lucide="square-pen"></i> Raise Request</h1>
     {% include 'message_alert.html' %}
 
     <div class="card mx-auto" style="max-width: 640px;">
         <div class="card-body p-4">
-            <form action="{% url 'requests:create_request' user.id %}" method="POST">
+            <form action="{% url 'tickets:create_request' user.id %}" method="POST" id="createRequestForm" data-employee-resources-url="{% url 'tickets:ajax_load_employee_resources' %}">
                 {% csrf_token %}
                 {% if generated_request_id %}
                 <div class="mb-3">
                     <label class="form-label">Request Id</label>
-                    <input type="text" class="form-control" value="RE{{ generated_request_id }}" readonly>
+                    <input type="text" name="request_id" class="form-control" value="RE{{ generated_request_id }}" readonly>
                 </div>
                 {% endif %}
                 <div class="mb-3">
                     <label class="form-label">Who is this for?</label>
-                    <input name="created_for" type="number" class="form-control" placeholder="Enter peoplesoft ID of member.." required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Resource required</label>
-                    <select name="request_resource" class="form-select">
-                        <option selected>--select resource--</option>
-                        {% for request_request in request_resource_list %}
-                        <option>{{ request_request.resource_category }}</option>
-                        {% endfor %}
-                    </select>
+                    <input name="created_for" id="created_for" type="number" class="form-control" placeholder="Enter peoplesoft ID of member.." required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Request category</label>
-                    <select name="request_category" class="form-select">
+                    <select name="request_category" id="request_category" class="form-select">
                         <option selected>--choose category--</option>
                         <option>Request new</option>
                         <option>Replacement</option>
-                        <option>Bitlocker</option>
+                        <option>Support</option>
+                    </select>
+                </div>
+                <div id="provision-fields" class="mb-3">
+                    <label class="form-label">Resource required</label>
+                    <select name="requested_category" class="form-select">
+                        <option selected value="">--select resource--</option>
+                        {% for category in request_resource_list %}
+                        <option value="{{ category.id }}">{{ category.resource_category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="support-fields" class="mb-3 d-none">
+                    <label class="form-label">Which of their assigned resources is this about?</label>
+                    <select name="regarding_resource_taken" id="regarding_resource_taken" class="form-select" disabled>
+                        <option value="">-- enter peoplesoft id above first --</option>
                     </select>
                 </div>
                 <div class="mb-3">
@@ -48,7 +54,6 @@
                 <input type="hidden" name="created_ps_id" value="{{ user.peoplesoft_id }}">
                 <input type="hidden" name="department" value="{{ user.department }}">
                 <input type="hidden" name="team" value="{{ user.team }}">
-                <input type="hidden" name="asset_id" value="">
                 <input type="hidden" name="request_status" value="Pending">
                 <input type="hidden" name="request_response" value="">
                 <input type="hidden" name="manager_email" value="{{ user.email }}">
@@ -60,10 +65,37 @@
                 {% endif %}
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary flex-fill">Create Request</button>
-                    <a href="{% url 'requests:list_requests_manager' user.id %}" class="btn btn-outline-secondary flex-fill">Back to Requests</a>
+                    <a href="{% url 'tickets:list_requests_manager' user.id %}" class="btn btn-outline-secondary flex-fill">Back to Requests</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var typeSelect = document.getElementById('request_category');
+    var provisionFields = document.getElementById('provision-fields');
+    var supportFields = document.getElementById('support-fields');
+    var createdFor = document.getElementById('created_for');
+    var regardingSelect = document.getElementById('regarding_resource_taken');
+    var resourcesUrl = document.getElementById('createRequestForm').dataset.employeeResourcesUrl;
+
+    function syncFieldsForType() {
+        var isSupport = typeSelect.value === 'Support';
+        provisionFields.classList.toggle('d-none', isSupport);
+        supportFields.classList.toggle('d-none', !isSupport);
+        provisionFields.querySelector('select').disabled = isSupport;
+        regardingSelect.disabled = !isSupport;
+    }
+    function loadEmployeeResources() {
+        if (typeSelect.value !== 'Support' || !createdFor.value) return;
+        fetch(resourcesUrl + '?peoplesoft_id=' + encodeURIComponent(createdFor.value))
+            .then(function (res) { return res.text(); })
+            .then(function (html) { regardingSelect.innerHTML = html; });
+    }
+    typeSelect.addEventListener('change', function () { syncFieldsForType(); loadEmployeeResources(); });
+    createdFor.addEventListener('blur', loadEmployeeResources);
+    syncFieldsForType();
+});
+</script>
 {% endblock %}

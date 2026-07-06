@@ -2,14 +2,14 @@ from django.db import models
 from department.models import Department
 from team.models import Team
 
+from companies.models import TenantModel
 
-# Create your models here.
 
-class Members(models.Model):
-    peoplesoft_id = models.CharField(max_length=8, unique=True)
+class Employee(TenantModel):
+    peoplesoft_id = models.CharField(max_length=8)
     fullname = models.CharField(max_length=150)
     position = models.CharField(max_length=150)
-    email = models.EmailField(max_length=100,unique=True)
+    email = models.EmailField(max_length=100)
     contact = models.CharField(max_length=50)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
@@ -21,8 +21,9 @@ class Members(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = 'member'
-        verbose_name_plural = 'members'
+        verbose_name = 'employee'
+        verbose_name_plural = 'employees'
+        unique_together = (('company', 'peoplesoft_id'), ('company', 'email'))
 
     def __str__(self):
         return self.peoplesoft_id

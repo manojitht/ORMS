@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Add Team Member{% endblock %}
+{% block title %}Sukhra | Add Team Member{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-user-plus'></i> Add Team Member</h1>
+    <h1 class="page-header"><i data-lucide="user-plus"></i> Add Team Member</h1>
     {% include 'message_alert.html' %}
 
     <div class="card mx-auto" style="max-width: 640px;">
         <div class="card-body p-4">
-            <form action="{% url 'members:add_member' %}" method="POST" enctype="multipart/form-data">
+            <form action="{% url 'employees:add_member' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -52,7 +52,7 @@
                 </div>
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary flex-fill">Create Profile</button>
-                    <a href="{% url 'members:view_team_members' user.id %}" class="btn btn-outline-secondary flex-fill">Back to My Team</a>
+                    <a href="{% url 'employees:view_team_members' user.id %}" class="btn btn-outline-secondary flex-fill">Back to My Team</a>
                 </div>
             </form>
         </div>

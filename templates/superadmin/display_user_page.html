@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Users{% endblock %}
+{% block title %}Sukhra | Users{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bxs-group'></i> Users Management</h1>
+    <h1 class="page-header"><i data-lucide="users"></i> Users Management</h1>
     {% include 'message_alert.html' %}
 
     <form action="{% url 'account:superadmin_users_date_sort' %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
@@ -23,7 +23,12 @@
         </div>
         <div class="col">
             <a href="{% url 'account:add_user_page' %}" class="btn btn-outline-primary">
-                <i class='bx bx-message-square-add'></i> Add User
+                <i data-lucide="message-square-plus"></i> Add User
+            </a>
+        </div>
+        <div class="col">
+            <a href="{% url 'account:export_users_csv' %}" class="btn btn-outline-secondary">
+                <i data-lucide="download"></i> Download CSV
             </a>
         </div>
     </form>
@@ -57,9 +62,9 @@
                     <td>{{ user.date_joined }}</td>
                     <td>
                         {% if user.is_active %}
-                            <span class="badge text-bg-success">Active</span>
+                            <span class="status-pill status-pill--good">Active</span>
                         {% else %}
-                            <span class="badge" style="background-color:#EA580C;">Inactive</span>
+                            <span class="status-pill status-pill--muted">Inactive</span>
                         {% endif %}
                     </td>
                     <td><a class="btn btn-sm btn-outline-primary" href="{% url 'account:view_user_details' user.id %}">View</a></td>

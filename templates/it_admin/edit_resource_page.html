@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load resource_extras %}
 
-{% block title %}ORMS | Edit Resource{% endblock %}
+{% block title %}Sukhra | Edit Resource{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-devices'></i> Edit Resource</h1>
+    <h1 class="page-header"><i data-lucide="laptop"></i> Edit Resource</h1>
 
     {% if selected_res %}
     <div class="card mx-auto" style="max-width: 720px;">
@@ -13,14 +14,14 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="mb-0">Editing {{ selected_res.asset_id }}</h5>
                 <a href="{% url 'resources:view_resource' selected_res.id %}" class="btn btn-sm btn-outline-secondary">
-                    <i class='bx bx-arrow-back'></i> Back
+                    <i data-lucide="arrow-left"></i> Back
                 </a>
             </div>
 
             {% if selected_res.resource_image %}
                 <img src="{{ selected_res.resource_image.url }}" class="mb-3 rounded" style="max-height: 160px;">
             {% else %}
-                <img src="{% static 'images/image_placeholder.jpg' %}" class="mb-3 rounded" style="max-height: 160px;">
+                {% include 'includes/media_placeholder.html' with icon='laptop' height=160 extra_class='mb-3' %}
             {% endif %}
 
             <form action="{% url 'resources:update_resource' selected_res.id %}" method="POST" enctype="multipart/form-data">
@@ -36,10 +37,9 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Resource type</label>
-                        <select name="resource_category" class="form-select">
-                            <option selected>{{ selected_res.resource_category }}</option>
+                        <select name="resource_category" id="resource_category_select" class="form-select">
                             {% for category in resource_categories %}
-                            <option>{{ category.resource_category }}</option>
+                            <option value="{{ category.id }}" {% if category.id == selected_res.resource_category_id %}selected{% endif %}>{{ category.resource_category }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -53,12 +53,17 @@
                             <option>Configuration</option>
                         </select>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Bitlocker key</label>
-                        <input name="bitlocker_key" class="form-control" type="text" value="{{ selected_res.bitlocker_key }}">
-                    </div>
                 </div>
                 <p class="text-muted small">Added on {{ selected_res.added_on }} &middot; Updated by {{ selected_res.added_by }}</p>
+                <div id="attribute-fields">
+                {% for key, label in all_attribute_defs %}
+                    <div class="mb-3 attribute-field d-none" data-key="{{ key }}">
+                        <label class="form-label">{{ label }}</label>
+                        <input type="text" name="attr__{{ key }}" class="form-control" value="{{ selected_res.attribute_values|dict_get:key }}" disabled>
+                    </div>
+                {% endfor %}
+                </div>
+                <script id="category-schema-data" type="application/json">{{ category_schema_json|safe }}</script>
                 <div class="mb-3">
                     <label class="form-label">Resource specifications</label>
                     <textarea name="resource_description" class="form-control" rows="4" required>{{ selected_res.resource_description }}</textarea>
@@ -74,4 +79,23 @@
     </div>
     {% endif %}
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var select = document.getElementById('resource_category_select');
+    var schemaEl = document.getElementById('category-schema-data');
+    if (!select || !schemaEl) return;
+    var schema = JSON.parse(schemaEl.textContent);
+    function sync() {
+        var keys = schema[select.value] || [];
+        document.querySelectorAll('.attribute-field').forEach(function (field) {
+            var show = keys.indexOf(field.dataset.key) !== -1;
+            field.classList.toggle('d-none', !show);
+            var input = field.querySelector('input');
+            if (input) input.disabled = !show;
+        });
+    }
+    select.addEventListener('change', sync);
+    sync();
+});
+</script>
 {% endblock %}

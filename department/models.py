@@ -1,11 +1,10 @@
-# from sre_parse import Verbose
-# from tabnanny import verbose
 from django.db import models
-# from datetime import datetime, date
 
-# Create your models here.
-class Department(models.Model):
-    department_name = models.CharField(max_length=150, unique=True)
+from companies.models import TenantModel
+
+
+class Department(TenantModel):
+    department_name = models.CharField(max_length=150)
     department_head = models.CharField(max_length=150)
     department_description = models.TextField(max_length=255, blank=True)
     created_by = models.CharField(max_length=150)
@@ -15,6 +14,7 @@ class Department(models.Model):
     class Meta:
         verbose_name = 'department'
         verbose_name_plural = 'departments'
+        unique_together = ('company', 'department_name')
 
     def __str__(self):
         return self.department_name

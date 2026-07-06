@@ -1,0 +1,23 @@
+{% extends 'account/emails/base_email.html' %}
+{% block heading %}Your request is complete{% endblock %}
+{% block body %}
+<p style="margin:0 0 16px 0;">Hi {{ update_req.created_for.fullname }},</p>
+<p style="margin:0 0 20px 0;">
+{% if update_req.request_category == 'Support' %}
+Your support request regarding <strong>{{ update_req.resource_label }}</strong> has been completed.
+{% else %}
+Your request for <strong>{{ update_req.resource_label }}</strong> has been completed.
+{% endif %}
+</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B; width:40%;">Request Id</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600; font-family:'SFMono-Regular',Consolas,monospace;">{{ update_req.request_id }}</td></tr>
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B;">Resource</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600;">{{ update_req.resource_label }}</td></tr>
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B;">Asset Id</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600; font-family:'SFMono-Regular',Consolas,monospace;">{{ update_req.asset_id }}</td></tr>
+{% for attr in resource_attributes %}
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B;">{{ attr.label }}</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600; font-family:'SFMono-Regular',Consolas,monospace;">{{ attr.value }}</td></tr>
+{% endfor %}
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B;">Completed on</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600;">{{ update_req.completed_on }}</td></tr>
+<tr><td style="padding:8px 0; color:#64748B;">Status</td><td style="padding:8px 0;"><span style="background-color:#DCFCE7; color:#15803D; font-size:13px; font-weight:600; padding:3px 10px; border-radius:999px;">{{ resuest_status_r }}</span></td></tr>
+</table>
+<p style="margin:20px 0 0 0;">Keep this email as confirmation, and collect your resource from your manager if applicable.</p>
+{% endblock %}

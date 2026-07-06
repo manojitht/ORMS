@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}ORMS | Taken Resources{% endblock %}
+{% block title %}Sukhra | Taken Resources{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
-    <h1 class="orms-page-header"><i class='bx bx-history'></i> Taken Resources</h1>
+    <h1 class="page-header"><i data-lucide="history"></i> Taken Resources</h1>
 
     <ul class="nav nav-pills mb-3">
         <li class="nav-item">
             <a class="nav-link active" href="{% url 'resources:manager_taken_resources_list_table' user.id %}">
-                <i class='bx bx-upload'></i> Taken Resources
+                <i data-lucide="upload"></i> Taken Resources
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'resources:manager_returned_resources_list_table' user.id %}">
-                <i class='bx bx-undo'></i> Returned Resources
+                <i data-lucide="undo-2"></i> Returned Resources
             </a>
         </li>
     </ul>
@@ -54,7 +54,7 @@
                 {% for device in get_result|default:resources %}
                 <tr>
                     <td>{{ device.asset_id }}</td>
-                    <td>{{ device.resource_category }}</td>
+                    <td>{{ device.asset_id.resource_category }}</td>
                     <td>{{ device.peoplesoft_id.fullname }}</td>
                     <td>{{ device.peoplesoft_id.position }}</td>
                     <td>{{ device.taken_date }}</td>
