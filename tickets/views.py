@@ -7,7 +7,7 @@ from department.models import Department
 from account.models import Account
 from tickets.models import Ticket
 from team.models import Team
-from datetime import date
+from django.utils import timezone
 import random
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
@@ -192,7 +192,15 @@ def manager_requests_date_sort(request, userid):
 
 @login_required(login_url='account:login')
 def cancel_request(request, reqid, userid):
-    get_request = Ticket.objects.get(id=reqid)
+    get_user_id = Account.objects.get(id=userid, company=request.user.company)
+    try:
+        # Scoped to the requesting manager's own tickets -- Ticket.objects is
+        # already company-scoped via TenantManager, but that alone doesn't
+        # stop one manager from cancelling another manager's ticket by id.
+        get_request = Ticket.objects.get(id=reqid, created_ps_id=get_user_id)
+    except Ticket.DoesNotExist:
+        message_alert.error(request, 'You do not have permission to cancel this request.')
+        return redirect('tickets:list_requests_manager', userid)
     get_request.request_status = 'Cancelled'
     resuest_status_r = 'Cancelled'
 
@@ -230,7 +238,15 @@ def list_pending_requests_it_admin(request, userid):
 
 @login_required(login_url='account:login')
 def cancel_request_it_admin(request, reqid, userid):
-    get_request = Ticket.objects.get(id=reqid)
+    get_user_id = Account.objects.get(id=userid, company=request.user.company)
+    try:
+        # Scoped to tickets actually assigned to this IT admin -- see
+        # cancel_request's comment above for why company-scoping alone
+        # (via TenantManager) isn't sufficient here.
+        get_request = Ticket.objects.get(id=reqid, assigned_to=get_user_id)
+    except Ticket.DoesNotExist:
+        message_alert.error(request, 'You do not have permission to cancel this request.')
+        return redirect('tickets:list_pending_requests_it_admin', userid)
     get_request.request_status = 'Cancelled'
     resuest_status_r = 'Cancelled'
 
@@ -292,6 +308,7 @@ def view_selected_request_it_admin(request, reqid):
 def approve_processing_request(request, reqid, userid):
     get_request = Ticket.objects.get(id=reqid)
     get_request.request_status = 'Processing'
+    get_request.processing_started_on = timezone.now()
     resuest_status_r = 'Processing'
 
     #send email functionality for request approval process
@@ -349,7 +366,7 @@ def complete_processing_request(request, reqid, userid):
         update_req.request_response = request.POST['request_response']
         update_req.request_status = 'Completed'
         resuest_status_r = "completed"
-        update_req.completed_on = date.today()
+        update_req.completed_on = timezone.now()
 
         if update_req.request_category == 'Support':
             resource_taken = update_req.regarding_resource_taken
@@ -442,5 +459,191 @@ def it_admin_completed_requests_date_sort(request, userid):
 
     context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, 'get_requests': None, }
     return render(request, 'it_admin/view_completed_requests_it_admin.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Employee self-service requests -- thin, dedicated views mirroring the
+# manager equivalents (create_request/list_requests_manager/etc.), matching
+# this codebase's existing convention of one view per role for the same
+# conceptual action (see cancel_request vs cancel_request_it_admin). Kept
+# separate rather than branching inside the manager views so neither path
+# risks regressing the other.
+
+@login_required(login_url='account:login')
+def create_request_employee(request, userid):
+    account = Account.objects.get(id=userid, company=request.user.company)
+    employee = account.employee_profile
+    request_resource_list = Category.objects.filter(is_active=True)
+    own_resources_taken = ResourceTaken.objects.filter(
+        peoplesoft_id=employee, resource_status='Taken', is_active=True) if employee else []
+
+    if request.method == 'POST' and employee is not None:
+        request_id = request.POST['request_id']
+        request_category = request.POST['request_category']
+        request_decription = request.POST['request_decription']
+
+        if request_category == '--choose category--':
+            message_alert.info(request, 'Please choose the request category!')
+        else:
+            requested_category = None
+            regarding_resource_taken = None
+
+            if request_category == 'Support':
+                regarding_resource_taken_id = request.POST.get('regarding_resource_taken')
+                regarding_resource_taken = ResourceTaken.objects.filter(
+                    id=regarding_resource_taken_id, peoplesoft_id=employee,
+                    resource_status='Taken', is_active=True,
+                ).first()
+                if regarding_resource_taken is None:
+                    message_alert.info(request, 'Please choose one of your currently assigned resources!')
+                    return redirect('tickets:create_request_employee', userid)
+            else:
+                requested_category_id = request.POST.get('requested_category')
+                if not requested_category_id:
+                    message_alert.info(request, 'Please choose a resource!')
+                    return redirect('tickets:create_request_employee', userid)
+                requested_category = Category.objects.get(id=requested_category_id)
+
+            all_it_admins = list(Account.objects.filter(company=request.user.company, is_it_admin=True, is_active=True))
+            assign_admin = random.sample(all_it_admins, 1)[0] if all_it_admins else None
+
+            ticket = Ticket(
+                request_id=request_id, created_for=employee, created_by=f'{account.first_name} {account.last_name}',
+                created_ps_id=account.peoplesoft_id, department=employee.department, team=employee.team,
+                requested_category=requested_category, regarding_resource_taken=regarding_resource_taken,
+                request_category=request_category, request_status='Pending Manager Approval',
+                request_decription=request_decription,
+                assigned_to=assign_admin.peoplesoft_id if assign_admin else '',
+            )
+            ticket.save()
+
+            manager_account = Account.objects.filter(
+                company=request.user.company, peoplesoft_id=employee.manager_peoplesoft_id).first()
+            if manager_account and manager_account.email:
+                mail_head_subject = f'Approval needed: request ({ticket.request_id}) from {employee.fullname}'
+                _send_ticket_email(mail_head_subject, 'request_needs_manager_approval_email.html', {
+                    'ticket': ticket, 'manager_account': manager_account,
+                }, [manager_account.email])
+
+            message_alert.success(request, f'{request_id} request submitted -- waiting on your manager\'s approval.')
+            return redirect('tickets:list_requests_employee', userid)
+
+    generated_request_id = random.randrange(11111111111, 99999999999, 11)
+    context = {
+        'generated_request_id': generated_request_id,
+        'request_resource_list': request_resource_list,
+        'own_resources_taken': own_resources_taken,
+    }
+    return render(request, 'employee/create_request_employee.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url='account:login')
+def list_requests_employee(request, userid):
+    account = Account.objects.get(id=userid, company=request.user.company)
+    get_requests_pending = Ticket.objects.filter(
+        created_ps_id=account, request_status='Pending Manager Approval', is_active=True).order_by('-id')
+    get_requests_processing = Ticket.objects.filter(
+        created_ps_id=account, request_status__in=['Pending', 'Processing'], is_active=True).order_by('-id')
+    context = { 'get_requests_pending': get_requests_pending, 'get_requests_processing': get_requests_processing, }
+    return render(request, 'employee/my_requests.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url='account:login')
+def list_completed_requests_employee(request, userid):
+    account = Account.objects.get(id=userid, company=request.user.company)
+    get_requests_completed = Ticket.objects.filter(
+        created_ps_id=account, request_status__in=['Completed', 'Cancelled'], is_active=True).order_by('-id')
+    context = { 'get_requests_completed': get_requests_completed, }
+    return render(request, 'employee/my_requests_completed.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url='account:login')
+def view_selected_request_employee(request, reqid):
+    get_request_id = Ticket.objects.get(id=reqid, created_ps_id=request.user)
+    context = { 'get_request_id': get_request_id }
+    return render(request, 'employee/open_request_employee.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url='account:login')
+def cancel_request_employee(request, reqid, userid):
+    account = Account.objects.get(id=userid, company=request.user.company)
+    try:
+        get_request = Ticket.objects.get(id=reqid, created_ps_id=account)
+    except Ticket.DoesNotExist:
+        message_alert.error(request, 'You do not have permission to cancel this request.')
+        return redirect('tickets:list_requests_employee', userid)
+    get_request.request_status = 'Cancelled'
+    get_request.save()
+    message_alert.success(request, get_request.request_id + ', was cancelled successfully!')
+    return redirect('tickets:list_requests_employee', userid)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Manager-side approval queue for employee-submitted requests.
+
+@login_required(login_url='account:login')
+def list_requests_from_team_manager(request, userid):
+    account = Account.objects.get(id=userid, company=request.user.company)
+    get_requests_awaiting = Ticket.objects.filter(
+        created_for__manager_peoplesoft_id=account, request_status='Pending Manager Approval', is_active=True
+    ).order_by('-id')
+    context = { 'get_requests_awaiting': get_requests_awaiting }
+    return render(request, 'manager/view_requests_from_employees.html', context)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url='account:login')
+def approve_employee_request_manager(request, reqid, userid):
+    account = Account.objects.get(id=userid, company=request.user.company)
+    try:
+        get_request = Ticket.objects.get(
+            id=reqid, request_status='Pending Manager Approval', created_for__manager_peoplesoft_id=account)
+    except Ticket.DoesNotExist:
+        message_alert.error(request, 'You do not have permission to approve this request.')
+        return redirect('tickets:list_requests_from_team_manager', userid)
+
+    get_request.request_status = 'Pending'
+    get_request.save()
+
+    employee_account = Account.objects.filter(
+        company=request.user.company, employee_profile=get_request.created_for).first()
+    if employee_account and employee_account.email:
+        mail_head_subject = f'Your manager approved request ({get_request.request_id})'
+        _send_ticket_email(mail_head_subject, 'request_manager_decision_email.html', {
+            'get_request': get_request, 'decision': 'approved',
+        }, [employee_account.email])
+
+    message_alert.success(request, get_request.request_id + ', was approved and sent to IT for processing!')
+    return redirect('tickets:list_requests_from_team_manager', userid)
+
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+@login_required(login_url='account:login')
+def deny_employee_request_manager(request, reqid, userid):
+    account = Account.objects.get(id=userid, company=request.user.company)
+    try:
+        get_request = Ticket.objects.get(
+            id=reqid, request_status='Pending Manager Approval', created_for__manager_peoplesoft_id=account)
+    except Ticket.DoesNotExist:
+        message_alert.error(request, 'You do not have permission to deny this request.')
+        return redirect('tickets:list_requests_from_team_manager', userid)
+
+    get_request.request_status = 'Cancelled'
+    if request.method == 'POST':
+        get_request.request_response = request.POST.get('denial_reason', '')
+    get_request.save()
+
+    employee_account = Account.objects.filter(
+        company=request.user.company, employee_profile=get_request.created_for).first()
+    if employee_account and employee_account.email:
+        mail_head_subject = f'Your manager denied request ({get_request.request_id})'
+        _send_ticket_email(mail_head_subject, 'request_manager_decision_email.html', {
+            'get_request': get_request, 'decision': 'denied',
+        }, [employee_account.email])
+
+    message_alert.success(request, get_request.request_id + ', was denied.')
+    return redirect('tickets:list_requests_from_team_manager', userid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | Import Resources{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="upload"></i> Import Resources</h1>
+    {% include 'message_alert.html' %}
+
+    <div class="card form-card">
+        <div class="card-body p-4">
+            <p class="text-muted small">
+                Upload a CSV file to add multiple resources at once. Each row needs an Asset Id, Model Name,
+                and Resource Type (matching one of your existing categories) &mdash; rows with problems are
+                skipped individually and reported back to you, the rest still import.
+            </p>
+            <a href="{% url 'resources:download_resource_import_template_csv' %}" class="btn btn-outline-primary btn-sm mb-4">
+                <i data-lucide="download"></i> Download CSV template
+            </a>
+
+            <form action="{% url 'resources:import_resources_csv' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">CSV file</label>
+                    <input type="file" name="file" class="form-control" accept=".csv" required>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'resources:resources_listings_page' %}" class="btn btn-outline-secondary flex-fill">Back</a>
+                    <button type="submit" class="btn btn-primary flex-fill">Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

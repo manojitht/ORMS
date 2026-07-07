@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | My Requests{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="receipt"></i> My Requests</h1>
+    {% include 'message_alert.html' %}
+
+    <ul class="nav nav-pills mb-3">
+        <li class="nav-item">
+            <a class="nav-link active" href="{% url 'tickets:list_requests_employee' user.id %}">Pending &amp; Processing</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'tickets:list_completed_requests_employee' user.id %}">Completed</a>
+        </li>
+    </ul>
+
+    <a href="{% url 'tickets:create_request_employee' user.id %}" class="btn btn-primary mb-3">
+        <i data-lucide="message-square-plus"></i> Create New
+    </a>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Request Id</th>
+                    <th>Resource</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Created On</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for requests in get_requests_pending %}
+                <tr>
+                    <td>{{ requests.request_id }}</td>
+                    <td>{{ requests.resource_label }}</td>
+                    <td>{{ requests.request_category }}</td>
+                    <td><span class="status-pill status-pill--warn">Awaiting manager approval</span></td>
+                    <td>{{ requests.created_on }}</td>
+                    <td class="d-flex gap-2 justify-content-center">
+                        <a class="btn btn-sm btn-success" href="{% url 'tickets:view_selected_request_employee' requests.id %}">
+                            <i data-lucide="folder-open"></i> Open
+                        </a>
+                        <a class="btn btn-sm btn-outline-warning" href="{% url 'tickets:cancel_request_employee' requests.id user.id %}">
+                            <i data-lucide="message-square-x"></i> Cancel
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% for requests in get_requests_processing %}
+                <tr>
+                    <td>{{ requests.request_id }}</td>
+                    <td>{{ requests.resource_label }}</td>
+                    <td>{{ requests.request_category }}</td>
+                    <td>
+                        {% if requests.request_status == 'Pending' %}
+                            <span class="status-pill status-pill--warn">Pending IT</span>
+                        {% elif requests.request_status == 'Processing' %}
+                            <span class="status-pill status-pill--info">Processing</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ requests.created_on }}</td>
+                    <td class="d-flex gap-2 justify-content-center">
+                        <a class="btn btn-sm btn-success" href="{% url 'tickets:view_selected_request_employee' requests.id %}">
+                            <i data-lucide="folder-open"></i> Open
+                        </a>
+                        <a class="btn btn-sm btn-outline-warning" href="{% url 'tickets:cancel_request_employee' requests.id user.id %}">
+                            <i data-lucide="message-square-x"></i> Cancel
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not get_requests_pending and not get_requests_processing %}
+                <tr><td colspan="6" class="p-0">
+                    {% include 'includes/empty_state.html' with icon='receipt' title='No open requests' subtitle='Requests you raise will show up here until completed.' %}
+                </td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

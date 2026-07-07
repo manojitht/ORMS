@@ -14,14 +14,55 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from sukhra.csv_utils import csv_response
+from sukhra.account_provisioning import generate_temporary_password, send_account_creation_email
 
 # Create your views here.
+
+
+def _provision_employee_account(request, employee):
+    """Create a self-service login for `employee`, linked via
+    Account.employee_profile. Mirrors add_user_page's collision-check
+    pattern -- Account.peoplesoft_id is globally unique while
+    Employee.peoplesoft_id is only unique per company, so two different
+    companies' employees can collide on id; when that happens we surface a
+    clear message and skip provisioning rather than erroring.
+    """
+    if Account.objects.filter(peoplesoft_id=employee.peoplesoft_id).exists():
+        message_alert.info(request, f'{employee.peoplesoft_id} is already taken by another account -- could not grant portal access.')
+        return False
+
+    first_name, _, last_name = employee.fullname.partition(' ')
+    password_generated = generate_temporary_password()
+    user = Account.objects.create_employee(
+        peoplesoft_id=employee.peoplesoft_id,
+        first_name=first_name,
+        last_name=last_name or first_name,
+        email=employee.email,
+        department=employee.department,
+        team=employee.team,
+        ini_pas=password_generated,
+        password=password_generated,
+        company=request.user.company,
+        employee=employee,
+    )
+    if send_account_creation_email(request, user):
+        message_alert.success(request, f'Portal access granted -- {employee.fullname} will get an activation email.')
+        return True
+    message_alert.error(request, 'Could not send the activation email -- portal access was not granted.')
+    return False
+
+
+@login_required(login_url='account:login')
+def grant_portal_access(request, memid):
+    employee = Employee.objects.get(id=memid)
+    _provision_employee_account(request, employee)
+    return redirect('employees:view_team_members_details', memid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def add_member(request):
-    
+
     if request.method == 'POST':
         peoplesoft_id = request.POST['peoplesoft_id']
         fullname = request.POST['fullname']
@@ -34,18 +75,21 @@ def add_member(request):
         department = request.POST['department']
         team = request.POST['team']
         member_image = request.FILES['member_image']
+        should_grant_portal_access = 'grant_portal_access' in request.POST
 
         if Employee.objects.filter(peoplesoft_id=peoplesoft_id).exists():
             message_alert.info(request, peoplesoft_id + ', is already exists as team member profile!')
         elif Employee.objects.filter(email=email).exists():
             message_alert.info(request, email + ', is already exists in team member profile!')
         else:
-            new_member = Employee(peoplesoft_id=peoplesoft_id, fullname=fullname, position=position, 
+            new_member = Employee(peoplesoft_id=peoplesoft_id, fullname=fullname, position=position,
             email=email, contact=contact, department=Department.objects.get(department_name=department),
-            team=Team.objects.get(team_name=team), home_address=home_address, 
+            team=Team.objects.get(team_name=team), home_address=home_address,
             member_image=member_image, manager_name=manager_name, manager_peoplesoft_id=manager_peoplesoft_id)
             new_member.save()
             message_alert.success(request, peoplesoft_id + ' team member profile created successfully!')
+            if should_grant_portal_access:
+                _provision_employee_account(request, new_member)
             return redirect('employees:add_member')
 
     return render(request, 'manager/add_member_form.html')
@@ -110,12 +154,6 @@ def search_team_member(request, userid):
         'team_members': None,
     }
     return render(request, 'manager/view_team_member.html', context)
-
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-@login_required(login_url='account:login')
-def manager_notes_page(request):
-    return render(request, 'manager/manager_notes_page.html')
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -272,9 +310,16 @@ def delete_team_member(request, memid, userid):
     if request.method == 'POST':
         delete_name = request.POST['delete_name']
         if delete_name == 'delete':
+            # Deactivate any linked self-service login before the delete --
+            # employee_profile is SET_NULL, so the FK would just go blank on
+            # its own, silently leaving an orphaned *active* account behind.
+            linked_account = Account.objects.filter(employee_profile=deleting_mem).first()
+            if linked_account:
+                linked_account.is_active = False
+                linked_account.save()
             message_alert.success(request, deleting_mem.fullname + ' was deleted successfully!')
             deleting_mem.delete()
-    return redirect('employees:view_team_members', userid)    
+    return redirect('employees:view_team_members', userid)
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

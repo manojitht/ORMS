@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
+from django.db.models import Avg, DurationField, ExpressionWrapper, F
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
@@ -19,10 +20,11 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from department.models import Department
 from employees.models import Employee
 from tickets.models import Ticket
-from resources.models import Category, Resource, ResourceTaken
+from resources.models import Category, Resource, ResourceTaken, WARRANTY_ALERT_WINDOW_DAYS
 from team.models import Team
 
 from sukhra.csv_utils import csv_response
+from sukhra.account_provisioning import generate_temporary_password, send_account_creation_email
 
 from .forms import LoginUsers
 from .models import Account, AccountProfile
@@ -34,6 +36,20 @@ ROLE_ACCOUNT_CREATORS = {
     'Manager': Account.objects.create_manager,
     'IT Administrator': Account.objects.create_IT_admin,
 }
+
+
+def _format_duration_human(td):
+    """A timedelta (or None) -> a short human string for a dashboard stat
+    tile, e.g. '4.2 hrs' or '1.3 days'. Built here rather than as a template
+    filter to match the existing convention of assembling display strings
+    in the view (see e.g. resource_label, is_overdue on Ticket).
+    """
+    if td is None:
+        return '—'
+    hours = td.total_seconds() / 3600
+    if hours < 48:
+        return f'{hours:.1f} hrs'
+    return f'{hours / 24:.1f} days'
 
 
 def _company_resource_breakdown():
@@ -67,32 +83,8 @@ def _company_resource_breakdown():
     }
 
 
-def _generate_temporary_password(length=10):
-    alphabet = string.ascii_letters + string.digits
-    return ''.join(secrets.choice(alphabet) for _ in range(length))
-
-
-def _send_account_creation_email(request, user):
-    """Email the new user their account-activation link. Deletes the account
-    and returns False if the email fails to send, so we don't leave behind
-    an account the owner has no way to activate."""
-    try:
-        current_site = get_current_site(request)
-        context = {
-            'user': user,
-            'domain': current_site,
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-            'token': default_token_generator.make_token(user),
-        }
-        text_body = render_to_string('account/account_confirmation_email.html', context)
-        html_body = render_to_string('account/emails/account_confirmation_email.html', context)
-        email = EmailMultiAlternatives('Sukhra account creation', text_body, to=[user.email])
-        email.attach_alternative(html_body, 'text/html')
-        email.send()
-        return True
-    except Exception:
-        user.delete()
-        return False
+_generate_temporary_password = generate_temporary_password
+_send_account_creation_email = send_account_creation_email
 
 
 def _update_account_profile(request, account):
@@ -160,6 +152,9 @@ def login(request):
             elif user is not None and user.is_superadmin:
                 permit_user(request, user)
                 return redirect('account:superadmin_portal')
+            elif user is not None and user.is_employee:
+                permit_user(request, user)
+                return redirect('account:employee_portal', user.id)
             else:
                 message = 'Invalid credentials please check!'
                 message_alert.error(request, 'Invalid credentials please check!')
@@ -211,6 +206,17 @@ def superadmin_portal(request):
         user_growth_counts.append(Account.objects.filter(
             company=company, is_active=True, date_joined__year=y, date_joined__month=m).count())
 
+    # Company-wide SLA stats -- same shape as it_admin_portal's, just not
+    # scoped to one assignee.
+    avg_response_time = Ticket.objects.filter(
+        is_active=True, processing_started_on__isnull=False
+    ).aggregate(avg=Avg(ExpressionWrapper(F('processing_started_on') - F('created_on'), output_field=DurationField())))['avg']
+    avg_resolution_time = Ticket.objects.filter(
+        is_active=True, completed_on__isnull=False, processing_started_on__isnull=False
+    ).aggregate(avg=Avg(ExpressionWrapper(F('completed_on') - F('processing_started_on'), output_field=DurationField())))['avg']
+    open_tickets = Ticket.objects.filter(is_active=True).exclude(request_status__in=['Completed', 'Cancelled'])
+    overdue_requests_count = sum(1 for t in open_tickets if t.is_overdue)
+
     context = {
         'get_total_managers_count': get_total_managers_count,
         'get_total_administrators_count': get_total_administrators_count,
@@ -224,6 +230,9 @@ def superadmin_portal(request):
         'ticket_status_counts': ticket_status_counts,
         'user_growth_labels': user_growth_labels,
         'user_growth_counts': user_growth_counts,
+        'avg_response_time': _format_duration_human(avg_response_time),
+        'avg_resolution_time': _format_duration_human(avg_resolution_time),
+        'overdue_requests_count': overdue_requests_count,
     }
     context.update(_company_resource_breakdown())
     return render(request, 'superadmin/superadmin_home.html', context)
@@ -240,10 +249,31 @@ def it_admin_portal(request, userid):
     pending_requests_count = Ticket.objects.filter(
         assigned_to=account, request_status='Pending', is_active=True).count()
 
+    warranty_cutoff = date.today() + timedelta(days=WARRANTY_ALERT_WINDOW_DAYS)
+    expired_warranty_count = Resource.objects.filter(
+        is_active=True, warranty_expiry_date__lt=date.today()).count()
+    expiring_soon_warranty_count = Resource.objects.filter(
+        is_active=True, warranty_expiry_date__gte=date.today(), warranty_expiry_date__lte=warranty_cutoff).count()
+
+    avg_response_time = Ticket.objects.filter(
+        assigned_to=account, is_active=True, processing_started_on__isnull=False
+    ).aggregate(avg=Avg(ExpressionWrapper(F('processing_started_on') - F('created_on'), output_field=DurationField())))['avg']
+    avg_resolution_time = Ticket.objects.filter(
+        assigned_to=account, is_active=True, completed_on__isnull=False, processing_started_on__isnull=False
+    ).aggregate(avg=Avg(ExpressionWrapper(F('completed_on') - F('processing_started_on'), output_field=DurationField())))['avg']
+    open_tickets = Ticket.objects.filter(assigned_to=account, is_active=True).exclude(
+        request_status__in=['Completed', 'Cancelled'])
+    overdue_requests_count = sum(1 for t in open_tickets if t.is_overdue)
+
     context = {
         'completed_requests_count': completed_requests_count,
         'processing_requests_count': processing_requests_count,
         'pending_requests_count': pending_requests_count,
+        'expired_warranty_count': expired_warranty_count,
+        'expiring_soon_warranty_count': expiring_soon_warranty_count,
+        'avg_response_time': _format_duration_human(avg_response_time),
+        'avg_resolution_time': _format_duration_human(avg_resolution_time),
+        'overdue_requests_count': overdue_requests_count,
     }
     context.update(_company_resource_breakdown())
     return render(request, 'it_admin/it_administrator_dashboard.html', context)
@@ -298,6 +328,59 @@ def manager_portal(request, userid):
         'request_list': request_list,
     }
     return render(request, 'manager/manager_dashboard.html', context)
+
+
+@login_required(login_url='account:login')
+def employee_portal(request, userid):
+    account = Account.objects.get(id=userid, company=request.user.company)
+    employee = account.employee_profile
+
+    resources_taken_count = ResourceTaken.objects.filter(
+        peoplesoft_id=employee, resource_status='Taken', is_active=True).count() if employee else 0
+    my_requests_count = Ticket.objects.filter(created_ps_id=account, is_active=True).count()
+    awaiting_approval_count = Ticket.objects.filter(
+        created_ps_id=account, request_status='Pending Manager Approval', is_active=True).count()
+    in_progress_count = Ticket.objects.filter(
+        created_ps_id=account, request_status__in=['Pending', 'Processing'], is_active=True).count()
+    completed_requests_count = Ticket.objects.filter(
+        created_ps_id=account, request_status='Completed', is_active=True).count()
+
+    context = {
+        'employee': employee,
+        'resources_taken_count': resources_taken_count,
+        'my_requests_count': my_requests_count,
+        'awaiting_approval_count': awaiting_approval_count,
+        'in_progress_count': in_progress_count,
+        'completed_requests_count': completed_requests_count,
+    }
+    return render(request, 'employee/employee_dashboard.html', context)
+
+
+@login_required(login_url='account:login')
+def employee_user_profile(request, userid):
+    account = Account.objects.get(id=userid, company=request.user.company)
+    context = { 'employee': account.employee_profile }
+    return render(request, 'employee/employee_profile.html', context)
+
+
+@login_required(login_url='account:login')
+def employee_edit_user_profile(request):
+    return render(request, 'employee/edit_employee_profile.html')
+
+
+@login_required(login_url='account:login')
+def employee_update_user_profile(request, userid):
+    account = Account.objects.get(id=userid, company=request.user.company)
+    _update_account_profile(request, account)
+    return redirect('account:employee_user_profile', userid)
+
+
+@login_required(login_url='account:login')
+def employee_change_password(request, userid):
+    account = Account.objects.get(id=userid, company=request.user.company)
+    if request.method == 'POST':
+        _process_password_change(request, account)
+    return redirect('account:employee_user_profile', userid)
 
 
 @login_required(login_url='account:login')

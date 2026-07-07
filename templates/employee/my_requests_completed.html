@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | Completed Requests{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="receipt"></i> My Requests</h1>
+    {% include 'message_alert.html' %}
+
+    <ul class="nav nav-pills mb-3">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'tickets:list_requests_employee' user.id %}">Pending &amp; Processing</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{% url 'tickets:list_completed_requests_employee' user.id %}">Completed</a>
+        </li>
+    </ul>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Request Id</th>
+                    <th>Resource</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Completed On</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for requests in get_requests_completed %}
+                <tr>
+                    <td>{{ requests.request_id }}</td>
+                    <td>{{ requests.resource_label }}</td>
+                    <td>{{ requests.request_category }}</td>
+                    <td>
+                        {% if requests.request_status == 'Completed' %}
+                            <span class="status-pill status-pill--good">Completed</span>
+                        {% elif requests.request_status == 'Cancelled' %}
+                            <span class="status-pill status-pill--muted">Cancelled</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ requests.completed_on|default:'—' }}</td>
+                    <td class="text-center">
+                        <a class="btn btn-sm btn-success" href="{% url 'tickets:view_selected_request_employee' requests.id %}">
+                            <i data-lucide="folder-open"></i> Open
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="p-0">
+                    {% include 'includes/empty_state.html' with icon='mail-open' title='No completed requests found' subtitle='Completed requests will show up here.' %}
+                </td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

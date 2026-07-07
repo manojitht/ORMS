@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | Scan Resource{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="scan-line"></i> Scan Resource</h1>
+    {% include 'message_alert.html' %}
+
+    <div class="card form-card">
+        <div class="card-body p-4">
+            {% if resource %}
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h5 class="mb-1">{{ resource.asset_id }}</h5>
+                    <p class="text-muted small mb-0">{{ resource.model_name }} &middot; {{ resource.resource_category }}</p>
+                </div>
+                <span class="status-pill status-pill--warn">{{ resource.resource_availability }}</span>
+            </div>
+            <p class="text-muted small">This resource isn't currently available to issue or return &mdash; check its status
+                on the resource page for details.</p>
+            <a href="{% url 'resources:view_resource' resource.id %}" class="btn btn-primary w-100">
+                <i data-lucide="arrow-right"></i> View resource details
+            </a>
+            {% else %}
+            {% include 'includes/empty_state.html' with icon='scan-line' title='No matching resource' subtitle=asset_id|add:' does not match any active resource.' %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

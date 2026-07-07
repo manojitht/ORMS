@@ -5,10 +5,6 @@ from .models import Department
 from team.models import Team
 from django.contrib.auth.decorators import login_required
 
-@login_required(login_url='account:login')
-def notes_page(request):
-    return render(request, 'superadmin/notes_page.html')
-
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')

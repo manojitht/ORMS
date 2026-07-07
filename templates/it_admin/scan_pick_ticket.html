@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | Scan Resource{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="scan-line"></i> Scan Resource</h1>
+    {% include 'message_alert.html' %}
+
+    <div class="card form-card mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1">{{ resource.asset_id }}</h5>
+                    <p class="text-muted small mb-0">{{ resource.model_name }} &middot; {{ resource.resource_category }}</p>
+                </div>
+                <span class="status-pill status-pill--good">Available</span>
+            </div>
+        </div>
+    </div>
+
+    <h6 class="form-section-label">Complete a processing request with this asset</h6>
+    {% for ticket in matching_tickets %}
+    <div class="card mb-3">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h6 class="mb-1">{{ ticket.request_id }} &mdash; {{ ticket.resource_label }}</h6>
+                    <p class="text-muted small mb-0">For {{ ticket.created_for }} &middot; requested by {{ ticket.created_by }}</p>
+                </div>
+                <span class="status-pill status-pill--info">Processing</span>
+            </div>
+            <form action="{% url 'tickets:complete_processing_request' ticket.id user.id %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="asset_id" value="{{ resource.asset_id }}">
+                <div class="mb-3">
+                    <label class="form-label">Response notes</label>
+                    <textarea name="request_response" class="form-control" rows="2" placeholder="e.g. Issued and configured." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i data-lucide="check"></i> Complete with {{ resource.asset_id }}
+                </button>
+            </form>
+        </div>
+    </div>
+    {% empty %}
+    {% include 'includes/empty_state.html' with icon='inbox' title='No matching processing requests' subtitle='There are no Processing tickets requesting this resource type right now.' %}
+    {% endfor %}
+
+    <a href="{% url 'resources:view_resource' resource.id %}" class="btn btn-outline-secondary">
+        <i data-lucide="arrow-left"></i> View resource details
+    </a>
+</div>
+{% endblock %}

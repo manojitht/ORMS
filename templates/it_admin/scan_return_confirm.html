@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | Scan Resource{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="scan-line"></i> Scan Resource</h1>
+    {% include 'message_alert.html' %}
+
+    <div class="card form-card">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h5 class="mb-1">{{ resource.asset_id }}</h5>
+                    <p class="text-muted small mb-0">{{ resource.model_name }} &middot; {{ resource.resource_category }}</p>
+                </div>
+                <span class="status-pill status-pill--info">Taken</span>
+            </div>
+
+            {% if resource_taken %}
+            <p class="text-muted small mb-4">Currently assigned to <strong>{{ resource_taken.peoplesoft_id.fullname }}</strong> since {{ resource_taken.taken_date }}.</p>
+
+            <form action="{% url 'employees:mark_returned' resource_taken.id resource_taken.peoplesoft_id.id %}" method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Select return reason</label>
+                    <select name="return_reason" class="form-select" required>
+                        <option selected>-------------</option>
+                        <option>Leaving From Company</option>
+                        <option>Resource Damaged</option>
+                        <option>Facing Software Issue</option>
+                        <option>Swaping For Highend Resource</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    <i data-lucide="check"></i> Confirm return
+                </button>
+            </form>
+            {% else %}
+            <p class="text-muted small">This resource is marked Taken, but no matching assignment record could be found.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <a href="{% url 'resources:view_resource' resource.id %}" class="btn btn-outline-secondary mt-3">
+        <i data-lucide="arrow-left"></i> View resource details
+    </a>
+</div>
+{% endblock %}

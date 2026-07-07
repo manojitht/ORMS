@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | Scan Asset{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="scan-line"></i> Scan Asset</h1>
+    {% include 'message_alert.html' %}
+
+    <div class="card form-card">
+        <div class="card-body p-4">
+            <p class="text-muted small">Point your camera at a resource's QR label to check it in or out.</p>
+            <div id="qr-reader" style="width: 100%;"></div>
+            <p id="qr-reader-status" class="text-muted small mt-2"></p>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var statusEl = document.getElementById('qr-reader-status');
+    var scanner = new Html5Qrcode('qr-reader');
+    var handled = false;
+
+    function onScanSuccess(decodedText) {
+        if (handled) return;
+        handled = true;
+        statusEl.textContent = 'Scanned — redirecting…';
+        scanner.stop().finally(function () {
+            window.location.href = decodedText;
+        });
+    }
+
+    scanner.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: 250 },
+        onScanSuccess,
+        function () { /* per-frame decode failures are expected while aiming the camera, ignore */ }
+    ).catch(function (err) {
+        statusEl.textContent = 'Could not access the camera: ' + err;
+    });
+});
+</script>
+{% endblock %}

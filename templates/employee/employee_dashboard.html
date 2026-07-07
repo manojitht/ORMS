@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | My Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="layout-dashboard"></i> My Dashboard</h1>
+
+    <div class="alert alert-primary d-flex align-items-center mb-4" role="alert">
+        <span>Hi there&#128075; <strong>{{ user.first_name }}</strong>, welcome to your Sukhra dashboard.</span>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="laptop"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ resources_taken_count }}</div>
+                    <div class="stat-tile__label">Resources with you</div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--mustard"><i data-lucide="clock"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ awaiting_approval_count }}</div>
+                    <div class="stat-tile__label">Awaiting your manager's approval</div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="loader-circle"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ in_progress_count }}</div>
+                    <div class="stat-tile__label">With IT, in progress</div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="circle-check"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ completed_requests_count }}</div>
+                    <div class="stat-tile__label">Requests completed</div>
+                </div>
+            </div></div>
+        </div>
+    </div>
+
+    <a href="{% url 'tickets:create_request_employee' user.id %}" class="btn btn-primary">
+        <i data-lucide="square-pen"></i> Raise a New Request
+    </a>
+</div>
+{% endblock %}

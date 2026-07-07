@@ -145,15 +145,6 @@ button:focus-visible,
     border-radius: var(--radius-sm);
 }
 
-/* Content used to sit in `.home-main`, offset 250px by the old fixed
-   sidebar. There's no sidebar (top navbar instead) — reclaim the width. */
-.home-main {
-    position: static;
-    left: 0;
-    width: 100%;
-    min-height: calc(100vh - 64px);
-    height: auto;
-}
 
 /* ---------------------------------------------------------------- */
 /* Buttons                                                            */
@@ -284,7 +275,7 @@ a.card:hover, .card--hover:hover {
    height so long tables scroll in their own panel, with the header sticky
    to *that* panel (top: 0) instead of the viewport. */
 .table-responsive {
-    max-height: calc(100vh - var(--navbar-height, 56px) - 3rem);
+    max-height: calc(100vh - var(--topbar-height, 60px) - 3rem);
 }
 .table {
     font-size: .85rem;
@@ -325,6 +316,86 @@ a.card:hover, .card--hover:hover {
 .table-hover > tbody > tr:hover {
     --bs-table-hover-bg: var(--sky-50);
     border-left-color: var(--sky-500);
+}
+
+.form-card {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.form-card--wide {
+    max-width: 720px;
+}
+.form-section-label {
+    font-size: .72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--ink-500);
+    margin-bottom: .75rem;
+}
+
+/* ---------------------------------------------------------------- */
+/* Table toolbar — search/filter fields + a spacer + a primary action */
+/* ---------------------------------------------------------------- */
+
+.table-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: .75rem;
+    margin-bottom: 1.25rem;
+}
+.table-toolbar__fields {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: .75rem;
+}
+.table-toolbar__spacer {
+    flex: 1 1 auto;
+}
+.table-toolbar .form-label {
+    margin-bottom: .3rem;
+}
+
+/* ---------------------------------------------------------------- */
+/* Empty state — icon + title + helper text + optional CTA           */
+/* ---------------------------------------------------------------- */
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+}
+.empty-state__icon {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto .9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ink-100);
+    border-radius: 50%;
+    color: var(--ink-500);
+}
+.empty-state__icon svg {
+    width: 21px;
+    height: 21px;
+}
+.empty-state__title {
+    font-weight: 600;
+    color: var(--ink-900);
+    font-size: .92rem;
+    margin-bottom: .2rem;
+}
+.empty-state__subtitle {
+    font-size: .85rem;
+    color: var(--ink-500);
+    max-width: 360px;
+    margin: 0 auto;
+}
+.empty-state__action {
+    margin-top: 1.1rem;
 }
 
 /* ---------------------------------------------------------------- */
@@ -398,6 +469,42 @@ a.card:hover, .card--hover:hover {
 .toast-danger .toast-body svg { color: var(--status-danger); }
 .toast-secondary { border-left-color: var(--ink-300); }
 .toast-secondary .toast-body svg { color: var(--ink-500); }
+
+/* ---------------------------------------------------------------- */
+/* Modals — match the card/toast elevation language                  */
+/* ---------------------------------------------------------------- */
+
+.modal-content {
+    border: 1px solid var(--ink-150);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+.modal-header {
+    border-bottom-color: var(--ink-150);
+    padding: 1rem 1.25rem;
+}
+.modal-header .modal-title {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+.modal-body {
+    padding: 1.25rem;
+    font-size: .88rem;
+}
+.modal-footer {
+    border-top-color: var(--ink-150);
+    padding: .85rem 1.25rem;
+}
+.modal-header--danger {
+    background: var(--status-danger-bg);
+    border-bottom-color: var(--status-danger-bg);
+}
+.modal-header--danger .modal-title {
+    color: var(--status-danger);
+}
 
 /* ---------------------------------------------------------------- */
 /* Avatars                                                            */
@@ -628,6 +735,11 @@ a.card:hover, .card--hover:hover {
     border: 1px solid var(--ink-150);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xs);
+    transition: box-shadow .15s ease, transform .15s ease;
+}
+.welcome-feature-card:hover {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
 }
 .welcome-feature-card svg {
     width: 20px;
@@ -650,9 +762,26 @@ a.card:hover, .card--hover:hover {
     margin: 0;
 }
 
+.welcome-cta {
+    background: var(--ink-900);
+    padding: 4rem 1rem;
+    text-align: center;
+}
+.welcome-cta h2 {
+    color: #fff;
+    font-size: 1.75rem;
+    margin-bottom: .6rem;
+}
+.welcome-cta p {
+    color: var(--ink-300);
+    margin-bottom: 1.75rem;
+}
+
 .welcome-footer {
     text-align: center;
-    padding: 2rem 0 3rem;
+    padding: 1.5rem 0 2rem;
+    background: var(--ink-900);
+    border-top: 1px solid rgba(255, 255, 255, .08);
     color: var(--ink-300);
     font-size: .85rem;
 }
@@ -713,4 +842,221 @@ a.card:hover, .card--hover:hover {
 .login-subtitle {
     color: var(--ink-500);
     margin: 0;
+}
+
+/* ---------------------------------------------------------------- */
+/* App shell — sidebar + slim topbar (replaces the old top-only navbar) */
+/* ---------------------------------------------------------------- */
+
+.app-shell {
+    min-height: 100vh;
+}
+
+.app-sidebar {
+    width: 240px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background: var(--ink-900);
+    color: var(--ink-300);
+    z-index: 1030;
+    overflow-y: auto;
+}
+
+.app-shell__main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+@media (min-width: 992px) {
+    .app-shell__main {
+        margin-left: 240px;
+    }
+    .app-shell__main--full {
+        margin-left: 0;
+    }
+}
+
+.app-sidebar__brand {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: 1.15rem 1.25rem;
+    color: #fff;
+    font-weight: 600;
+    font-size: .95rem;
+}
+.app-sidebar__brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+}
+.app-sidebar__brand-role {
+    font-size: .65rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--mustard-300);
+}
+
+.app-sidebar__nav {
+    padding: .25rem .75rem 1.5rem;
+}
+.app-sidebar__nav .nav-item {
+    margin-bottom: .15rem;
+}
+.app-sidebar__nav .nav-link {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .55rem .75rem;
+    border-radius: var(--radius-sm);
+    font-size: .85rem;
+    font-weight: 500;
+    color: var(--ink-300);
+}
+.app-sidebar__nav .nav-link svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+}
+.app-sidebar__nav .nav-link:hover {
+    background: rgba(255, 255, 255, .06);
+    color: #fff;
+}
+.app-sidebar__nav .nav-link.active {
+    background: var(--sky-500);
+    color: #fff;
+}
+.app-sidebar__nav-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, .08);
+    margin: .65rem .75rem;
+}
+
+/* Offcanvas reuses .app-sidebar__nav for the item styling above — only the
+   container differs between the fixed rail (>=lg) and this mobile panel. */
+.app-sidebar-offcanvas {
+    width: 260px;
+    background: var(--ink-900);
+    color: var(--ink-300);
+}
+.app-sidebar-offcanvas .offcanvas-header {
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+    padding: .85rem 1rem;
+}
+.app-sidebar-offcanvas .app-sidebar__brand {
+    padding: 0;
+}
+
+.app-topbar {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    background: #fff;
+    border-bottom: 1px solid var(--ink-150);
+    box-shadow: var(--shadow-xs);
+    padding: .6rem 1.25rem;
+    min-height: var(--topbar-height, 60px);
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+.app-topbar__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: transparent;
+    color: var(--ink-700);
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+.app-topbar__toggle:hover {
+    background: var(--ink-100);
+}
+.app-topbar__toggle svg {
+    width: 19px;
+    height: 19px;
+}
+.app-topbar__breadcrumb {
+    font-size: .82rem;
+    color: var(--ink-500);
+    font-weight: 500;
+}
+.app-topbar__breadcrumb:empty {
+    display: none;
+}
+.app-topbar__spacer {
+    flex: 1 1 auto;
+}
+
+.app-user-menu__toggle {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    padding: .3rem .55rem .3rem .3rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: transparent;
+}
+.app-user-menu__toggle:hover {
+    background: var(--ink-50);
+    border-color: var(--ink-150);
+}
+.app-user-menu__toggle svg {
+    width: 16px;
+    height: 16px;
+    color: var(--ink-500);
+}
+.app-user-menu__name {
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--ink-900);
+}
+.app-user-menu__menu {
+    min-width: 220px;
+    padding: .5rem;
+    border: 1px solid var(--ink-150);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+}
+.app-user-menu__header {
+    padding: .35rem .6rem .6rem;
+}
+.app-user-menu__fullname {
+    font-weight: 600;
+    font-size: .88rem;
+    color: var(--ink-900);
+}
+.app-user-menu__role {
+    font-size: .72rem;
+    color: var(--ink-500);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-top: .1rem;
+}
+.app-user-menu__menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    font-size: .85rem;
+    border-radius: var(--radius-sm);
+    padding: .45rem .6rem;
+}
+.app-user-menu__menu .dropdown-item svg {
+    width: 16px;
+    height: 16px;
+}
+.app-user-menu__menu .dropdown-item:hover {
+    background: var(--sky-50);
+    color: var(--sky-700);
+}
+.app-user-menu__logout:hover {
+    background: var(--status-danger-bg) !important;
+    color: var(--status-danger) !important;
 }

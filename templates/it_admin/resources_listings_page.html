@@ -8,11 +8,22 @@
     <h1 class="page-header"><i data-lucide="laptop"></i> Resource Listings</h1>
     {% include 'message_alert.html' %}
 
-    <form action="{% url 'resources:search_resource' %}" method="GET" class="d-flex gap-2 mb-2 flex-wrap">
-        <input type="text" class="form-control" style="max-width: 320px;" name="keyword" placeholder="Search by asset id or name.." required>
-        <button type="submit" class="btn btn-warning"><i data-lucide="search"></i> Search</button>
-        <a href="{% url 'resources:add_resource_page' %}" class="btn btn-primary ms-auto">
+    <form action="{% url 'resources:search_resource' %}" method="GET" class="table-toolbar">
+        <div class="table-toolbar__fields">
+            <div>
+                <label class="form-label small">Search</label>
+                <input type="text" class="form-control" name="keyword" placeholder="Search by asset id or name.." required>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-outline-primary"><i data-lucide="search"></i> Search</button>
+            </div>
+        </div>
+        <div class="table-toolbar__spacer"></div>
+        <a href="{% url 'resources:add_resource_page' %}" class="btn btn-primary">
             <i data-lucide="book-plus"></i> Add
+        </a>
+        <a href="{% url 'resources:import_resources_csv' %}" class="btn btn-outline-secondary">
+            <i data-lucide="upload"></i> Import CSV
         </a>
         <a href="{% url 'resources:resources_list_table' %}" class="btn btn-outline-secondary">
             <i data-lucide="table"></i> View table
@@ -46,12 +57,18 @@
                         {% elif device.resource_availability == 'Taken' %}
                             <span class="status-pill status-pill--info mb-2">Taken</span>
                         {% endif %}
+                        {% if device.warranty_alert_level == 'expired' %}
+                            <span class="status-pill status-pill--danger mb-2">Warranty expired</span>
+                        {% elif device.warranty_alert_level == 'expiring_soon' %}
+                            <span class="status-pill status-pill--warn mb-2">Warranty expiring soon</span>
+                        {% endif %}
                         <a href="{% url 'resources:view_resource' device.id %}" class="btn btn-sm btn-outline-primary w-100">View Resource</a>
                     </div>
                 </div>
             </div>
         {% empty %}
-            <p class="text-muted text-center py-5">No resources to show yet.</p>
+            {% url 'resources:add_resource_page' as resource_add_url %}
+            {% include 'includes/empty_state.html' with icon='laptop' title='No resources found' subtitle='Resources you add will show up here.' action_url=resource_add_url action_label='Add Resource' %}
         {% endfor %}
     </div>
 </div>

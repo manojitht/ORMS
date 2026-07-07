@@ -35,7 +35,7 @@
             {% endfor %}
         </div>
     {% else %}
-        <p class="text-muted text-center py-5">No device history for {{ get_member_id.fullname }} &mdash; nothing returned yet.</p>
+        {% include 'includes/empty_state.html' with icon='history' title='No device history found' subtitle='Nothing has been returned by this team member yet.' %}
     {% endif %}
 </div>
 {% endblock %}

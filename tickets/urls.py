@@ -26,4 +26,14 @@ urlpatterns = [
     path('complete_processing_request/<int:reqid>/<int:userid>/', views.complete_processing_request, name='complete_processing_request'),
     path('it_admin_completed_requests_date_sort/<int:userid>/', views.it_admin_completed_requests_date_sort, name='it_admin_completed_requests_date_sort'),
     path('ajax_load_employee_resources/', views.ajax_load_employee_resources, name='ajax_load_employee_resources'),
+
+    path('create_request_employee/<int:userid>/', views.create_request_employee, name='create_request_employee'),
+    path('list_requests_employee/<int:userid>/', views.list_requests_employee, name='list_requests_employee'),
+    path('list_completed_requests_employee/<int:userid>/', views.list_completed_requests_employee, name='list_completed_requests_employee'),
+    path('view_selected_request_employee/<int:reqid>/', views.view_selected_request_employee, name='view_selected_request_employee'),
+    path('cancel_request_employee/<int:reqid>/<int:userid>/', views.cancel_request_employee, name='cancel_request_employee'),
+
+    path('list_requests_from_team_manager/<int:userid>/', views.list_requests_from_team_manager, name='list_requests_from_team_manager'),
+    path('approve_employee_request_manager/<int:reqid>/<int:userid>/', views.approve_employee_request_manager, name='approve_employee_request_manager'),
+    path('deny_employee_request_manager/<int:reqid>/<int:userid>/', views.deny_employee_request_manager, name='deny_employee_request_manager'),
 ]

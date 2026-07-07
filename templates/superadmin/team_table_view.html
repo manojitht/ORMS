@@ -8,24 +8,27 @@
     <h1 class="page-header"><i data-lucide="users"></i> Teams Index</h1>
     {% include 'message_alert.html' %}
 
-    <form action="{% url 'team:superadmin_team_date_sort' %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
+    <form action="{% url 'team:superadmin_team_date_sort' %}" method="POST" class="table-toolbar">
         {% csrf_token %}
-        <div class="col">
-            <label class="form-label small mb-1">From</label>
-            <input type="date" name="from_tem" class="form-control" required>
+        <div class="table-toolbar__fields">
+            <div>
+                <label class="form-label small">From</label>
+                <input type="date" name="from_tem" class="form-control" required>
+            </div>
+            <div>
+                <label class="form-label small">To</label>
+                <input type="date" name="to_tem" class="form-control" required>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-outline-primary">
+                    <i data-lucide="filter"></i> Filter
+                </button>
+            </div>
         </div>
-        <div class="col">
-            <label class="form-label small mb-1">To</label>
-            <input type="date" name="to_tem" class="form-control" required>
-        </div>
-        <div class="col">
-            <button type="submit" class="btn btn-primary">Sort</button>
-        </div>
-        <div class="col">
-            <a href="{% url 'team:superadmin_add_team' %}" class="btn btn-outline-primary">
-                <i data-lucide="message-square-plus"></i> Add Team
-            </a>
-        </div>
+        <div class="table-toolbar__spacer"></div>
+        <a href="{% url 'team:superadmin_add_team' %}" class="btn btn-primary">
+            <i data-lucide="plus"></i> Add Team
+        </a>
     </form>
 
     {% if get_result %}
@@ -61,7 +64,10 @@
                     </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="6" class="text-center text-muted py-4">No teams found.</td></tr>
+                <tr><td colspan="6" class="p-0">
+                    {% url 'team:superadmin_add_team' as team_add_url %}
+                    {% include 'includes/empty_state.html' with icon='users' title='No teams found' subtitle='Teams you add will show up here.' action_url=team_add_url action_label='Add Team' %}
+                </td></tr>
                 {% endfor %}
             </tbody>
         </table>

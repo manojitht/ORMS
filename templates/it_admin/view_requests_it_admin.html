@@ -51,6 +51,9 @@
                         {% elif requests.request_status == 'Cancelled' %}
                             <span class="status-pill status-pill--muted">{{ requests.request_status }}</span>
                         {% endif %}
+                        {% if requests.is_overdue %}
+                            <span class="status-pill status-pill--danger ms-1">Overdue</span>
+                        {% endif %}
                     </td>
                     <td>{{ requests.created_on }}</td>
                     <td class="d-flex gap-2 justify-content-center">
@@ -69,7 +72,9 @@
                     </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="7" class="text-center text-muted py-4">No pending requests.</td></tr>
+                <tr><td colspan="7" class="p-0">
+                    {% include 'includes/empty_state.html' with icon='mail-open' title='No pending requests' subtitle='New requests will show up here.' %}
+                </td></tr>
                 {% endfor %}
             </tbody>
         </table>

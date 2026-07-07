@@ -43,7 +43,9 @@
                     <td>&mdash;</td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="6" class="text-center text-muted py-4">No removed departments.</td></tr>
+                <tr><td colspan="6" class="p-0">
+                    {% include 'includes/empty_state.html' with icon='trash-2' title='No removed departments' subtitle='Departments that get deleted will show up here.' %}
+                </td></tr>
                 {% endfor %}
             </tbody>
         </table>

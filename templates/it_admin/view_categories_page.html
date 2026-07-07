@@ -35,7 +35,7 @@
                 </div>
             </div>
         {% empty %}
-            <p class="text-muted text-center py-5">No categories yet.</p>
+            {% include 'includes/empty_state.html' with icon='shapes' title='No categories found' subtitle='Categories you add will show up here.' %}
         {% endfor %}
     </div>
 </div>

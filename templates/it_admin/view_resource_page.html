@@ -32,6 +32,17 @@
                 {% for attr in selected_res.resource_category.attribute_schema %}
                 <dt class="col-sm-4">{{ attr.label }}</dt><dd class="col-sm-8">{{ selected_res.attribute_values|dict_get:attr.key|default:"—" }}</dd>
                 {% endfor %}
+                {% if selected_res.warranty_expiry_date %}
+                <dt class="col-sm-4">Warranty/lease expiry</dt>
+                <dd class="col-sm-8">
+                    {{ selected_res.warranty_expiry_date }}
+                    {% if selected_res.warranty_alert_level == 'expired' %}
+                        <span class="status-pill status-pill--danger ms-2">Expired</span>
+                    {% elif selected_res.warranty_alert_level == 'expiring_soon' %}
+                        <span class="status-pill status-pill--warn ms-2">Expiring soon</span>
+                    {% endif %}
+                </dd>
+                {% endif %}
                 <dt class="col-sm-4">Added on</dt><dd class="col-sm-8">{{ selected_res.added_on }}</dd>
                 <dt class="col-sm-4">Updated by</dt><dd class="col-sm-8">{{ selected_res.added_by }}</dd>
                 <dt class="col-sm-4">Specifications</dt><dd class="col-sm-8">{{ selected_res.resource_description }}</dd>
@@ -48,12 +59,24 @@
         </div>
     </div>
 
+    <div class="card form-card mt-4">
+        <div class="card-body p-4 text-center">
+            <h6 class="form-section-label">QR tag</h6>
+            <img src="{% url 'resources:resource_qr_image' selected_res.id %}" alt="QR code for {{ selected_res.asset_id }}" style="width: 140px; height: 140px;">
+            <div class="mt-3">
+                <a href="{% url 'resources:print_resource_label' selected_res.id %}" class="btn btn-outline-primary btn-sm" target="_blank">
+                    <i data-lucide="printer"></i> Print Label
+                </a>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="deleteResourceModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form action="{% url 'resources:delete_resource' selected_res.id %}" method="POST">
                     {% csrf_token %}
-                    <div class="modal-header">
+                    <div class="modal-header modal-header--danger">
                         <h5 class="modal-title"><i data-lucide="triangle-alert" class="text-warning"></i> Warning!</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>

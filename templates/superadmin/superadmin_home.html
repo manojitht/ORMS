@@ -84,6 +84,33 @@
                 </div>
             </div></div>
         </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="timer"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ avg_response_time }}</div>
+                    <div class="stat-tile__label">Avg. response time (company-wide)</div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--sky"><i data-lucide="hourglass"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ avg_resolution_time }}</div>
+                    <div class="stat-tile__label">Avg. resolution time (company-wide)</div>
+                </div>
+            </div></div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="card h-100"><div class="stat-tile">
+                <div class="stat-tile__icon stat-tile__icon--mustard"><i data-lucide="alarm-clock"></i></div>
+                <div>
+                    <div class="stat-tile__value">{{ overdue_requests_count }}</div>
+                    <div class="stat-tile__label">Requests overdue (company-wide)</div>
+                </div>
+            </div></div>
+        </div>
     </div>
 
     <div class="row g-4 mt-1">
@@ -148,6 +175,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
+    // Reads design-system.css's color tokens so chart colors stay in sync
+    // with the palette instead of duplicating hex values here.
+    function cc(varName) { return getComputedStyle(document.documentElement).getPropertyValue(varName).trim(); }
+
     var orgCtx = document.getElementById('orgCompositionChart').getContext('2d');
     new Chart(orgCtx, {
         type: 'doughnut',
@@ -155,7 +186,7 @@
             labels: ['Managers', 'IT Administrators', 'Superadmins'],
             datasets: [{
                 data: [{{ get_total_managers_count }}, {{ get_total_administrators_count }}, {{ get_total_superadmins_count }}],
-                backgroundColor: ['#0284C7', '#E3A61B', '#0D9488'],
+                backgroundColor: [cc('--sky-600'), cc('--mustard-500'), cc('--ink-700')],
                 borderWidth: 0,
             }]
         },
@@ -174,12 +205,12 @@
             datasets: [{
                 label: 'Users added',
                 data: [{% for count in user_growth_counts %} '{{ count }}', {% endfor %}],
-                borderColor: '#0284C7',
+                borderColor: cc('--sky-600'),
                 backgroundColor: 'rgba(2, 132, 199, 0.1)',
                 fill: true,
                 tension: 0.3,
                 pointRadius: 4,
-                pointBackgroundColor: '#0284C7',
+                pointBackgroundColor: cc('--sky-600'),
             }]
         },
         options: {
@@ -187,7 +218,7 @@
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#E4EBF2' } },
+                y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: cc('--ink-150') } },
                 x: { grid: { display: false } },
             },
         }
@@ -201,7 +232,7 @@
             datasets: [{
                 label: 'Devices',
                 data: [{% for count in category_count_list %} '{{ count }}', {% endfor %}],
-                backgroundColor: '#0284C7',
+                backgroundColor: cc('--sky-600'),
                 borderRadius: 4,
                 maxBarThickness: 40,
             }]
@@ -211,7 +242,7 @@
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#E4EBF2' } },
+                y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: cc('--ink-150') } },
                 x: { grid: { display: false } },
             },
         }
@@ -223,9 +254,9 @@
         data: {
             labels: [{% for category in category_list %} '{{ category|escapejs }}', {% endfor %}],
             datasets: [
-                { data: [{% for count in available_resource_list %} '{{ count }}', {% endfor %}], label: 'Available', backgroundColor: '#15803D', borderRadius: 4 },
-                { data: [{% for count in taken_resource_list %} '{{ count }}', {% endfor %}], label: 'Taken', backgroundColor: '#0284C7', borderRadius: 4 },
-                { data: [{% for count in configuration_resource_list %} '{{ count }}', {% endfor %}], label: 'Configuration', backgroundColor: '#E3A61B', borderRadius: 4 },
+                { data: [{% for count in available_resource_list %} '{{ count }}', {% endfor %}], label: 'Available', backgroundColor: cc('--status-good'), borderRadius: 4 },
+                { data: [{% for count in taken_resource_list %} '{{ count }}', {% endfor %}], label: 'Taken', backgroundColor: cc('--sky-600'), borderRadius: 4 },
+                { data: [{% for count in configuration_resource_list %} '{{ count }}', {% endfor %}], label: 'Configuration', backgroundColor: cc('--mustard-500'), borderRadius: 4 },
             ]
         },
         options: {
@@ -234,7 +265,7 @@
             plugins: { legend: { position: 'bottom' } },
             scales: {
                 x: { stacked: true, grid: { display: false } },
-                y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#E4EBF2' } },
+                y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: cc('--ink-150') } },
             },
         }
     });
@@ -247,7 +278,7 @@
             datasets: [{
                 label: 'Tickets',
                 data: [{% for count in ticket_status_counts %} '{{ count }}', {% endfor %}],
-                backgroundColor: ['#E3A61B', '#0284C7', '#15803D', '#64748B'],
+                backgroundColor: [cc('--mustard-500'), cc('--sky-600'), cc('--status-good'), cc('--ink-500')],
                 borderRadius: 4,
                 maxBarThickness: 60,
             }]
@@ -257,7 +288,7 @@
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#E4EBF2' } },
+                y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: cc('--ink-150') } },
                 x: { grid: { display: false } },
             },
         }

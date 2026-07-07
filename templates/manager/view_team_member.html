@@ -8,10 +8,18 @@
     <h1 class="page-header"><i data-lucide="users"></i> {{ user.team }}</h1>
     {% include 'message_alert.html' %}
 
-    <form action="{% url 'employees:search_team_member' user.id %}" method="GET" class="d-flex gap-2 mb-2 flex-wrap">
-        <input type="text" class="form-control" style="max-width: 320px;" name="keyword" placeholder="Search by name or ps id.." required>
-        <button type="submit" class="btn btn-warning"><i data-lucide="search"></i> Search</button>
-        <a href="{% url 'employees:view_team_members_index_table' user.id %}" class="btn btn-outline-secondary ms-auto">
+    <form action="{% url 'employees:search_team_member' user.id %}" method="GET" class="table-toolbar">
+        <div class="table-toolbar__fields">
+            <div>
+                <label class="form-label small">Search</label>
+                <input type="text" class="form-control" name="keyword" placeholder="Search by name or ps id.." required>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-outline-primary"><i data-lucide="search"></i> Search</button>
+            </div>
+        </div>
+        <div class="table-toolbar__spacer"></div>
+        <a href="{% url 'employees:view_team_members_index_table' user.id %}" class="btn btn-outline-secondary">
             <i data-lucide="table"></i> Member Index
         </a>
         <a href="{% url 'employees:export_team_members_csv' user.id %}" class="btn btn-outline-secondary">
@@ -45,7 +53,7 @@
                 </div>
             </div>
         {% empty %}
-            <p class="text-muted text-center py-5">No team members yet.</p>
+            {% include 'includes/empty_state.html' with icon='users' title='No team members found' subtitle='Try adjusting your search, or check back once team members are added.' %}
         {% endfor %}
     </div>
 </div>

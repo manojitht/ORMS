@@ -9,7 +9,7 @@
     <h1 class="page-header"><i data-lucide="laptop"></i> Edit Resource</h1>
 
     {% if selected_res %}
-    <div class="card mx-auto" style="max-width: 720px;">
+    <div class="card form-card form-card--wide">
         <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="mb-0">Editing {{ selected_res.asset_id }}</h5>
@@ -65,8 +65,12 @@
                 </div>
                 <script id="category-schema-data" type="application/json">{{ category_schema_json|safe }}</script>
                 <div class="mb-3">
+                    <label class="form-label">Warranty/lease expiry date</label>
+                    <input type="date" name="warranty_expiry_date" class="form-control" value="{{ selected_res.warranty_expiry_date|date:'Y-m-d' }}">
+                </div>
+                <div class="mb-3">
                     <label class="form-label">Resource specifications</label>
-                    <textarea name="resource_description" class="form-control" rows="4" required>{{ selected_res.resource_description }}</textarea>
+                    <textarea name="resource_description" class="form-control" rows="4">{{ selected_res.resource_description }}</textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Device image</label>

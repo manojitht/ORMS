@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from department.models import Department
 from team.models import Team
+from employees.models import Employee
 
 from companies.models import TenantModel
 
@@ -79,6 +80,30 @@ class MyManagerAccount(BaseUserManager):
         user.save(using=self._db) #saving details on database
         return user
 
+    def create_employee(self, peoplesoft_id, first_name, last_name, email, department, team, ini_pas, company, employee, password=None):
+        if not peoplesoft_id:
+            raise ValueError('User should have a peoplesoft id')
+
+        if not email:
+            raise ValueError('User should have an email address')
+
+        user = self.model(
+            peoplesoft_id = peoplesoft_id,
+            first_name = first_name,
+            last_name = last_name,
+            email = self.normalize_email(email),
+            department = department,
+            team = team,
+            ini_pas = ini_pas,
+            company = company,
+            employee_profile = employee,
+        )
+        user.is_employee = True
+        user.is_active = False
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
     def create_superuser(self, peoplesoft_id, first_name, last_name, email, department, team, ini_pas, company, password):
         user = self.create_user(
             peoplesoft_id = peoplesoft_id,
@@ -116,8 +141,16 @@ class Account(AbstractBaseUser, TenantModel):
     is_superadmin = models.BooleanField('Is Superadmin',default=False)
     is_it_admin = models.BooleanField('Is IT Admin',default=False)
     is_manager = models.BooleanField('Is Manager',default=False)
+    is_employee = models.BooleanField('Is Employee', default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    # Links a self-service Employee login back to their Employee record.
+    # Nullable/SET_NULL since only employees granted portal access have one --
+    # every other role leaves this blank. Account owns the link (not the
+    # reverse) since Account is the actor/auth model; `related_name='account'`
+    # lets templates check `employee.account` for "has portal access".
+    employee_profile = models.OneToOneField(
+        Employee, null=True, blank=True, on_delete=models.SET_NULL, related_name='account')
 
     USERNAME_FIELD = 'peoplesoft_id'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'email', 'department', 'team', 'ini_pas', 'company']
@@ -144,6 +177,8 @@ class Account(AbstractBaseUser, TenantModel):
             return 'IT Administrator'
         if self.is_manager:
             return 'Manager'
+        if self.is_employee:
+            return 'Employee'
         return ''
 
     def has_perm(self, perm, obj=None):

@@ -8,24 +8,27 @@
     <h1 class="page-header"><i data-lucide="building-2"></i> Departments Index</h1>
     {% include 'message_alert.html' %}
 
-    <form action="{% url 'department:superadmin_department_date_sort' %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
+    <form action="{% url 'department:superadmin_department_date_sort' %}" method="POST" class="table-toolbar">
         {% csrf_token %}
-        <div class="col">
-            <label class="form-label small mb-1">From</label>
-            <input type="date" name="from_dep" class="form-control" required>
+        <div class="table-toolbar__fields">
+            <div>
+                <label class="form-label small">From</label>
+                <input type="date" name="from_dep" class="form-control" required>
+            </div>
+            <div>
+                <label class="form-label small">To</label>
+                <input type="date" name="to_dep" class="form-control" required>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-outline-primary">
+                    <i data-lucide="filter"></i> Filter
+                </button>
+            </div>
         </div>
-        <div class="col">
-            <label class="form-label small mb-1">To</label>
-            <input type="date" name="to_dep" class="form-control" required>
-        </div>
-        <div class="col">
-            <button type="submit" class="btn btn-primary">Sort</button>
-        </div>
-        <div class="col">
-            <a href="{% url 'department:add_new_department' %}" class="btn btn-outline-primary">
-                <i data-lucide="message-square-plus"></i> Add Department
-            </a>
-        </div>
+        <div class="table-toolbar__spacer"></div>
+        <a href="{% url 'department:add_new_department' %}" class="btn btn-primary">
+            <i data-lucide="plus"></i> Add Department
+        </a>
     </form>
 
     {% if get_result %}
@@ -59,7 +62,10 @@
                     </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="5" class="text-center text-muted py-4">No departments found.</td></tr>
+                <tr><td colspan="5" class="p-0">
+                    {% url 'department:add_new_department' as department_add_url %}
+                    {% include 'includes/empty_state.html' with icon='building-2' title='No departments found' subtitle='Departments you add will show up here.' action_url=department_add_url action_label='Add Department' %}
+                </td></tr>
                 {% endfor %}
             </tbody>
         </table>

@@ -13,6 +13,5 @@ urlpatterns = [
     path('superadmin_department_table/', views.superadmin_department_table, name='superadmin_department_table'),
     path('superadmin_department_date_sort/', views.superadmin_department_date_sort, name='superadmin_department_date_sort'),
     path('department_view_teams/<int:depid>/', views.department_view_teams, name='department_view_teams'),
-    path('notes_page', views.notes_page, name='notes_page'),
     path('department_deletion_history/', views.department_deletion_history, name='department_deletion_history'),
 ]
