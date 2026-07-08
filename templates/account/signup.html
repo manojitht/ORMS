@@ -22,7 +22,7 @@
         <div class="login-card login-card--wide">
             <div class="text-center mb-4">
                 <div class="d-flex justify-content-center mb-3">
-                    {% include 'includes/logo.html' with size=56 %}
+                    <a href="{% url 'home' %}">{% include 'includes/logo.html' with size=56 %}</a>
                 </div>
                 <h1 class="login-title">Set up your company</h1>
                 <p class="login-subtitle">Create your organization's Sukhra workspace and its first Superadmin account</p>
@@ -35,13 +35,14 @@
 
                 <h6 class="text-muted small text-uppercase mb-3">Company</h6>
                 <div class="row">
-                    <div class="col-md-7 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label class="form-label" for="company_name">Company name</label>
                         <input type="text" id="company_name" name="company_name" class="form-control" placeholder="Acme Inc." required>
                     </div>
-                    <div class="col-md-5 mb-3">
+                    <div class="col-md-6 mb-3">
                         <label class="form-label" for="company_code">Company code</label>
                         <input type="text" id="company_code" name="company_code" class="form-control" placeholder="acme" pattern="[a-z0-9\-]+" title="Lowercase letters, numbers, and hyphens only" required>
+                        <div class="form-text">Generated from your company name - edit it if you'd like something different.</div>
                     </div>
                 </div>
 
@@ -88,5 +89,31 @@
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="{% static 'script.js' %}"></script>
+    <script>
+        // Auto-fill the company code from the company name (like a Slack/GitHub
+        // slug) until the user edits the code field themselves, at which point
+        // their choice is respected and no longer overwritten.
+        document.addEventListener('DOMContentLoaded', function () {
+            var nameField = document.getElementById('company_name');
+            var codeField = document.getElementById('company_code');
+            var codeManuallyEdited = false;
+
+            function slugify(value) {
+                return value.toLowerCase().trim()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+            }
+
+            codeField.addEventListener('input', function () {
+                codeManuallyEdited = true;
+            });
+
+            nameField.addEventListener('input', function () {
+                if (!codeManuallyEdited) {
+                    codeField.value = slugify(nameField.value);
+                }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | Raise Request{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="square-pen"></i> Raise Request</h1>
+    {% include 'message_alert.html' %}
+
+    <div class="card form-card">
+        <div class="card-body p-4">
+            <p class="text-muted small">Your manager will need to approve this before it goes to IT.</p>
+            <form action="{% url 'tickets:create_request_employee' user.id %}" method="POST" id="createRequestEmployeeForm">
+                {% csrf_token %}
+                {% if generated_request_id %}
+                <div class="mb-3">
+                    <label class="form-label">Request Id</label>
+                    <input type="text" name="request_id" class="form-control" value="RE{{ generated_request_id }}" readonly>
+                </div>
+                {% endif %}
+                <div class="mb-3">
+                    <label class="form-label">Request category</label>
+                    <select name="request_category" id="request_category" class="form-select">
+                        <option selected>--choose category--</option>
+                        <option>Request new</option>
+                        <option>Replacement</option>
+                        <option>Support</option>
+                    </select>
+                </div>
+                <div id="provision-fields" class="mb-3">
+                    <label class="form-label">Resource required</label>
+                    <select name="requested_category" class="form-select">
+                        <option selected value="">--select resource--</option>
+                        {% for category in request_resource_list %}
+                        <option value="{{ category.id }}">{{ category.resource_category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="support-fields" class="mb-3 d-none">
+                    <label class="form-label">Which of your assigned resources is this about?</label>
+                    <select name="regarding_resource_taken" class="form-select" disabled>
+                        <option value="">--select resource--</option>
+                        {% for taken in own_resources_taken %}
+                        <option value="{{ taken.id }}">{{ taken.asset_id }} - {{ taken.asset_id.model_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="request_decription" class="form-control" rows="4" placeholder="Write your request here.." required></textarea>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">Submit Request</button>
+                    <a href="{% url 'tickets:list_requests_employee' user.id %}" class="btn btn-outline-secondary flex-fill">Back to Requests</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var typeSelect = document.getElementById('request_category');
+    var provisionFields = document.getElementById('provision-fields');
+    var supportFields = document.getElementById('support-fields');
+
+    function syncFieldsForType() {
+        var isSupport = typeSelect.value === 'Support';
+        provisionFields.classList.toggle('d-none', isSupport);
+        supportFields.classList.toggle('d-none', !isSupport);
+        provisionFields.querySelector('select').disabled = isSupport;
+        supportFields.querySelector('select').disabled = !isSupport;
+    }
+    typeSelect.addEventListener('change', syncFieldsForType);
+    syncFieldsForType();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | Requests From Employees{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="user-check"></i> Requests From Employees</h1>
+    {% include 'message_alert.html' %}
+
+    <p class="text-muted small mb-3">Self-service requests your team members have raised, waiting on your approval before they go to IT.</p>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Request Id</th>
+                    <th>Employee</th>
+                    <th>Resource</th>
+                    <th>Category</th>
+                    <th>Created On</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for requests in get_requests_awaiting %}
+                <tr>
+                    <td>{{ requests.request_id }}</td>
+                    <td>{{ requests.created_for.fullname }}</td>
+                    <td>{{ requests.resource_label }}</td>
+                    <td>{{ requests.request_category }}</td>
+                    <td>{{ requests.created_on }}</td>
+                    <td class="d-flex gap-2 justify-content-center">
+                        <a class="btn btn-sm btn-success" href="{% url 'tickets:approve_employee_request_manager' requests.id user.id %}">
+                            <i data-lucide="check"></i> Approve
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#denyModal{{ requests.id }}">
+                            <i data-lucide="x"></i> Deny
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="p-0">
+                    {% include 'includes/empty_state.html' with icon='user-check' title='Nothing awaiting approval' subtitle="Requests your team members raise themselves will show up here." %}
+                </td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% for requests in get_requests_awaiting %}
+<div class="modal fade" id="denyModal{{ requests.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{% url 'tickets:deny_employee_request_manager' requests.id user.id %}" method="POST">
+                {% csrf_token %}
+                <div class="modal-header modal-header--danger">
+                    <h5 class="modal-title"><i data-lucide="triangle-alert"></i> Deny request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="form-label">Reason (optional, shared with {{ requests.created_for.fullname }})</label>
+                    <textarea name="denial_reason" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Deny request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% autoescape off %}
+
+Hi {{ get_request.created_for.fullname }},
+
+{% if decision == 'approved' %}
+    Your manager approved your request ({{ get_request.request_id }}) for {{ get_request.resource_label }}. It has been sent to IT for processing.
+{% else %}
+    Your manager denied your request ({{ get_request.request_id }}) for {{ get_request.resource_label }}.
+    {% if get_request.request_response %}Reason given: {{ get_request.request_response }}{% endif %}
+{% endif %}
+
+Thank you,
+Sukhra Team.
+
+Have a great day!
+
+{% endautoescape %}

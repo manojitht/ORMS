@@ -1,0 +1,16 @@
+{% autoescape off %}
+
+Hi {{ manager_account.first_name }},
+
+{{ ticket.created_for.fullname }} has raised a self-service request ({{ ticket.request_id }}) for {{ ticket.resource_label }}.
+
+    This falls under the category of ({{ ticket.request_category }}), created on {{ ticket.created_on }}.
+
+    Please review and approve or deny it before it can be sent to IT for processing.
+
+Thank you,
+Sukhra Team.
+
+Have a great day!
+
+{% endautoescape %}

@@ -9,7 +9,7 @@
     {% include 'message_alert.html' %}
 
     {% if user %}
-    <div class="card mx-auto" style="max-width: 720px;">
+    <div class="card form-card form-card--wide">
         <div class="card-body p-4">
             <form action="{% url 'account:it_admin_update_user_profile' user.id %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -57,16 +57,16 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Contact number</label>
-                        <input name="contact_number" class="form-control" type="text" value="{{ user.accountprofile.contact_number }}" required>
+                        <input name="contact_number" class="form-control" type="text" value="{{ user.accountprofile.contact_number }}">
                     </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Home address</label>
-                    <input name="home_address" class="form-control" type="text" value="{{ user.accountprofile.home_address }}" required>
+                    <input name="home_address" class="form-control" type="text" value="{{ user.accountprofile.home_address }}">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Profile image</label>
-                    <input name="profile_image" class="form-control" type="file" accept="image/*" {% if not user.accountprofile.profile_image %}required{% endif %}>
+                    <input name="profile_image" class="form-control" type="file" accept="image/*">
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{% url 'account:it_admin_user_profile' user.id %}" class="btn btn-outline-secondary flex-fill">Back</a>

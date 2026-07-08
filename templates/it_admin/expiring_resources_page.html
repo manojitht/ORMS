@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | Warranty Alerts{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="shield-alert"></i> Warranty Alerts</h1>
+    {% include 'message_alert.html' %}
+
+    <h6 class="form-section-label">Expired</h6>
+    <div class="table-responsive mb-4">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Asset Id</th>
+                    <th>Model</th>
+                    <th>Resource Type</th>
+                    <th>Warranty Expired On</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resource in expired_resources %}
+                <tr>
+                    <td><a href="{% url 'resources:view_resource' resource.id %}" class="id-code">{{ resource.asset_id }}</a></td>
+                    <td>{{ resource.model_name }}</td>
+                    <td>{{ resource.resource_category }}</td>
+                    <td><span class="status-pill status-pill--danger">{{ resource.warranty_expiry_date }}</span></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="p-0">
+                    {% include 'includes/empty_state.html' with icon='circle-check' title='No expired warranties' subtitle='Resources with a lapsed warranty date will show up here.' %}
+                </td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h6 class="form-section-label">Expiring soon</h6>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Asset Id</th>
+                    <th>Model</th>
+                    <th>Resource Type</th>
+                    <th>Warranty Expires On</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resource in expiring_soon_resources %}
+                <tr>
+                    <td><a href="{% url 'resources:view_resource' resource.id %}" class="id-code">{{ resource.asset_id }}</a></td>
+                    <td>{{ resource.model_name }}</td>
+                    <td>{{ resource.resource_category }}</td>
+                    <td><span class="status-pill status-pill--warn">{{ resource.warranty_expiry_date }}</span></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="p-0">
+                    {% include 'includes/empty_state.html' with icon='circle-check' title='Nothing expiring soon' subtitle="Resources due to expire within 30 days will show up here." %}
+                </td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

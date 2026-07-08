@@ -19,6 +19,7 @@ urlpatterns = [
     path('permanent_delete_user/<int:uid>/', views.permanent_delete_user, name='permanent_delete_user'),
     path('it_admin_portal/<int:userid>/', views.it_admin_portal, name='it_admin_portal'),
     path('manager_portal/<int:userid>/', views.manager_portal, name='manager_portal'),
+    path('employee_portal/<int:userid>/', views.employee_portal, name='employee_portal'),
     path('superadmin_users_date_sort/', views.superadmin_users_date_sort, name='superadmin_users_date_sort'),
     path('users_deletion_history/', views.users_deletion_history, name='users_deletion_history'),
     path('activate/<uidb64>/<token>/', views.activate, name='activate'),
@@ -38,6 +39,11 @@ urlpatterns = [
     path('manager_change_password/<int:userid>/', views.manager_change_password, name='manager_change_password'),
     path('it_admin_change_password/<int:userid>/', views.it_admin_change_password, name='it_admin_change_password'),
     path('superadmin_change_password/<int:userid>/', views.superadmin_change_password, name='superadmin_change_password'),
+    path('employee_change_password/<int:userid>/', views.employee_change_password, name='employee_change_password'),
+
+    path('employee_user_profile/<int:userid>/', views.employee_user_profile, name='employee_user_profile'),
+    path('employee_edit_user_profile/', views.employee_edit_user_profile, name='employee_edit_user_profile'),
+    path('employee_update_user_profile/<int:userid>/', views.employee_update_user_profile, name='employee_update_user_profile'),
 
 
     path('load_teams/', views.load_teams, name='ajax_load_teams'),

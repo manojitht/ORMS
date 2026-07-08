@@ -1,9 +1,17 @@
+from datetime import date, timedelta
+
 from django.db import models
 from department.models import Department
 from team.models import Team
 from employees.models import Employee
 
 from companies.models import TenantModel
+
+# How far ahead of a resource's warranty_expiry_date to start flagging it as
+# "expiring soon" on the resources list/dashboards. Hardcoded for now -- no
+# per-company config UI exists yet, and 30 days is a reasonable default lead
+# time for reordering/renewing before a warranty actually lapses.
+WARRANTY_ALERT_WINDOW_DAYS = 30
 
 
 class Category(TenantModel):
@@ -41,6 +49,11 @@ class Resource(TenantModel):
     added_by = models.CharField(max_length=200)
     resource_image = models.ImageField(upload_to='photos/resources', blank=True, null=True)
     added_on = models.DateField(auto_now_add=True)
+    # When this resource's warranty/lease runs out. Optional and first-class
+    # (not a schema-driven attribute_values entry) because alerts need to
+    # filter/sort/aggregate on it in querysets -- a JSON dict value can't do
+    # that efficiently.
+    warranty_expiry_date = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
@@ -50,6 +63,24 @@ class Resource(TenantModel):
 
     def __str__(self):
         return self.asset_id
+
+    @property
+    def warranty_alert_level(self):
+        """'expired' / 'expiring_soon' / None, for a status-pill on resource
+        list/detail pages and dashboard counts. Computed at request time
+        rather than stored/synced, matching Ticket.resource_label's shape --
+        there's no background job runner in this project to keep a stored
+        flag in sync, so deriving it from today's date on read is the only
+        option that can't drift stale.
+        """
+        if not self.warranty_expiry_date:
+            return None
+        today = date.today()
+        if self.warranty_expiry_date < today:
+            return 'expired'
+        if self.warranty_expiry_date <= today + timedelta(days=WARRANTY_ALERT_WINDOW_DAYS):
+            return 'expiring_soon'
+        return None
 
 class ResourceTaken(TenantModel):
     asset_id = models.ForeignKey(Resource, on_delete=models.CASCADE)

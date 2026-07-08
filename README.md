@@ -10,9 +10,16 @@ multi-tenant product: any company can sign up, configure its own resource
 categories and custom attributes, and run its own IT asset lifecycle
 independently of every other tenant on the same install.
 
+Beyond the core ticket/resource loop, Sukhra also covers: bulk CSV import of
+resources, warranty/lease expiry alerts, QR/barcode asset tagging for
+scan-to-issue/return, SLA response/resolution-time tracking with overdue
+flags, and an employee self-service portal (raise your own requests, see your
+own gear) gated behind manager approval before IT ever sees them.
+
 ## Table of contents
 
 - [What it does](#what-it-does)
+- [End-to-end workflow](#end-to-end-workflow)
 - [Tech stack](#tech-stack)
 - [Architecture](#architecture)
 - [Project structure](#project-structure)
@@ -25,19 +32,28 @@ independently of every other tenant on the same install.
 
 ### Roles
 
-Sukhra has three roles per company, each with its own dashboard:
+Sukhra has four roles per company, each with its own dashboard:
 
 - **Superadmin** — owns the org: departments, teams, and user accounts
   (creates Manager and IT Administrator logins). Sees org-wide charts (org
-  composition, user growth, company-wide resource/ticket rollups) and can
-  export the user list as CSV.
-- **Manager** — owns a team of employees (tracked people, not login
-  accounts). Adds team members and raises tickets on their behalf. Exports
-  completed tickets and the team roster as CSV.
+  composition, user growth, company-wide resource/ticket rollups, company-wide
+  SLA stats) and can export the user list as CSV.
+- **Manager** — owns a team of employees. Adds team members, raises tickets
+  on their behalf, and optionally grants them their own self-service portal
+  login. Reviews and approves/denies requests employees raise themselves
+  before they reach IT. Exports completed tickets and the team roster as CSV.
 - **IT Administrator** — owns the resource inventory: defines categories
   (with per-category custom attributes, e.g. a BitLocker key field for a
-  "Laptop" category), adds physical or non-physical resources, and processes
-  tickets end to end. Exports resources and completed tickets as CSV.
+  "Laptop" category), adds physical or non-physical resources, tracks
+  warranty/lease expiry, generates QR labels for physical assets, and
+  processes tickets end to end. Sees response/resolution-time and overdue
+  stats on their dashboard. Exports resources and completed tickets as CSV.
+- **Employee** — a tracked team member. Doesn't log in by default (still
+  just an `Employee` record a Manager manages), but can optionally be granted
+  a lightweight self-service login: raise their own requests, see their own
+  assigned resources, and track request status — without needing their
+  manager to do it for them. See [Employee self-service](#employee-self-service)
+  for how this is wired up.
 
 ### The ticket lifecycle
 
@@ -51,8 +67,53 @@ point) — is one of three types:
   completion, IT doesn't retype anything — the resource's stored attribute
   values (e.g. a BitLocker key) are looked up and included automatically.
 
-Every stage (created / approved / completed / cancelled) sends a branded
-HTML email (with a plain-text fallback) to the relevant people.
+A request an **Employee** raises themselves (via their self-service portal)
+starts one step earlier — `Pending Manager Approval` — and only advances to
+the regular `Pending` queue IT admins see once their manager approves it
+(denying it moves straight to `Cancelled`, with an optional reason emailed
+back to the employee). Manager-raised requests skip this step entirely and
+start at `Pending` exactly as before.
+
+Every stage (submitted / needs approval / approved / denied / completed /
+cancelled) sends a branded HTML email (with a plain-text fallback) to the
+relevant people.
+
+**SLA tracking.** Each `Ticket` records `created_on`, `processing_started_on`
+(stamped the moment it's approved into Processing), and `completed_on` — so
+average response time (created → processing) and resolution time
+(processing → completed) can be computed directly in the database with
+`Avg(F(...) - F(...))`, no extra bookkeeping. A ticket still open past a
+hardcoded threshold (`tickets/models.py`: `SLA_HOURS_TO_START_PROCESSING`,
+`SLA_DAYS_TO_COMPLETE`) shows an "Overdue" badge on the IT admin's request
+lists — there's no per-category/per-company configuration for these yet, and
+no background job computes them proactively; it's all derived at request
+time from the two timestamps above.
+
+### Resource lifecycle extras
+
+- **Bulk CSV import.** Symmetric with the existing CSV export: upload a CSV
+  (template downloadable from the same page) and each row becomes a
+  `Resource`. Bad rows (unknown category, missing required field, duplicate
+  asset id) are skipped individually with a reason shown back to you — one
+  malformed row doesn't sink the rest of the batch.
+- **Warranty/lease expiry alerts.** An optional `warranty_expiry_date` on
+  `Resource` drives an "expiring soon" / "expired" status pill on resource
+  lists, the detail page, and IT admin/Superadmin dashboard tiles that link
+  straight to a dedicated alerts page. Computed at request time from a
+  hardcoded lead-time window (`resources/models.py`:
+  `WARRANTY_ALERT_WINDOW_DAYS`), not a scheduled job — there's no background
+  task runner in this project (see [Tech stack](#tech-stack)), so there's no
+  proactive email digest yet, just an always-current on-page indicator.
+- **QR/barcode tagging.** Every resource has a generated QR code (and a
+  printable label) encoding a scan-action URL for that asset. Scanning it
+  routes based on the resource's current availability: an *Available*
+  resource shows Processing tickets requesting that category with a
+  one-click "complete with this asset" action; a *Taken* resource shows a
+  return-confirmation form. Both paths call straight into the existing
+  `complete_processing_request` / `mark_returned` views — scanning removes
+  the manual asset-id typing step, it doesn't introduce a second, parallel
+  way to hand out or take back a resource, so every `ResourceTaken` row
+  still traces back to a real `Ticket`.
 
 ### Multi-tenancy
 
@@ -60,6 +121,65 @@ Companies sign up self-serve, each getting an isolated tenant: their own
 departments, teams, users, resource categories, resources, and tickets,
 invisible to every other company on the same install. See
 [Architecture](#architecture) for how isolation is enforced.
+
+## End-to-end workflow
+
+A concrete walkthrough of one full loop, start to finish, across every role:
+
+1. **A company signs up.** Anyone visiting `/companies/signup/` creates a new
+   `Company` plus its first **Superadmin** account, with zero setup required
+   from an existing tenant — this is what actually creates the isolated
+   tenant every later step happens inside.
+2. **Superadmin builds the org.** Creates `Department`s and `Team`s, then
+   creates a **Manager** and an **IT Administrator** account for each team
+   that needs one (`account:add_user_page`) — each new account is `is_active=False`
+   until its owner clicks the activation link in the email they're sent.
+3. **IT Administrator sets up the resource catalog.** Defines `Category`s
+   (e.g. "Laptops"), each with its own custom attribute schema (e.g. a
+   BitLocker key field) and a `tracks_physical_asset` flag (physical units
+   vs. license-only categories), then adds actual `Resource` rows — either
+   one at a time, or in bulk via CSV import. Physical resources can get a
+   `warranty_expiry_date` and a generated QR label to print and stick on the
+   device.
+4. **Manager builds their team.** Adds `Employee` records for each person on
+   their team, optionally checking "grant portal access" to give that person
+   their own self-service login (or grants it retroactively later from the
+   team member's detail page).
+5. **A request gets raised**, one of two ways:
+   - The **Manager** raises it directly on the employee's behalf
+     (`tickets:create_request`) — it starts at `Pending`, assigned to a
+     random `is_it_admin` account in the same company.
+   - The **Employee** raises it themselves (`tickets:create_request_employee`)
+     — it starts at `Pending Manager Approval` and emails their manager. The
+     manager approves it (→ `Pending`, same as the manager-raised path from
+     here on) or denies it (→ `Cancelled`, with an optional reason emailed
+     back).
+6. **IT Administrator processes it.** Approves it into `Processing`
+   (`processing_started_on` is stamped here, starting the SLA clock) and
+   works the request, then completes it — either through the normal
+   completed-request form, or by scanning the target resource's QR label,
+   which shows only the Processing tickets that resource could fulfil and
+   completes it in one tap. Completing:
+   - a **Request new**/**Replacement** ticket allocates a real `Resource`,
+     flips it to `Taken`, and creates a `ResourceTaken` row linking it to the
+     employee;
+   - a **Support** ticket looks up the employee's already-assigned resource
+     and its stored attribute values automatically, no retyping.
+7. **The employee has the resource.** They (or their manager) can see it
+   under "My Resources"/"Resources Taken", IT can see it under "In & Outs",
+   and the Superadmin sees it rolled up company-wide on their dashboard.
+8. **Eventually, it's returned.** Either through the manager's "Mark
+   Returned" flow on the employee's profile, or by scanning the resource's
+   QR label again (now routed to a return-confirmation form instead, since
+   it's `Taken`) — either way, a reason is recorded (leaving the company,
+   swapping for a better spec, damaged, software issue) and the resource
+   goes back to `Available` (or `Configuration` if it needs attention first).
+9. **Along the way**, every stage sends a branded email to whoever needs to
+   know, response/resolution-time and overdue stats accumulate on the IT
+   Admin's and Superadmin's dashboards, and warranty alerts surface on their
+   own schedule regardless of ticket activity — none of this needs a
+   separate reporting step, it's all derived from the same rows as they're
+   written.
 
 ## Tech stack
 
@@ -69,9 +189,10 @@ invisible to every other company on the same install. See
 | Package management | [`uv`](https://github.com/astral-sh/uv) (PEP 621 `pyproject.toml` + lockfile) |
 | Database | SQLite (dev), PostgreSQL (prod, via `psycopg`) |
 | Frontend | Server-rendered Django templates, Bootstrap 5 (vendored, not CDN), vanilla JS (no build step) |
-| Charts | Chart.js (CDN) |
+| Charts | Chart.js (CDN), colors read from the design system's CSS custom properties rather than hardcoded hex |
 | Icons | [Lucide](https://lucide.dev) (CDN, SVG) |
 | Fonts | IBM Plex Sans / IBM Plex Mono (Google Fonts) |
+| QR codes | [`qrcode`](https://pypi.org/project/qrcode/) (server-side generation) + [html5-qrcode](https://github.com/mebjas/html5-qrcode) (CDN, camera-based scanning in the browser) |
 | Static files | WhiteNoise |
 | Email | Django's email framework — console backend in dev, SMTP in prod; `EmailMultiAlternatives` for HTML+text emails |
 | App server | Gunicorn |
@@ -90,8 +211,17 @@ All design tokens (color, spacing, radius, shadow) and component CSS live in
 one file: `sukhra/static/design-system.css`, loaded after the vendored `bootstrap.min.css`
 and retheming it via Bootstrap's own CSS custom properties (`--bs-primary`,
 `--bs-body-font-size`, etc.) wherever that's cheap, with real component rules
-everywhere else.
+everywhere else. Palette: sky blue / mustard yellow / white, with a dark-navy
+sidebar for contrast.
 
+- **App shell: sidebar + topbar.** Every authenticated page (`templates/base.html`)
+  renders a fixed left sidebar (role-specific nav, active-state highlighting
+  via `account/templatetags/nav_extras.py`'s `nav_active` tag) and a slim
+  topbar (breadcrumb slot + avatar/user-menu dropdown), collapsing to a
+  Bootstrap `offcanvas` panel below the `lg` breakpoint — no custom JS, just
+  Bootstrap's own `data-bs-toggle="offcanvas"`. Public/unauthenticated pages
+  (welcome, login, signup) are standalone documents that don't use this shell
+  at all.
 - **Compact type scale.** Base body text runs at `.9rem` (14.4px) rather than
   Bootstrap's 16px default — tables, buttons, form controls, stat tiles, and
   the page-header heading are all sized deliberately dense to read as a
@@ -106,15 +236,21 @@ everywhere else.
   exists at [lucide.dev/icons](https://lucide.dev/icons) first — a
   nonexistent name silently leaves a blank space (Lucide just can't find it
   to render), it won't error.
+- **Reusable component classes.** `.table-toolbar` (search/filter row + a
+  primary action), `.empty-state` (icon + title + helper text, via
+  `templates/includes/empty_state.html`), `.form-card`/`.form-card--wide`
+  (centered form containers, 640px/720px), and `.status-pill--*` (good /
+  info / warn / danger / neutral / muted) cover the vast majority of new
+  list/form/detail pages — check these before writing new one-off CSS.
 - **Responsive by default.** Every page uses Bootstrap's grid (`col-md-*`,
-  `col-lg-*`) and the navbar's built-in `navbar-toggler`/`collapse` for
-  mobile — verified via Playwright screenshots at 375px (mobile), 768px
+  `col-lg-*`) — verified via Playwright screenshots at 375px (mobile), 768px
   (tablet/iPad portrait), 1024px (iPad landscape/small laptop), and 1440px
-  (desktop) across representative dashboard/table/form pages. Wide tables
-  scroll horizontally within their own `.table-responsive` container on
-  narrow screens rather than breaking the page layout — this is intentional
-  (a real card-based mobile table alternative would be a much larger,
-  per-template change, not a token-level one).
+  (desktop) across representative dashboard/table/form pages, with particular
+  attention at the `lg` breakpoint where the sidebar swaps to the offcanvas
+  panel. Wide tables scroll horizontally within their own `.table-responsive`
+  container on narrow screens rather than breaking the page layout — this is
+  intentional (a real card-based mobile table alternative would be a much
+  larger, per-template change, not a token-level one).
 
 ## Architecture
 
@@ -123,11 +259,11 @@ everywhere else.
 | App | Owns |
 |---|---|
 | `companies` | `Company` (the tenant), plus the tenant-isolation machinery (see below) |
-| `account` | `Account` — the login/auth model (Superadmin / Manager / IT Admin) |
+| `account` | `Account` — the login/auth model (Superadmin / Manager / IT Admin / self-service Employee) |
 | `department`, `team` | Org structure each company is scoped into |
-| `employees` | `Employee` — a tracked person who does **not** log in (distinct from `Account`) |
-| `resources` | `Category` (with custom attribute schema), `Resource`, `ResourceTaken`, `OtherAccessories` |
-| `tickets` | `Ticket` — the request/support lifecycle |
+| `employees` | `Employee` — a tracked person, distinct from `Account`, optionally linked to one via `Account.employee_profile` for self-service login |
+| `resources` | `Category` (with custom attribute schema), `Resource` (incl. `warranty_expiry_date`), `ResourceTaken`, `OtherAccessories` |
+| `tickets` | `Ticket` — the request/support lifecycle, incl. SLA timestamps and the employee-approval status |
 
 ### Multi-tenancy: how isolation is enforced
 
@@ -172,6 +308,37 @@ render every possible attribute field once and a small vanilla-JS snippet
 shows only the fields belonging to the selected category — no page reload,
 no JS build step.
 
+### Employee self-service
+
+`Employee` (a tracked person) and `Account` (the login model) are, by
+design, two separate models — `Employee.peoplesoft_id` is only unique
+*per company*, while `Account.peoplesoft_id` must be globally unique (see
+the `Account` exception above), so `Employee` itself can never be the login
+model. Instead, `Account` gained a fourth role flag (`is_employee`) and a
+nullable `OneToOneField` to `Employee` (`Account.employee_profile`,
+`on_delete=SET_NULL`, `related_name='account'`) — `Account` owns the link
+since it's the actor/auth model, and `employee.account` is how a template
+checks "does this person have portal access yet".
+
+- **Provisioning**: a Manager can grant portal access inline when adding a
+  new team member, or retroactively from an existing team member's detail
+  page. Either path calls `MyManagerAccount.create_employee(...)` (mirrors
+  `create_manager`/`create_IT_admin`) and reuses the same activation-email
+  flow every other role already goes through. The temp-password generator
+  and activation-email sender were pulled out into
+  `sukhra/account_provisioning.py` so both `account/views.py` and
+  `employees/views.py` share one implementation.
+- **Offboarding**: hard-deleting an `Employee` with a linked `Account`
+  deactivates that `Account` first (`is_active=False`) — `employee_profile`
+  being `SET_NULL` would otherwise silently null the FK and leave an
+  orphaned *active* login behind.
+- **Cross-tenant id collisions**: because `Employee.peoplesoft_id` is only
+  unique per company but `Account.peoplesoft_id` is global, two different
+  companies' employees can occasionally collide on id when granting portal
+  access. This surfaces as a plain "already taken" message (same pattern as
+  `add_user_page`'s existing collision check) — it doesn't redesign
+  `USERNAME_FIELD`.
+
 ### Settings
 
 Split by environment (`sukhra/settings/{base,dev,prod}.py`), driven by
@@ -183,14 +350,14 @@ hardening flags.
 ## Project structure
 
 ```
-sukhra/                  # Django project package (settings, root urls, static/, csv_utils.py)
-account/                 # Auth, login, dashboards, add/edit users
+sukhra/                  # Django project package (settings, root urls, static/, csv_utils.py, account_provisioning.py)
+account/                 # Auth, login, dashboards, add/edit users (incl. self-service Employee accounts)
 companies/               # Company model, TenantModel/TenantManager, signup flow
 department/  team/       # Org structure
-employees/               # Tracked (non-login) people
-resources/               # Categories, resources, ResourceTaken
-tickets/                 # Ticket lifecycle
-templates/               # Shared + per-role templates (account/, manager/, it_admin/, superadmin/, includes/)
+employees/               # Tracked people; optionally linked to an Account for self-service login
+resources/               # Categories, resources (incl. warranty tracking), ResourceTaken, QR/scan views
+tickets/                 # Ticket lifecycle, incl. employee-approval flow and SLA tracking
+templates/               # Shared + per-role templates (account/, manager/, it_admin/, superadmin/, employee/, includes/)
 templates/account/emails/# Branded HTML email templates
 factories.py             # Shared factory_boy test factories, used across every app's tests
 docker-compose.yml       # app + db (Postgres) + nginx
@@ -226,6 +393,13 @@ one employee, and tickets covering every lifecycle state (pending,
 processing, completed — both a "Request new" and a "Support" ticket —  and
 cancelled). It's what every screenshot in this README's own development was
 generated from.
+
+It doesn't currently seed the newer optional bits — no resource has a
+`warranty_expiry_date` set, no employee has self-service portal access, and
+there's no `Pending Manager Approval` ticket — so to see those in action,
+grant portal access to the seeded employee from a Manager's team page, log
+in as them, and raise a request; or set a warranty date while editing a
+seeded resource as the IT Administrator.
 
 ```bash
 uv run manage.py seed_demo_data              # creates company code "demo"

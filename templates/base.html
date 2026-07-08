@@ -21,46 +21,107 @@
 </head>
 <body class="home-body">
     {% if user.is_authenticated %}
-    <nav class="navbar navbar-expand-lg site-navbar sticky-top">
-        <div class="container-fluid px-3 px-lg-4">
-            <a class="navbar-brand" href="{% if user.is_it_admin %}{% url 'account:it_admin_portal' user.id %}{% elif user.is_manager %}{% url 'account:manager_portal' user.id %}{% elif user.is_superadmin %}{% url 'account:superadmin_portal' %}{% endif %}">
+        {% if user.is_it_admin %}
+            {% url 'account:it_admin_portal' user.id as brand_url %}
+            {% url 'account:it_admin_user_profile' user.id as profile_url %}
+        {% elif user.is_manager %}
+            {% url 'account:manager_portal' user.id as brand_url %}
+            {% url 'account:manager_user_profile' user.id as profile_url %}
+        {% elif user.is_superadmin %}
+            {% url 'account:superadmin_portal' as brand_url %}
+            {% url 'account:superadmin_user_profile' as profile_url %}
+        {% elif user.is_employee %}
+            {% url 'account:employee_portal' user.id as brand_url %}
+            {% url 'account:employee_user_profile' user.id as profile_url %}
+        {% endif %}
+    {% endif %}
+
+    <div class="app-shell">
+        {% if user.is_authenticated %}
+        <aside class="app-sidebar d-none d-lg-flex flex-column">
+            <a class="app-sidebar__brand" href="{{ brand_url }}">
                 {% include 'includes/logo.html' %}
-                <span>
+                <span class="app-sidebar__brand-text">
                     Sukhra
-                    <span class="brand-role">{{ user.first_name }} &middot; {{ user.role }}</span>
+                    <span class="app-sidebar__brand-role">{{ user.role }}</span>
                 </span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#ormsNavbarContent" aria-controls="ormsNavbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="ormsNavbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul class="nav flex-column app-sidebar__nav">
+                {% if user.is_it_admin %}
+                    {% include 'includes/nav_it_admin.html' %}
+                {% elif user.is_manager %}
+                    {% include 'includes/nav_manager.html' %}
+                {% elif user.is_superadmin %}
+                    {% include 'includes/nav_superadmin.html' %}
+                {% elif user.is_employee %}
+                    {% include 'includes/nav_employee.html' %}
+                {% endif %}
+            </ul>
+        </aside>
+
+        <div class="offcanvas offcanvas-start app-sidebar-offcanvas" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+            <div class="offcanvas-header">
+                <a class="app-sidebar__brand" href="{{ brand_url }}" id="sidebarOffcanvasLabel">
+                    {% include 'includes/logo.html' %}
+                    <span class="app-sidebar__brand-text">Sukhra</span>
+                </a>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body p-0">
+                <ul class="nav flex-column app-sidebar__nav">
                     {% if user.is_it_admin %}
                         {% include 'includes/nav_it_admin.html' %}
                     {% elif user.is_manager %}
                         {% include 'includes/nav_manager.html' %}
                     {% elif user.is_superadmin %}
                         {% include 'includes/nav_superadmin.html' %}
+                    {% elif user.is_employee %}
+                        {% include 'includes/nav_employee.html' %}
                     {% endif %}
                 </ul>
-                <a href="{% url 'account:logout' %}" class="btn btn-outline-warning btn-sm btn-logout">
-                    <i data-lucide="log-out"></i> Logout
-                </a>
             </div>
         </div>
-    </nav>
-    {% endif %}
+        {% endif %}
 
-    <main class="page-content">
-        {% block content %}
-        {% endblock %}
-    </main>
+        <div class="app-shell__main{% if not user.is_authenticated %} app-shell__main--full{% endif %}">
+            {% if user.is_authenticated %}
+            <header class="app-topbar">
+                <button class="app-topbar__toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas" aria-label="Toggle navigation">
+                    <i data-lucide="menu"></i>
+                </button>
+                <div class="app-topbar__breadcrumb">{% block breadcrumb %}{% endblock %}</div>
+                <div class="app-topbar__spacer"></div>
+                <div class="dropdown app-user-menu">
+                    <button class="btn app-user-menu__toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% include 'includes/avatar.html' with name=user.first_name size=32 %}
+                        <span class="app-user-menu__name d-none d-md-inline">{{ user.first_name }}</span>
+                        <i data-lucide="chevron-down"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end app-user-menu__menu">
+                        <li class="app-user-menu__header">
+                            <div class="app-user-menu__fullname">{{ user.first_name }} {{ user.last_name }}</div>
+                            <div class="app-user-menu__role">{{ user.role }}</div>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ profile_url }}"><i data-lucide="circle-user"></i> My Profile</a></li>
+                        <li><a class="dropdown-item app-user-menu__logout" href="{% url 'account:logout' %}"><i data-lucide="log-out"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </header>
+            {% endif %}
 
-    {% if user.is_authenticated %}
-    <footer class="app-footer">
-        <p>&copy; {% now "Y" %} Sukhra &mdash; Office Resources Management System</p>
-    </footer>
-    {% endif %}
+            <main class="page-content">
+                {% block content %}
+                {% endblock %}
+            </main>
+
+            {% if user.is_authenticated %}
+            <footer class="app-footer">
+                <p>&copy; {% now "Y" %} Sukhra - Office Resources Management System</p>
+            </footer>
+            {% endif %}
+        </div>
+    </div>
 
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>

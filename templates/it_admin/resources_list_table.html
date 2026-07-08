@@ -7,33 +7,34 @@
 <div class="container-fluid px-4">
     <h1 class="page-header"><i data-lucide="laptop"></i> Resources Table</h1>
 
-    <form action="{% url 'resources:resources_date_sort' %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
+    <form action="{% url 'resources:resources_date_sort' %}" method="POST" class="table-toolbar">
         {% csrf_token %}
-        <div class="col">
-            <label class="form-label small mb-1">From</label>
-            <input type="date" name="from_res" class="form-control" required>
+        <div class="table-toolbar__fields">
+            <div>
+                <label class="form-label small">From</label>
+                <input type="date" name="from_res" class="form-control" required>
+            </div>
+            <div>
+                <label class="form-label small">To</label>
+                <input type="date" name="to_res" class="form-control" required>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-outline-primary">
+                    <i data-lucide="filter"></i> Filter
+                </button>
+            </div>
         </div>
-        <div class="col">
-            <label class="form-label small mb-1">To</label>
-            <input type="date" name="to_res" class="form-control" required>
-        </div>
-        <div class="col">
-            <button type="submit" class="btn btn-primary">Search</button>
-        </div>
-        <div class="col">
-            <a href="{% url 'resources:resources_listings_page' %}" class="btn btn-outline-secondary">
-                <i data-lucide="arrow-left"></i> Back
-            </a>
-        </div>
-        <div class="col">
-            <a href="{% url 'resources:export_resources_csv' %}" class="btn btn-outline-secondary">
-                <i data-lucide="download"></i> Download CSV
-            </a>
-        </div>
+        <div class="table-toolbar__spacer"></div>
+        <a href="{% url 'resources:resources_listings_page' %}" class="btn btn-outline-secondary">
+            <i data-lucide="arrow-left"></i> Back
+        </a>
+        <a href="{% url 'resources:export_resources_csv' %}" class="btn btn-outline-secondary">
+            <i data-lucide="download"></i> Download CSV
+        </a>
     </form>
 
     {% if get_result %}
-        <p class="text-muted small">Showing {{ from_date }} to {{ to_date }} &mdash; {{ result_count }} result(s)</p>
+        <p class="text-muted small">Showing {{ from_date }} to {{ to_date }} - {{ result_count }} result(s)</p>
     {% endif %}
 
     <div class="table-responsive">
@@ -67,7 +68,9 @@
                     </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="5" class="text-center text-muted py-4">No resources found.</td></tr>
+                <tr><td colspan="5" class="p-0">
+                    {% include 'includes/empty_state.html' with icon='laptop' title='No resources found' subtitle='Try adjusting your date range.' %}
+                </td></tr>
                 {% endfor %}
             </tbody>
         </table>

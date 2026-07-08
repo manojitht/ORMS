@@ -1,35 +1,37 @@
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account:manager_portal' user.id %}">
-                            <i data-lucide="chart-pie"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'employees:view_team_members' user.id %}">
-                            <i data-lucide="house"></i> My Team
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'employees:add_member' %}">
-                            <i data-lucide="book-plus"></i> New Member
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'tickets:list_requests_manager' user.id %}">
-                            <i data-lucide="receipt"></i> My Requests
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'resources:manager_taken_resources_list_table' user.id %}">
-                            <i data-lucide="history"></i> In &amp; Out
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'employees:manager_notes_page' %}">
-                            <i data-lucide="sticky-note"></i> My Notes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account:manager_user_profile' user.id %}">
-                            <i data-lucide="circle-user"></i> My Profile
-                        </a>
-                    </li>
+{% load nav_extras %}
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'manager_portal' %}" href="{% url 'account:manager_portal' user.id %}">
+        <i data-lucide="chart-pie"></i> <span>Dashboard</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'view_team_members' 'view_team_members_details' 'edit_team_member' 'view_team_members_index_table' 'search_team_member' %}" href="{% url 'employees:view_team_members' user.id %}">
+        <i data-lucide="house"></i> <span>My Team</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'add_member' %}" href="{% url 'employees:add_member' %}">
+        <i data-lucide="book-plus"></i> <span>New Member</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'list_requests_manager' 'list_completed_requests_manager' 'create_request' 'view_selected_request' 'view_manager_completed_request' %}" href="{% url 'tickets:list_requests_manager' user.id %}">
+        <i data-lucide="receipt"></i> <span>My Requests</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'manager_taken_resources_list_table' 'manager_returned_resources_list_table' %}" href="{% url 'resources:manager_taken_resources_list_table' user.id %}">
+        <i data-lucide="history"></i> <span>In &amp; Out</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'list_requests_from_team_manager' %}" href="{% url 'tickets:list_requests_from_team_manager' user.id %}">
+        <i data-lucide="user-check"></i> <span>Requests From Employees</span>
+    </a>
+</li>
+<li class="nav-item app-sidebar__nav-divider"></li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'manager_user_profile' 'manager_edit_user_profile' %}" href="{% url 'account:manager_user_profile' user.id %}">
+        <i data-lucide="circle-user"></i> <span>My Profile</span>
+    </a>
+</li>

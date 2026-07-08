@@ -1,25 +1,27 @@
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account:superadmin_portal' %}">
-                            <i data-lucide="layout-dashboard"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account:superadmin_add_user' %}">
-                            <i data-lucide="user-plus"></i> System Users
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'department:superadmin_department_table' %}">
-                            <i data-lucide="building-2"></i> Departments
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'team:superadmin_team_table' %}">
-                            <i data-lucide="users"></i> Teams
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account:superadmin_user_profile' %}">
-                            <i data-lucide="circle-user"></i> My Profile
-                        </a>
-                    </li>
+{% load nav_extras %}
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'superadmin_portal' %}" href="{% url 'account:superadmin_portal' %}">
+        <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'superadmin_add_user' 'add_user_page' 'view_user_details' 'edit_user' 'users_deletion_history' %}" href="{% url 'account:superadmin_add_user' %}">
+        <i data-lucide="user-plus"></i> <span>System Users</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'superadmin_department_table' 'display_departments' 'add_new_department' 'edit_department' 'department_view_teams' 'department_deletion_history' %}" href="{% url 'department:superadmin_department_table' %}">
+        <i data-lucide="building-2"></i> <span>Departments</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'superadmin_team_table' 'display_team' 'superadmin_add_team' 'edit_team' 'team_deletion_history' %}" href="{% url 'team:superadmin_team_table' %}">
+        <i data-lucide="users"></i> <span>Teams</span>
+    </a>
+</li>
+<li class="nav-item app-sidebar__nav-divider"></li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'superadmin_user_profile' 'superadmin_edit_user_profile' %}" href="{% url 'account:superadmin_user_profile' %}">
+        <i data-lucide="circle-user"></i> <span>My Profile</span>
+    </a>
+</li>

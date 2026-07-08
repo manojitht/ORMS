@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | Edit My Profile{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="circle-user"></i> Edit My Profile</h1>
+    {% include 'message_alert.html' %}
+
+    {% if user %}
+    <div class="card form-card form-card--wide">
+        <div class="card-body p-4">
+            <form action="{% url 'account:employee_update_user_profile' user.id %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="text-center mb-3">
+                    {% if user.accountprofile.profile_image %}
+                        <img src="{{ user.accountprofile.profile_image.url }}" class="avatar-img" style="--avatar-size: 88px;">
+                    {% else %}
+                        {% include 'includes/avatar.html' with name=user.first_name|add:' '|add:user.last_name size=88 %}
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">First name</label>
+                        <input name="first_name" class="form-control" type="text" value="{{ user.first_name }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Last name</label>
+                        <input name="last_name" class="form-control" type="text" value="{{ user.last_name }}" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Peoplesoft Id</label>
+                        <input class="form-control" type="text" value="{{ user.peoplesoft_id }}" readonly>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Department</label>
+                        <input class="form-control" type="text" value="{{ user.department }}" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        <input name="email" class="form-control" type="email" value="{{ user.email }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Contact number</label>
+                        <input name="contact_number" class="form-control" type="text" value="{{ user.accountprofile.contact_number }}">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Home address</label>
+                    <input name="home_address" class="form-control" type="text" value="{{ user.accountprofile.home_address }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Profile image</label>
+                    <input name="profile_image" class="form-control" type="file" accept="image/*">
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'account:employee_user_profile' user.id %}" class="btn btn-outline-secondary flex-fill">Back</a>
+                    <button type="submit" class="btn btn-primary flex-fill">Update Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
