@@ -16,8 +16,6 @@ from django.contrib.auth.decorators import login_required
 from sukhra.csv_utils import csv_response
 from sukhra.account_provisioning import generate_temporary_password, send_account_creation_email
 
-# Create your views here.
-
 
 def _provision_employee_account(request, employee):
     """Create a self-service login for `employee`, linked via
@@ -58,7 +56,6 @@ def grant_portal_access(request, memid):
     _provision_employee_account(request, employee)
     return redirect('employees:view_team_members_details', memid)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def add_member(request):
@@ -94,7 +91,6 @@ def add_member(request):
 
     return render(request, 'manager/add_member_form.html')
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def view_team_members(request, userid):
@@ -105,7 +101,6 @@ def view_team_members(request, userid):
     context = { 'team_members': team_members, 'tm_count': tm_count, }
     return render(request, 'manager/view_team_member.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def export_team_members_csv(request, userid):
@@ -118,7 +113,6 @@ def export_team_members_csv(request, userid):
     return csv_response('team_members.csv',
         ('PS Id', 'Fullname', 'Position', 'Email', 'Contact', 'Date Joined'), rows)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def view_team_members_details(request, memid):
@@ -134,7 +128,6 @@ def view_team_members_details(request, memid):
     context = { 'get_member_id': get_member_id, 'get_devices_id': get_devices_id, 'get_oa': get_oa, 'device_count': device_count, }
     return render(request, 'manager/view_team_member_details.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def search_team_member(request, userid):
@@ -155,7 +148,6 @@ def search_team_member(request, userid):
     }
     return render(request, 'manager/view_team_member.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def edit_team_member(request, memid):
@@ -163,7 +155,6 @@ def edit_team_member(request, memid):
     context = { 'get_member_id': get_member_id, }
     return render(request, 'manager/edit_team_member.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def update_team_member(request, memid):
@@ -184,7 +175,6 @@ def update_team_member(request, memid):
         message_alert.success(request, 'Team member details of ' + update_tm.peoplesoft_id + ' was updated successfully!')
     return redirect('employees:view_team_members_details', memid)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def add_other_notes(request, memid):
@@ -196,7 +186,6 @@ def add_other_notes(request, memid):
         message_alert.success(request, 'Other notes added to ' + peoplesoft_id +' successfully!')
     return redirect('employees:view_team_members_details', memid)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def edit_other_notes(request, memid):
@@ -204,7 +193,6 @@ def edit_other_notes(request, memid):
     context = { 'get_oa_id': get_oa_id, }
     return render(request, 'manager/view_team_member_details.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def update_other_notes(request, memid, psid):
@@ -216,7 +204,6 @@ def update_other_notes(request, memid, psid):
         message_alert.success(request, 'Other notes was updated successfully!')
     return redirect('employees:view_team_members_details', psid)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def mark_returned(request, resid, memid):
@@ -226,7 +213,6 @@ def mark_returned(request, resid, memid):
 
     if request.method == 'POST':
         reason_notes = request.POST['return_reason']
-        # peoplesoft_id = request.POST['peoplesoft_id']
 
         if reason_notes == 'Leaving From Company' or reason_notes == 'Swaping For Highend Resource':
             get_asset.resource_status = 'Returned'
@@ -237,7 +223,6 @@ def mark_returned(request, resid, memid):
                 update.resource_availability = 'Available'
                 update.save()
 
-                #send email functionality for return resource process
                 mail_head_subject = ' Resource Mark Returned Completed For ' + update.asset_id + ''
                 return_email_context = {'get_asset': get_asset, 'asset_id': update.asset_id}
                 text_body = render_to_string('account/resource_mark_return_email.html', return_email_context)
@@ -256,7 +241,6 @@ def mark_returned(request, resid, memid):
                 update.resource_availability = 'Configuration'
                 update.save()
 
-            #send email functionality for return resource process
             mail_head_subject = ' Resource Mark Returned Completed For ' + update.asset_id + ''
             return_email_context = {'get_asset': get_asset, 'asset_id': update.asset_id}
             text_body = render_to_string('account/resource_mark_return_email.html', return_email_context)
@@ -271,38 +255,23 @@ def mark_returned(request, resid, memid):
     
     return redirect('employees:view_team_members_details', memid)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def view_member_resource_info(request, memid, resid):
     get_member_id = Employee.objects.get(id=memid)
-    # get_ps_id = Employee.objects.get(peoplesoft_id=get_member_id.peoplesoft_id)
     get_devices_id = ResourceTaken.objects.get(id=resid)
     context = { 'get_devices_id': get_devices_id, 'get_member_id': get_member_id, }
     return render(request, 'manager/view_resource_info.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def view_history_resources(request, memid):
     get_member_id = Employee.objects.get(id=memid)
     get_ps_id = Employee.objects.get(peoplesoft_id=get_member_id.peoplesoft_id)
     get_devices_id = ResourceTaken.objects.filter(peoplesoft_id=get_ps_id, resource_status='Returned')
-
-    # for date_range in get_devices_id:
-    #     get_date_taken = ResourceTaken.objects.get(taken_date=date_range.taken_date)
-    #     get_date_returned = ResourceTaken.objects.get(returned_date=date_range.returned_date)
-    #     date_format = "%Y-%m-%d"
-    #     take_date = datetime.strptime(get_date_taken, date_format)
-    #     return_date = datetime.strptime(get_date_returned, date_format)
-    #     no_of_days = return_date - take_date
-    #     print(no_of_days)
-
-
     context = { 'get_devices_id': get_devices_id, 'get_member_id': get_member_id, }
     return render(request, 'manager/view_history_devices.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def delete_team_member(request, memid, userid):
@@ -321,7 +290,6 @@ def delete_team_member(request, memid, userid):
             deleting_mem.delete()
     return redirect('employees:view_team_members', userid)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def view_team_members_index_table(request, userid):
@@ -331,7 +299,6 @@ def view_team_members_index_table(request, userid):
     context = { 'team_members': team_members, }
     return render(request, 'manager/member_index_table.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def date_sort_team_members_index_table(request, userid):
@@ -344,5 +311,3 @@ def date_sort_team_members_index_table(request, userid):
         result_count = get_result.count()
     context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, 'team_members': None, }
     return render(request, 'manager/member_index_table.html', context)
-
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

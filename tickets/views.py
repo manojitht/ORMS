@@ -15,10 +15,6 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from sukhra.csv_utils import csv_response
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# Create your views here.
-
 
 def _send_ticket_email(subject, template_name, context, recipient_list):
     """Send a ticket-lifecycle notification with both a plain-text part (the
@@ -41,7 +37,6 @@ def list_requests_manager(request, userid):
     context = { 'get_requests_pending': get_requests_pending, 'get_requests_processing': get_requests_processing, }
     return render(request, 'manager/view_requests_page.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def list_completed_requests_manager(request, userid):
@@ -51,7 +46,6 @@ def list_completed_requests_manager(request, userid):
     context = { 'get_requests_completed': get_requests_completed, }
     return render(request, 'manager/view_requests_completed_page.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def export_manager_completed_requests_csv(request, userid):
@@ -64,7 +58,6 @@ def export_manager_completed_requests_csv(request, userid):
     return csv_response('completed_requests.csv',
         ('Request Id', 'Resource', 'Category', 'Created For', 'Status', 'Completed On'), rows)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def create_request(request, userid):
@@ -151,7 +144,6 @@ def create_request(request, userid):
     context = { 'generated_request_id': generated_request_id, 'assign_admin': assign_admin, 'request_resource_list': request_resource_list, }
     return render(request, 'manager/create_request_form.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def view_selected_request(request, reqid):
@@ -160,7 +152,6 @@ def view_selected_request(request, reqid):
     context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, }
     return render(request, 'manager/open_request_page.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def view_manager_completed_request(request, reqid):
@@ -169,7 +160,6 @@ def view_manager_completed_request(request, reqid):
     context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, }
     return render(request, 'manager/open_completed_request_manager.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def manager_requests_date_sort(request, userid):
@@ -188,7 +178,6 @@ def manager_requests_date_sort(request, userid):
     context = { 'get_result': get_result, 'get_requests_completed': None, }
     return render(request, 'manager/view_requests_completed_page.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def cancel_request(request, reqid, userid):
@@ -204,7 +193,6 @@ def cancel_request(request, reqid, userid):
     get_request.request_status = 'Cancelled'
     resuest_status_r = 'Cancelled'
 
-    #send email functionality for request cancellation process by manager
     mail_head_subject = 'Request (' + get_request.request_id + ') Was Cancelled For ' + get_request.resource_label
     _send_ticket_email(mail_head_subject, 'request_cancellation_manager_email.html', {
         'get_request': get_request,
@@ -214,7 +202,6 @@ def cancel_request(request, reqid, userid):
     message_alert.success(request, get_request.request_id +  ', was cancelled successfully!')
     return redirect('tickets:list_requests_manager', userid)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def delete_request(request, reqid, userid):
@@ -224,7 +211,6 @@ def delete_request(request, reqid, userid):
     message_alert.success(request, get_request.request_id +  ', was deleted successfully!')
     return redirect('tickets:list_requests_manager', userid)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def list_pending_requests_it_admin(request, userid):
@@ -234,7 +220,6 @@ def list_pending_requests_it_admin(request, userid):
     context = { 'get_requests': get_requests, }
     return render(request, 'it_admin/view_requests_it_admin.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def cancel_request_it_admin(request, reqid, userid):
@@ -250,7 +235,6 @@ def cancel_request_it_admin(request, reqid, userid):
     get_request.request_status = 'Cancelled'
     resuest_status_r = 'Cancelled'
 
-    #send email functionality for request cancellation process by IT administrator
     mail_head_subject = 'Request (' + get_request.request_id + ') Was Cancelled For ' + get_request.resource_label
     _send_ticket_email(mail_head_subject, 'request_cancellation_it_admin_email.html', {
         'get_request': get_request,
@@ -260,7 +244,6 @@ def cancel_request_it_admin(request, reqid, userid):
     message_alert.success(request, get_request.request_id +  ', was cancelled successfully!')
     return redirect('tickets:list_pending_requests_it_admin', userid)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def list_processing_requests_it_admin(request, userid):
@@ -270,7 +253,6 @@ def list_processing_requests_it_admin(request, userid):
     context = { 'get_requests': get_requests, }
     return render(request, 'it_admin/view_processing_requests_it_admin.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def list_completed_requests_it_admin(request, userid):
@@ -280,7 +262,6 @@ def list_completed_requests_it_admin(request, userid):
     context = { 'get_requests': get_requests, }
     return render(request, 'it_admin/view_completed_requests_it_admin.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def export_it_admin_completed_requests_csv(request, userid):
@@ -293,7 +274,6 @@ def export_it_admin_completed_requests_csv(request, userid):
     return csv_response('completed_requests.csv',
         ('Request Id', 'Resource', 'Category', 'Created For', 'Status', 'Completed On'), rows)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def view_selected_request_it_admin(request, reqid):
@@ -302,7 +282,6 @@ def view_selected_request_it_admin(request, reqid):
     context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, }
     return render(request, 'it_admin/open_request_it_admin_page.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def approve_processing_request(request, reqid, userid):
@@ -311,7 +290,6 @@ def approve_processing_request(request, reqid, userid):
     get_request.processing_started_on = timezone.now()
     resuest_status_r = 'Processing'
 
-    #send email functionality for request approval process
     mail_head_subject = 'Request Was Approved (' + get_request.request_id + ') For ' + get_request.resource_label
     _send_ticket_email(mail_head_subject, 'request_approval_email.html', {
         'get_request': get_request,
@@ -322,7 +300,6 @@ def approve_processing_request(request, reqid, userid):
     message_alert.success(request, get_request.request_id +  ', was approved successfully & assigned to your processing requests tab!')
     return redirect('tickets:list_pending_requests_it_admin', userid)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def view_selected_processing_request(request, reqid):
@@ -345,7 +322,6 @@ def view_selected_processing_request(request, reqid):
     context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, 'assign_resource': assign_resource, }
     return render(request, 'it_admin/open_processing_request.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def view_selected_completed_request(request, reqid):
@@ -354,7 +330,6 @@ def view_selected_completed_request(request, reqid):
     context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, }
     return render(request, 'it_admin/open_completed_request.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def complete_processing_request(request, reqid, userid):
@@ -431,7 +406,6 @@ def complete_processing_request(request, reqid, userid):
 
     return redirect('tickets:list_processing_requests_it_admin', userid)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def ajax_load_employee_resources(request):
@@ -441,7 +415,6 @@ def ajax_load_employee_resources(request):
     )
     return render(request, 'manager/employee_resources_dropdownlist_options.html', {'resources_taken': resources_taken})
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def it_admin_completed_requests_date_sort(request, userid):
@@ -460,7 +433,6 @@ def it_admin_completed_requests_date_sort(request, userid):
     context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, 'get_requests': None, }
     return render(request, 'it_admin/view_completed_requests_it_admin.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Employee self-service requests -- thin, dedicated views mirroring the
 # manager equivalents (create_request/list_requests_manager/etc.), matching
 # this codebase's existing convention of one view per role for the same
@@ -535,7 +507,6 @@ def create_request_employee(request, userid):
     }
     return render(request, 'employee/create_request_employee.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def list_requests_employee(request, userid):
@@ -547,7 +518,6 @@ def list_requests_employee(request, userid):
     context = { 'get_requests_pending': get_requests_pending, 'get_requests_processing': get_requests_processing, }
     return render(request, 'employee/my_requests.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def list_completed_requests_employee(request, userid):
@@ -557,7 +527,6 @@ def list_completed_requests_employee(request, userid):
     context = { 'get_requests_completed': get_requests_completed, }
     return render(request, 'employee/my_requests_completed.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def view_selected_request_employee(request, reqid):
@@ -565,7 +534,6 @@ def view_selected_request_employee(request, reqid):
     context = { 'get_request_id': get_request_id }
     return render(request, 'employee/open_request_employee.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def cancel_request_employee(request, reqid, userid):
@@ -580,7 +548,6 @@ def cancel_request_employee(request, reqid, userid):
     message_alert.success(request, get_request.request_id + ', was cancelled successfully!')
     return redirect('tickets:list_requests_employee', userid)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Manager-side approval queue for employee-submitted requests.
 
 @login_required(login_url='account:login')
@@ -592,7 +559,6 @@ def list_requests_from_team_manager(request, userid):
     context = { 'get_requests_awaiting': get_requests_awaiting }
     return render(request, 'manager/view_requests_from_employees.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def approve_employee_request_manager(request, reqid, userid):
@@ -618,7 +584,6 @@ def approve_employee_request_manager(request, reqid, userid):
     message_alert.success(request, get_request.request_id + ', was approved and sent to IT for processing!')
     return redirect('tickets:list_requests_from_team_manager', userid)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def deny_employee_request_manager(request, reqid, userid):
@@ -645,5 +610,3 @@ def deny_employee_request_manager(request, reqid, userid):
 
     message_alert.success(request, get_request.request_id + ', was denied.')
     return redirect('tickets:list_requests_from_team_manager', userid)
-
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

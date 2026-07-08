@@ -15,7 +15,6 @@ from account.models import Account
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from sukhra.csv_utils import csv_response
-# Create your views here.
 
 RESOURCE_IMPORT_FIXED_COLUMNS = ('Asset Id', 'Model Name', 'Resource Type', 'Availability', 'Description', 'Added By')
 
@@ -52,7 +51,6 @@ def _parse_attribute_values_from_post(post, category):
             values[key] = value
     return values
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def resources_list_table(request):
@@ -60,7 +58,6 @@ def resources_list_table(request):
     context = { 'resources': resources, }
     return render(request, 'it_admin/resources_list_table.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def export_resources_csv(request):
@@ -72,7 +69,6 @@ def export_resources_csv(request):
     return csv_response('resources.csv',
         ('Asset Id', 'Resource Type', 'Lastly Updated By', 'Added On', 'Availability'), rows)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def _all_attribute_keys(resource_categories):
     """De-duplicated (key, label) pairs across every category's
@@ -100,7 +96,6 @@ def download_resource_import_template_csv(request):
     )
     return csv_response('resource_import_template.csv', header, rows)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def import_resources_csv(request):
@@ -157,7 +152,6 @@ def import_resources_csv(request):
 
     return render(request, 'it_admin/import_resources_page.html', {'resource_categories': resource_categories})
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def returned_resources_list_table(request):
@@ -165,7 +159,6 @@ def returned_resources_list_table(request):
     context = { 'resources': resources, }
     return render(request, 'it_admin/view_returns_page.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def taken_resources_list_table(request):
@@ -173,7 +166,6 @@ def taken_resources_list_table(request):
     context = { 'resources': resources, }
     return render(request, 'it_admin/view_taken_page.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def _category_schema_context(resource_categories):
     """Shared context builder for the Add/Edit Resource templates: a
@@ -231,9 +223,7 @@ def add_resource_page(request):
             return redirect('resources:resources_listings_page')
 
     return render(request, 'it_admin/add_resource_form.html', context)
-    # return render(request, 'it_admin/resource_form.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def edit_resource(request, resid):
@@ -243,7 +233,6 @@ def edit_resource(request, resid):
     context.update(_category_schema_context(resource_categories))
     return render(request, 'it_admin/edit_resource_page.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def update_resource(request, resid):
@@ -267,7 +256,6 @@ def update_resource(request, resid):
         message_alert.success(request, 'Resource details of ' + update_res.asset_id + ' was updated successfully!')
     return redirect('resources:resources_listings_page')
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def resource_deletion_history(request):
@@ -275,7 +263,6 @@ def resource_deletion_history(request):
     context = { 'resources': resources, }
     return render(request, 'it_admin/resource_deletion_history.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def restore_device(request, resid):
@@ -285,7 +272,6 @@ def restore_device(request, resid):
     message_alert.success(request, 'Device restored successfully!')
     return redirect('resources:resource_deletion_history')
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def permanent_delete_device(request, resid):
@@ -294,7 +280,6 @@ def permanent_delete_device(request, resid):
     message_alert.success(request, 'Device permanently deleted successfully!')
     return redirect('resources:resource_deletion_history')
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def resources_date_sort(request):
@@ -307,7 +292,6 @@ def resources_date_sort(request):
     context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, 'resources': None, }
     return render(request, 'it_admin/resources_list_table.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def returned_resources_date_sort(request):
@@ -320,7 +304,6 @@ def returned_resources_date_sort(request):
     context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, 'resources': None, }
     return render(request, 'it_admin/view_returns_page.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def taken_resources_date_sort(request):
@@ -333,7 +316,6 @@ def taken_resources_date_sort(request):
     context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, 'resources': None, }
     return render(request, 'it_admin/view_taken_page.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def resources_listings_page(request):
@@ -342,7 +324,6 @@ def resources_listings_page(request):
     context = { 'resources': resources, 'res_count': res_count, }
     return render(request, 'it_admin/resources_listings_page.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def expiring_resources_page(request):
@@ -356,7 +337,6 @@ def expiring_resources_page(request):
     context = { 'expired_resources': expired_resources, 'expiring_soon_resources': expiring_soon_resources, }
     return render(request, 'it_admin/expiring_resources_page.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def view_resource(request, resid):
@@ -364,7 +344,6 @@ def view_resource(request, resid):
     context = { 'selected_res': selected_res, }
     return render(request, 'it_admin/view_resource_page.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def resource_qr_image(request, resid):
@@ -379,14 +358,12 @@ def resource_qr_image(request, resid):
     img.save(buffer, format='PNG')
     return HttpResponse(buffer.getvalue(), content_type='image/png')
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def print_resource_label(request, resid):
     resource = Resource.objects.get(id=resid)
     return render(request, 'it_admin/print_resource_label.html', {'resource': resource})
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def scan_resource(request, asset_id):
@@ -419,13 +396,11 @@ def scan_resource(request, asset_id):
     else:
         return render(request, 'it_admin/scan_resource_readonly.html', {'resource': resource, 'asset_id': asset_id})
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def scan_camera_page(request):
     return render(request, 'it_admin/scan_camera.html')
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def view_resource_categories(request):
@@ -434,7 +409,6 @@ def view_resource_categories(request):
     context = { 'all_categories': all_categories, 'category_count': category_count, }
     return render(request, 'it_admin/view_categories_page.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def add_category_page(request):
@@ -458,7 +432,6 @@ def add_category_page(request):
 
     return redirect('resources:view_resource_categories')
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def edit_category_page(request, catid):
@@ -466,7 +439,6 @@ def edit_category_page(request, catid):
     context = { 'get_cat': get_cat, }
     return render(request, 'it_admin/edit_category_page.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def update_category(request, catid):
@@ -485,16 +457,13 @@ def update_category(request, catid):
         message_alert.success(request, update_cat.resource_category + ' category was updated successfully!')
     return redirect('resources:view_resource_categories')
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def delete_category_warning(request, delcatid):
-    get_cat = Category.objects.get(id=delcatid) 
-    # resources_count = Resource.objects.filter(is_active=True, resource_category=get_cat.resource_category).count()
+    get_cat = Category.objects.get(id=delcatid)
     context = { 'get_cat': get_cat, }
     return render(request, 'it_admin/warning_page.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def delete_resource(request, resid):
@@ -505,7 +474,6 @@ def delete_resource(request, resid):
             deleting_res.delete()
             message_alert.success(request, deleting_res.asset_id + ' - Resource was deleted successfully!')
     return redirect('resources:resources_listings_page')
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def search_resource(request):
@@ -518,7 +486,6 @@ def search_resource(request):
     context = { 'search_resource': search_resource, 'keyword': keyword, 'search_count': search_count, 'resources': None, }
     return render(request, 'it_admin/resources_listings_page.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def manager_returned_resources_list_table(request, userid):
@@ -528,7 +495,6 @@ def manager_returned_resources_list_table(request, userid):
     context = { 'resources': resources, }
     return render(request, 'manager/view_returns_page.html', context)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def manager_taken_resources_list_table(request, userid):
@@ -538,7 +504,6 @@ def manager_taken_resources_list_table(request, userid):
     context = { 'resources': resources, }
     return render(request, 'manager/view_taken_page.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def employee_taken_resources_list_table(request, userid):
@@ -549,7 +514,6 @@ def employee_taken_resources_list_table(request, userid):
     context = { 'resources': resources, }
     return render(request, 'employee/my_resources.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def manager_returned_resources_date_sort(request, userid):
@@ -564,7 +528,6 @@ def manager_returned_resources_date_sort(request, userid):
     context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, 'resources': None, }
     return render(request, 'manager/view_returns_page.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def manager_taken_resources_date_sort(request, userid):
@@ -578,5 +541,3 @@ def manager_taken_resources_date_sort(request, userid):
         result_count = get_result.count()
     context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, 'resources': None, }
     return render(request, 'manager/view_taken_page.html', context)
-
-#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------

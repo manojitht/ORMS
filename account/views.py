@@ -1,6 +1,4 @@
 import os
-import secrets
-import string
 from datetime import date, datetime, timedelta
 
 from django.contrib import auth

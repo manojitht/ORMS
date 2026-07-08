@@ -5,7 +5,6 @@ from .models import Department
 from team.models import Team
 from django.contrib.auth.decorators import login_required
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def display_departments(request, depid):
@@ -13,7 +12,6 @@ def display_departments(request, depid):
     context = { 'selected_dep': selected_dep, }
     return render(request, 'superadmin/display_department_page.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def add_new_department(request):
@@ -33,10 +31,7 @@ def add_new_department(request):
     else:
         pass
     return render(request, 'superadmin/add_department_form.html')
-    
-    # naming convention finished.
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def delete_department(request, depid):
@@ -48,7 +43,6 @@ def delete_department(request, depid):
             message_alert.success(request, dep_delete.department_name + ' Department deleted successfully!')
     return redirect('department:superadmin_department_table')
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def edit_department(request, depid):
@@ -56,10 +50,7 @@ def edit_department(request, depid):
     dep_list = Department.objects.all()
     context = { 'selected_dep': selected_dep, 'dep_list': dep_list, }
     return render(request, 'superadmin/add_department_form.html', context)
-    
-    # naming convention finished.
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def update_department(request, depid):
@@ -71,19 +62,13 @@ def update_department(request, depid):
     update_dep.save()
     message_alert.success(request, 'Department is updated successfully!')
     return redirect('department:display_departments', depid)
-    
-    # naming convention finished.
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def superadmin_department_table(request):
     departments_table = Department.objects.all().order_by('department_name')
     context = { 'departments_table': departments_table, }
     return render(request, 'superadmin/department_table_view.html', context)
-    # naming convention finished.
-
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def superadmin_department_date_sort(request):
@@ -98,23 +83,15 @@ def superadmin_department_date_sort(request):
             message_alert.info(request, 'Please select the date fields properly!')
     context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, 'departments_table': None, }
     return render(request, 'superadmin/department_table_view.html', context)
-    # naming convention finished.
-
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def department_view_teams(request, depid):
     get_department = Department.objects.get(id=depid)
     name = Department.objects.get(department_name=get_department.department_name)
-    # department_name = depname.replace('-', ' ')
-    # corrected_name = department_name.title()
     department_view_teams = Team.objects.all().filter(department=name, is_active=True)
     team_count = department_view_teams.count()
     context = { 'department_view_teams': department_view_teams, 'name': name, 'team_count': team_count, }
     return render(request, 'superadmin/display_team_page.html', context)
-    # naming convention finished.
-
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def department_deletion_history(request):
@@ -122,4 +99,3 @@ def department_deletion_history(request):
     context = { 'departments': departments, }
     return render(request, 'superadmin/department_deletion_history.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

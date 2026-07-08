@@ -134,8 +134,6 @@ class Account(AbstractBaseUser, TenantModel):
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     ini_pas = models.CharField(max_length=100)
 
-
-    #must have fields
     date_joined = models.DateField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now_add=True)
     is_superadmin = models.BooleanField('Is Superadmin',default=False)
@@ -162,6 +160,18 @@ class Account(AbstractBaseUser, TenantModel):
 
     def __str__(self):
         return self.peoplesoft_id
+
+    # Why this matters: several models (Ticket.created_ps_id/assigned_to,
+    # Employee.manager_peoplesoft_id, ResourceTaken.manager_peoplesoft_id...)
+    # store "which account" as a plain peoplesoft_id CharField instead of a
+    # ForeignKey. Passing an Account instance straight into a filter/get on
+    # one of those fields (e.g. `Ticket.objects.filter(created_ps_id=account)`)
+    # still works, because Django's CharField comparison calls `str()` on
+    # the right-hand side, and str(account) is exactly this method. It reads
+    # like a FK lookup but isn't one -- there's no real foreign key, no
+    # on_delete behavior, and no join; it's a string equality match that
+    # happens to line up. Keep that in mind before "simplifying" one of
+    # these comparisons, and before renaming/reformatting peoplesoft_id.
 
     @property
     def role(self):
