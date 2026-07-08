@@ -42,10 +42,12 @@
                     <td>{{ team.department }}</td>
                     <td>{{ team.created_by }}</td>
                     <td>{{ team.created_date }}</td>
-                    <td>&mdash;</td>
+                    <td>-</td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="7" class="text-center text-muted py-4">No removed teams.</td></tr>
+                <tr><td colspan="7" class="p-0">
+                    {% include 'includes/empty_state.html' with icon='trash-2' title='No removed teams' subtitle='Teams that get deleted will show up here.' %}
+                </td></tr>
                 {% endfor %}
             </tbody>
         </table>

@@ -8,7 +8,7 @@
     <h1 class="page-header"><i data-lucide="users"></i> {% if selected_tem %}Update{% else %}Add{% endif %} Team</h1>
     {% include 'message_alert.html' %}
 
-    <div class="card mx-auto" style="max-width: 640px;">
+    <div class="card form-card">
         <div class="card-body p-4">
             {% if selected_tem %}
             <form action="{% url 'team:update_team' selected_tem.id %}" method="POST">

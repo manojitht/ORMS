@@ -52,7 +52,9 @@
                     </td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="8" class="text-center text-muted py-4">No removed users.</td></tr>
+                <tr><td colspan="8" class="p-0">
+                    {% include 'includes/empty_state.html' with icon='trash-2' title='No removed users' subtitle='Users that get deleted will show up here.' %}
+                </td></tr>
                 {% endfor %}
             </tbody>
         </table>

@@ -9,7 +9,7 @@
     {% include 'message_alert.html' %}
 
     {% if get_member_id %}
-    <div class="card mx-auto" style="max-width: 720px;">
+    <div class="card form-card form-card--wide">
         <div class="card-body p-4">
             <form action="{% url 'employees:update_team_member' get_member_id.id %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}

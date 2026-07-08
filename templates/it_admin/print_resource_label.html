@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Label | {{ resource.asset_id }}</title>
+    <style>
+        body {
+            font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+        }
+        .label {
+            width: 260px;
+            border: 1px solid #33475B;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+        }
+        .label img {
+            width: 160px;
+            height: 160px;
+        }
+        .label .asset-id {
+            font-family: 'IBM Plex Mono', ui-monospace, monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 8px 0 2px;
+        }
+        .label .model-name {
+            font-size: .85rem;
+            color: #33475B;
+        }
+        .print-actions {
+            text-align: center;
+            margin-top: 16px;
+        }
+        @media print {
+            .print-actions { display: none; }
+            body { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="label">
+            <img src="{% url 'resources:resource_qr_image' resource.id %}" alt="QR code for {{ resource.asset_id }}">
+            <div class="asset-id">{{ resource.asset_id }}</div>
+            <div class="model-name">{{ resource.model_name }}</div>
+        </div>
+        <div class="print-actions">
+            <button onclick="window.print()">Print label</button>
+        </div>
+    </div>
+</body>
+</html>

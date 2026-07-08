@@ -1,30 +1,42 @@
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account:it_admin_portal' user.id %}">
-                            <i data-lucide="line-chart"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'resources:view_resource_categories' %}">
-                            <i data-lucide="shapes"></i> Categories
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'resources:resources_listings_page' %}">
-                            <i data-lucide="laptop"></i> Resources
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'resources:returned_resources_list_table' %}">
-                            <i data-lucide="history"></i> In &amp; Outs
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'tickets:list_pending_requests_it_admin' user.id %}">
-                            <i data-lucide="columns-3"></i> Requests
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account:it_admin_user_profile' user.id %}">
-                            <i data-lucide="circle-user"></i> My Profile
-                        </a>
-                    </li>
+{% load nav_extras %}
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'it_admin_portal' %}" href="{% url 'account:it_admin_portal' user.id %}">
+        <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'view_resource_categories' 'add_category_page' 'edit_category_page' 'delete_category_warning' %}" href="{% url 'resources:view_resource_categories' %}">
+        <i data-lucide="shapes"></i> <span>Categories</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'resources_listings_page' 'resources_list_table' 'add_resource_page' 'edit_resource' 'view_resource' 'resource_deletion_history' 'search_resource' 'import_resources_csv' %}" href="{% url 'resources:resources_listings_page' %}">
+        <i data-lucide="laptop"></i> <span>Resources</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'returned_resources_list_table' 'taken_resources_list_table' %}" href="{% url 'resources:returned_resources_list_table' %}">
+        <i data-lucide="history"></i> <span>In &amp; Outs</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'expiring_resources_page' %}" href="{% url 'resources:expiring_resources_page' %}">
+        <i data-lucide="shield-alert"></i> <span>Warranty Alerts</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'scan_camera_page' 'scan_resource' %}" href="{% url 'resources:scan_camera_page' %}">
+        <i data-lucide="scan-line"></i> <span>Scan Asset</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'list_pending_requests_it_admin' 'list_processing_requests_it_admin' 'list_completed_requests_it_admin' 'view_selected_request_it_admin' 'view_selected_processing_request' 'view_selected_completed_request' %}" href="{% url 'tickets:list_pending_requests_it_admin' user.id %}">
+        <i data-lucide="columns-3"></i> <span>Requests</span>
+    </a>
+</li>
+<li class="nav-item app-sidebar__nav-divider"></li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'it_admin_user_profile' 'it_admin_edit_user_profile' %}" href="{% url 'account:it_admin_user_profile' user.id %}">
+        <i data-lucide="circle-user"></i> <span>My Profile</span>
+    </a>
+</li>

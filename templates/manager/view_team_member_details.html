@@ -32,6 +32,15 @@
                 <dt class="col-sm-4">Contact</dt><dd class="col-sm-8">{{ get_member_id.contact }}</dd>
                 <dt class="col-sm-4">Home address</dt><dd class="col-sm-8">{{ get_member_id.home_address }}</dd>
             </dl>
+            <div class="mb-3">
+                {% if get_member_id.account %}
+                    <span class="status-pill status-pill--good">Portal access granted</span>
+                {% else %}
+                    <a href="{% url 'employees:grant_portal_access' get_member_id.id %}" class="btn btn-outline-primary btn-sm">
+                        <i data-lucide="key"></i> Grant Portal Access
+                    </a>
+                {% endif %}
+            </div>
             <div class="d-flex gap-2 mt-3">
                 <a href="{% url 'employees:view_team_members' user.id %}" class="btn btn-outline-secondary flex-fill">Back</a>
                 <button type="button" class="btn btn-outline-primary flex-fill" data-bs-toggle="modal" data-bs-target="#notesModal">
@@ -108,8 +117,8 @@
             <div class="modal-content">
                 <form action="{% url 'employees:delete_team_member' get_member_id.id user.id %}" method="POST">
                     {% csrf_token %}
-                    <div class="modal-header">
-                        <h5 class="modal-title"><i data-lucide="triangle-alert" class="text-warning"></i> Warning!</h5>
+                    <div class="modal-header modal-header--danger">
+                        <h5 class="modal-title"><i data-lucide="triangle-alert"></i> Warning!</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">

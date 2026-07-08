@@ -8,7 +8,7 @@
     <h1 class="page-header"><i data-lucide="square-pen"></i> Raise Request</h1>
     {% include 'message_alert.html' %}
 
-    <div class="card mx-auto" style="max-width: 640px;">
+    <div class="card form-card">
         <div class="card-body p-4">
             <form action="{% url 'tickets:create_request' user.id %}" method="POST" id="createRequestForm" data-employee-resources-url="{% url 'tickets:ajax_load_employee_resources' %}">
                 {% csrf_token %}

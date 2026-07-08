@@ -8,7 +8,7 @@
     <h1 class="page-header"><i data-lucide="user-plus"></i> {% if selected_user %}Edit User: {{ selected_user.peoplesoft_id }}{% else %}Add New User{% endif %}</h1>
     {% include 'message_alert.html' %}
 
-    <div class="card mx-auto" style="max-width: 640px;">
+    <div class="card form-card">
         <div class="card-body p-4">
             {% if selected_user %}
             <form action="{% url 'account:update_user' selected_user.id %}" method="POST" id="editUserForm" data-teams-url="{% url 'account:ajax_load_teams' %}">

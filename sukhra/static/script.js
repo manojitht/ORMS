@@ -17,16 +17,21 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // The sticky table header (see design-system.css) needs to sit just below the sticky
-// navbar. Measuring it here instead of hardcoding a px value keeps the two
-// in sync even as the navbar's real height changes (e.g. it wraps to two
-// lines on narrow screens).
-function syncNavbarHeightVar() {
-  var nav = document.querySelector('.site-navbar');
-  if (!nav) return;
-  document.documentElement.style.setProperty('--navbar-height', nav.getBoundingClientRect().height + 'px');
+// topbar. Measuring it here instead of hardcoding a px value keeps the two
+// in sync even as the topbar's real height changes (e.g. it wraps on narrow screens).
+function syncTopbarHeightVar() {
+  var topbar = document.querySelector('.app-topbar') || document.querySelector('.site-navbar');
+  if (!topbar) return;
+  document.documentElement.style.setProperty('--topbar-height', topbar.getBoundingClientRect().height + 'px');
 }
-document.addEventListener('DOMContentLoaded', syncNavbarHeightVar);
-window.addEventListener('resize', syncNavbarHeightVar);
+document.addEventListener('DOMContentLoaded', syncTopbarHeightVar);
+window.addEventListener('resize', syncTopbarHeightVar);
+
+// Lets dashboard Chart.js configs read design-system.css's color tokens
+// instead of hardcoding hex values that would drift from the palette.
+window.chartColor = function (varName) {
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+};
 
 // Disable the submit button and show a spinner on every form submission —
 // stops accidental double-submits (e.g. double-clicking "Create User") as
@@ -50,26 +55,63 @@ document.addEventListener('submit', function (e) {
   }, 0);
 });
 
-// Legacy popup-panel toggles, still used by a handful of not-yet-converted
-// pages (a #blur overlay + a specific panel id). Harmless no-ops if the
-// referenced elements aren't present on the current page.
-function toggle_blur() {
-  var blur = document.getElementById('blur');
-  if (blur) blur.classList.toggle('active');
-  var request_popup = document.getElementById('request_popup');
-  if (request_popup) request_popup.classList.toggle('active');
-}
+// Top-of-page loading bar (see .page-progress in design-system.css) for
+// full-page navigations and form submits. Every page here is a real
+// server round trip rather than an SPA route change, so the bar just
+// trickles toward 90% and is abandoned when the browser unloads the page
+// for the next one — there is no "request finished" event to hook for a
+// normal navigation, the incoming page's own fresh bar starts at 0% instead.
+(function () {
+  var bar = document.createElement('div');
+  bar.className = 'page-progress';
+  document.addEventListener('DOMContentLoaded', function () {
+    document.body.appendChild(bar);
+  });
 
-function toggle_accessories_blur() {
-  var blur = document.getElementById('blur');
-  if (blur) blur.classList.toggle('active');
-  var other_popup = document.getElementById('other_accessories');
-  if (other_popup) other_popup.classList.toggle('active');
-}
+  var trickleTimer = null;
 
-function toggle_warning_blur() {
-  var blur = document.getElementById('blur');
-  if (blur) blur.classList.toggle('active');
-  var warning_popup = document.getElementById('warning_popup');
-  if (warning_popup) warning_popup.classList.toggle('active');
-}
+  function startProgress() {
+    clearInterval(trickleTimer);
+    bar.classList.add('is-active');
+    bar.style.width = '20%';
+    var width = 20;
+    trickleTimer = setInterval(function () {
+      width += (90 - width) * 0.1;
+      bar.style.width = width + '%';
+    }, 300);
+  }
+
+  // Only reached if the page is restored from bfcache (e.g. the back
+  // button) instead of a fresh load — resets a bar that may have been
+  // left mid-trickle from before the user navigated away.
+  function resetProgress() {
+    clearInterval(trickleTimer);
+    bar.classList.remove('is-active');
+    bar.style.width = '0%';
+  }
+
+  function isPlainLeftClick(e) {
+    return e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+  }
+
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href]');
+    if (!link || !isPlainLeftClick(e)) return;
+    if (link.target && link.target !== '_self') return;
+    if (link.hasAttribute('download') || link.dataset.noProgress !== undefined) return;
+    var href = link.getAttribute('href');
+    if (!href || /^(#|javascript:|mailto:|tel:)/.test(href)) return;
+    if (link.origin !== window.location.origin || link.href === window.location.href) return;
+    startProgress();
+  });
+
+  document.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (!(form instanceof HTMLFormElement) || form.dataset.noProgress !== undefined) return;
+    startProgress();
+  });
+
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) resetProgress();
+  });
+})();

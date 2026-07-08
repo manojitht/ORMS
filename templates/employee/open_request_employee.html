@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | View Request{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="mail-open"></i> View Request</h1>
+
+    {% if get_request_id %}
+    <div class="card form-card form-card--wide">
+        <div class="card-body p-4">
+            <h5 class="mb-3">{{ get_request_id.request_id }}</h5>
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Resource required</dt><dd class="col-sm-8">{{ get_request_id.resource_label }}</dd>
+                <dt class="col-sm-4">Request category</dt><dd class="col-sm-8">{{ get_request_id.request_category }}</dd>
+                <dt class="col-sm-4">Created on</dt><dd class="col-sm-8">{{ get_request_id.created_on }}</dd>
+                <dt class="col-sm-4">Status</dt>
+                <dd class="col-sm-8">
+                    {% if get_request_id.request_status == 'Pending Manager Approval' %}
+                        <span class="status-pill status-pill--warn">Awaiting manager approval</span>
+                    {% elif get_request_id.request_status == 'Pending' %}
+                        <span class="status-pill status-pill--warn">Pending IT</span>
+                    {% elif get_request_id.request_status == 'Processing' %}
+                        <span class="status-pill status-pill--info">Processing</span>
+                    {% elif get_request_id.request_status == 'Completed' %}
+                        <span class="status-pill status-pill--good">Completed</span>
+                    {% elif get_request_id.request_status == 'Cancelled' %}
+                        <span class="status-pill status-pill--muted">Cancelled</span>
+                    {% endif %}
+                </dd>
+                <dt class="col-sm-4">Description</dt><dd class="col-sm-8">{{ get_request_id.request_decription }}</dd>
+                {% if get_request_id.request_response %}
+                <dt class="col-sm-4">Response</dt><dd class="col-sm-8">{{ get_request_id.request_response }}</dd>
+                {% endif %}
+            </dl>
+            <div class="d-flex gap-2 mt-3">
+                <a href="{% url 'tickets:list_requests_employee' user.id %}" class="btn btn-outline-secondary flex-fill">Back</a>
+                {% if get_request_id.request_status != 'Completed' and get_request_id.request_status != 'Cancelled' %}
+                <a href="{% url 'tickets:cancel_request_employee' get_request_id.id user.id %}" class="btn btn-outline-warning flex-fill">
+                    <i data-lucide="message-square-x"></i> Cancel Request
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

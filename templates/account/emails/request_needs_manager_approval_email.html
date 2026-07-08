@@ -1,0 +1,15 @@
+{% extends 'account/emails/base_email.html' %}
+{% block heading %}A team member needs your approval{% endblock %}
+{% block body %}
+<p style="margin:0 0 16px 0;">Hi {{ manager_account.first_name }},</p>
+<p style="margin:0 0 20px 0;">
+<strong>{{ ticket.created_for.fullname }}</strong> has raised a self-service request for <strong>{{ ticket.resource_label }}</strong>.
+Please review and approve or deny it before it can be sent to IT for processing.
+</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B; width:40%;">Request Id</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600; font-family:'SFMono-Regular',Consolas,monospace;">{{ ticket.request_id }}</td></tr>
+<tr><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#64748B;">Category</td><td style="padding:8px 0; border-bottom:1px solid #EEF3F8; color:#0F1B2A; font-weight:600;">{{ ticket.request_category }}</td></tr>
+<tr><td style="padding:8px 0; color:#64748B;">Created on</td><td style="padding:8px 0; color:#0F1B2A; font-weight:600;">{{ ticket.created_on }}</td></tr>
+</table>
+{% endblock %}
+{% block footer_note %}Log in to Sukhra to approve or deny this request.{% endblock %}

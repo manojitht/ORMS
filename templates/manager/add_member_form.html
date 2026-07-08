@@ -8,7 +8,7 @@
     <h1 class="page-header"><i data-lucide="user-plus"></i> Add Team Member</h1>
     {% include 'message_alert.html' %}
 
-    <div class="card mx-auto" style="max-width: 640px;">
+    <div class="card form-card">
         <div class="card-body p-4">
             <form action="{% url 'employees:add_member' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -49,6 +49,12 @@
                 <div class="mb-3">
                     <label class="form-label">Team member profile image</label>
                     <input type="file" name="member_image" class="form-control" accept="image/*" required>
+                </div>
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="grant_portal_access" name="grant_portal_access">
+                    <label class="form-check-label" for="grant_portal_access">
+                        Grant self-service portal access (they'll get an email to activate their own login)
+                    </label>
                 </div>
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary flex-fill">Create Profile</button>

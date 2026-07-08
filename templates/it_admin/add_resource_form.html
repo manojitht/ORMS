@@ -8,7 +8,7 @@
     <h1 class="page-header"><i data-lucide="laptop"></i> Add Resource</h1>
     {% include 'message_alert.html' %}
 
-    <div class="card mx-auto" style="max-width: 640px;">
+    <div class="card form-card">
         <div class="card-body p-4">
             <form action="{% url 'resources:add_resource_page' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -44,6 +44,10 @@
                         <option selected>Available</option>
                         <option>Configuration</option>
                     </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Warranty/lease expiry date</label>
+                    <input type="date" name="warranty_expiry_date" class="form-control">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Resource description (max 250 words)</label>

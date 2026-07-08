@@ -7,28 +7,31 @@
 <div class="container-fluid px-4">
     <h1 class="page-header"><i data-lucide="users"></i> Team Members Index</h1>
 
-    <form action="{% url 'employees:date_sort_team_members_index_table' user.id %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
+    <form action="{% url 'employees:date_sort_team_members_index_table' user.id %}" method="POST" class="table-toolbar">
         {% csrf_token %}
-        <div class="col">
-            <label class="form-label small mb-1">From</label>
-            <input type="date" name="from_mem" class="form-control" required>
+        <div class="table-toolbar__fields">
+            <div>
+                <label class="form-label small">From</label>
+                <input type="date" name="from_mem" class="form-control" required>
+            </div>
+            <div>
+                <label class="form-label small">To</label>
+                <input type="date" name="to_mem" class="form-control" required>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-outline-primary">
+                    <i data-lucide="filter"></i> Search
+                </button>
+            </div>
         </div>
-        <div class="col">
-            <label class="form-label small mb-1">To</label>
-            <input type="date" name="to_mem" class="form-control" required>
-        </div>
-        <div class="col">
-            <button type="submit" class="btn btn-primary">Search</button>
-        </div>
-        <div class="col">
-            <a href="{% url 'employees:view_team_members' user.id %}" class="btn btn-outline-secondary">
-                <i data-lucide="arrow-left"></i> Back
-            </a>
-        </div>
+        <div class="table-toolbar__spacer"></div>
+        <a href="{% url 'employees:view_team_members' user.id %}" class="btn btn-outline-secondary">
+            <i data-lucide="arrow-left"></i> Back
+        </a>
     </form>
 
     {% if get_result %}
-        <p class="text-muted small">Showing {{ from_date }} to {{ to_date }} &mdash; {{ result_count }} result(s)</p>
+        <p class="text-muted small">Showing {{ from_date }} to {{ to_date }} - {{ result_count }} result(s)</p>
     {% endif %}
 
     <div class="table-responsive">
@@ -52,7 +55,9 @@
                     <td>{{ member.date_joined }}</td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="5" class="text-center text-muted py-4">No team members found.</td></tr>
+                <tr><td colspan="5" class="p-0">
+                    {% include 'includes/empty_state.html' with icon='users' title='No team members found' subtitle='Try adjusting the date range.' %}
+                </td></tr>
                 {% endfor %}
             </tbody>
         </table>

@@ -16,7 +16,7 @@
     <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
 </head>
 <body class="welcome-body">
-    <nav class="navbar site-navbar">
+    <nav class="navbar site-navbar sticky-top">
         <div class="container-fluid px-4">
             <span class="navbar-brand mb-0">
                 {% include 'includes/logo.html' %}
@@ -26,60 +26,70 @@
         </div>
     </nav>
 
-    <section class="welcome-hero">
-        <div class="grid-backdrop"></div>
-        <div class="container">
-            <div class="row justify-content-center text-center">
-                <div class="col-lg-8">
-                    <span class="welcome-eyebrow">Office Resources Management System</span>
-                    <h1 class="welcome-title">Track every device.<br>Serve every request.<br><span class="text-accent">All in one place.</span></h1>
-                    <p class="welcome-lede">Sukhra keeps departments, teams, and office resources organized &mdash;
-                        so managers, IT admins, and superadmins always know who has what.</p>
-                    <div class="d-flex gap-2 justify-content-center flex-wrap">
-                        <a href="{% url 'account:login' %}" class="btn btn-primary btn-lg px-4">
-                            Login to Sukhra <i data-lucide="arrow-right"></i>
-                        </a>
-                        <a href="{% url 'companies:signup' %}" class="btn btn-outline-primary btn-lg px-4">
-                            Set up your company
-                        </a>
+    <div class="page-content">
+        <section class="welcome-hero">
+            <div class="grid-backdrop"></div>
+            <div class="container">
+                <div class="row justify-content-center text-center">
+                    <div class="col-lg-8">
+                        <span class="welcome-eyebrow">Office Resources Management System</span>
+                        <h1 class="welcome-title">Track every device.<br>Serve every request.<br><span class="text-accent">All in one place.</span></h1>
+                        <p class="welcome-lede">Sukhra keeps departments, teams, and office resources organized -
+                            so managers, IT admins, and superadmins always know who has what.</p>
+                        <div class="d-flex justify-content-center">
+                            <a href="{% url 'account:login' %}" class="btn btn-primary btn-lg px-4">
+                                Login to Sukhra <i data-lucide="arrow-right"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row justify-content-center mt-5 pt-4 g-4 welcome-feature-row">
-                <div class="col-md-4">
-                    <div class="welcome-feature-card">
-                        <i data-lucide="laptop"></i>
-                        <h3>Resource tracking</h3>
-                        <p>Laptops, accessories, and hardware &mdash; know what's available, taken, or in for
-                            configuration at a glance.</p>
+                <div class="row justify-content-center mt-5 pt-4 g-4 welcome-feature-row">
+                    <div class="col-md-4">
+                        <div class="welcome-feature-card">
+                            <i data-lucide="laptop"></i>
+                            <h3>Resource tracking</h3>
+                            <p>Laptops, accessories, and hardware - know what's available, taken, or in for
+                                configuration at a glance.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="welcome-feature-card">
-                        <i data-lucide="receipt"></i>
-                        <h3>Requests, start to finish</h3>
-                        <p>Managers raise requests, IT admins process and complete them &mdash; with a full history
-                            kept for every device.</p>
+                    <div class="col-md-4">
+                        <div class="welcome-feature-card">
+                            <i data-lucide="receipt"></i>
+                            <h3>Requests, start to finish</h3>
+                            <p>Managers raise requests, IT admins process and complete them - with a full history
+                                kept for every device.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="welcome-feature-card">
-                        <i data-lucide="building-2"></i>
-                        <h3>Org-wide visibility</h3>
-                        <p>Departments, teams, and members stay in sync, so superadmins always see the full
-                            picture.</p>
+                    <div class="col-md-4">
+                        <div class="welcome-feature-card">
+                            <i data-lucide="building-2"></i>
+                            <h3>Org-wide visibility</h3>
+                            <p>Departments, teams, and members stay in sync, so superadmins always see the full
+                                picture.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <section class="welcome-cta">
+            <div class="container text-center">
+                <h2>New here? Set up your company's workspace</h2>
+                <p>Get your own Sukhra workspace running in a few minutes - no credit card, no installation.</p>
+                <a href="{% url 'companies:signup' %}" class="btn btn-warning btn-lg px-4">
+                    Set up your company <i data-lucide="arrow-right"></i>
+                </a>
+            </div>
+        </section>
+    </div>
 
     <footer class="welcome-footer">
-        <p>&copy; Sukhra &mdash; Office Resources Management System</p>
+        <p>&copy; Sukhra - Office Resources Management System</p>
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="{% static 'script.js' %}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             if (window.lucide) lucide.createIcons();

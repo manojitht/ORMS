@@ -8,33 +8,34 @@
     <h1 class="page-header"><i data-lucide="users"></i> Users Management</h1>
     {% include 'message_alert.html' %}
 
-    <form action="{% url 'account:superadmin_users_date_sort' %}" method="POST" class="row row-cols-auto g-2 align-items-end mb-4">
+    <form action="{% url 'account:superadmin_users_date_sort' %}" method="POST" class="table-toolbar">
         {% csrf_token %}
-        <div class="col">
-            <label class="form-label small mb-1">From</label>
-            <input type="date" name="from_user" class="form-control" required>
+        <div class="table-toolbar__fields">
+            <div>
+                <label class="form-label small">From</label>
+                <input type="date" name="from_user" class="form-control" required>
+            </div>
+            <div>
+                <label class="form-label small">To</label>
+                <input type="date" name="to_user" class="form-control" required>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-outline-primary">
+                    <i data-lucide="filter"></i> Filter
+                </button>
+            </div>
         </div>
-        <div class="col">
-            <label class="form-label small mb-1">To</label>
-            <input type="date" name="to_user" class="form-control" required>
-        </div>
-        <div class="col">
-            <button type="submit" class="btn btn-primary">Sort</button>
-        </div>
-        <div class="col">
-            <a href="{% url 'account:add_user_page' %}" class="btn btn-outline-primary">
-                <i data-lucide="message-square-plus"></i> Add User
-            </a>
-        </div>
-        <div class="col">
-            <a href="{% url 'account:export_users_csv' %}" class="btn btn-outline-secondary">
-                <i data-lucide="download"></i> Download CSV
-            </a>
-        </div>
+        <div class="table-toolbar__spacer"></div>
+        <a href="{% url 'account:export_users_csv' %}" class="btn btn-outline-secondary">
+            <i data-lucide="download"></i> Download CSV
+        </a>
+        <a href="{% url 'account:add_user_page' %}" class="btn btn-primary">
+            <i data-lucide="plus"></i> Add User
+        </a>
     </form>
 
     {% if get_result %}
-        <p class="text-muted small">Showing {{ from_date }} to {{ to_date }} &mdash; {{ result_count }} result(s)</p>
+        <p class="text-muted small">Showing {{ from_date }} to {{ to_date }} - {{ result_count }} result(s)</p>
     {% endif %}
 
     <div class="table-responsive">
@@ -70,7 +71,10 @@
                     <td><a class="btn btn-sm btn-outline-primary" href="{% url 'account:view_user_details' user.id %}">View</a></td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="8" class="text-center text-muted py-4">No users found.</td></tr>
+                <tr><td colspan="8" class="p-0">
+                    {% url 'account:add_user_page' as user_add_url %}
+                    {% include 'includes/empty_state.html' with icon='users' title='No users found' subtitle='Users you add will show up here.' action_url=user_add_url action_label='Add User' %}
+                </td></tr>
                 {% endfor %}
             </tbody>
         </table>

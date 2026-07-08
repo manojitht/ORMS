@@ -5,7 +5,6 @@ from .models import Team
 from department.models import Department
 from django.contrib.auth.decorators import login_required
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def superadmin_add_team(request):
@@ -35,7 +34,6 @@ def superadmin_add_team(request):
         pass
     return render(request, 'superadmin/add_team_form.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def display_team(request, temid):
@@ -43,7 +41,6 @@ def display_team(request, temid):
     context = { 'selected_tem': selected_tem, }
     return render(request, 'superadmin/display_team_page.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def edit_team(request, temid):
@@ -53,7 +50,6 @@ def edit_team(request, temid):
     context = { 'selected_tem': selected_tem, 'tem_list': tem_list, 'dep_list': dep_list, }
     return render(request, 'superadmin/add_team_form.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def update_team(request, temid):
@@ -68,7 +64,6 @@ def update_team(request, temid):
     message_alert.success(request, 'Team is updated on the ' + take_dep + ' department successfully!')
     return redirect('team:display_team', temid)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def delete_team(request, temid):
@@ -80,24 +75,6 @@ def delete_team(request, temid):
             message_alert.success(request, deleting_tem.team_name + ' Team deleted successfully!')
     return redirect('team:superadmin_team_table')
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# def restore_team(request, temid):
-#     restoring_tem = Team.objects.get(id=temid)
-#     restoring_tem.is_active = True
-#     restoring_tem.save()
-#     message_alert.success(request, 'Team restored successfully!')
-#     return redirect('team:team_deletion_history')
-
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-# def permanent_delete_team(request, temid):
-#     restoring_tem = Team.objects.get(id=temid)
-#     restoring_tem.delete()
-#     message_alert.success(request, 'Team deleted successfully!')
-#     return redirect('team:team_deletion_history')
-
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def superadmin_team_table(request):
@@ -105,7 +82,6 @@ def superadmin_team_table(request):
     context = { 'teams_table': teams_table, }
     return render(request, 'superadmin/team_table_view.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def superadmin_team_date_sort(request):
@@ -118,7 +94,6 @@ def superadmin_team_date_sort(request):
     context = { 'get_result': get_result, 'from_date': from_date, 'to_date': to_date, 'result_count': result_count, 'teams_table': None, }
     return render(request, 'superadmin/team_table_view.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 @login_required(login_url='account:login')
 def team_deletion_history(request):
@@ -126,4 +101,3 @@ def team_deletion_history(request):
     context = { 'teams': teams, }
     return render(request, 'superadmin/team_deletion_history.html', context)
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

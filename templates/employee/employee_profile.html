@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | My Profile{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="circle-user"></i> My User Profile</h1>
+    {% include 'message_alert.html' %}
+
+    {% if user %}
+    <div class="card form-card form-card--wide">
+        <div class="card-body p-4">
+            <div class="text-center mb-3">
+                {% if user.accountprofile.profile_image %}
+                    <img src="{{ user.accountprofile.profile_image.url }}" class="avatar-img" style="--avatar-size: 96px;">
+                {% else %}
+                    {% include 'includes/avatar.html' with name=user.first_name|add:' '|add:user.last_name size=96 %}
+                {% endif %}
+            </div>
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Full name</dt><dd class="col-sm-8">{{ user.first_name }} {{ user.last_name }}</dd>
+                <dt class="col-sm-4">Peoplesoft Id</dt><dd class="col-sm-8">{{ user.peoplesoft_id }}</dd>
+                {% if employee %}
+                <dt class="col-sm-4">Position</dt><dd class="col-sm-8">{{ employee.position }}</dd>
+                <dt class="col-sm-4">Reporting to</dt><dd class="col-sm-8">{{ employee.manager_name }}</dd>
+                {% endif %}
+                <dt class="col-sm-4">Date joined</dt><dd class="col-sm-8">{{ user.date_joined }}</dd>
+                <dt class="col-sm-4">Department</dt><dd class="col-sm-8">{{ user.department }}</dd>
+                <dt class="col-sm-4">Team</dt><dd class="col-sm-8">{{ user.team }}</dd>
+                <dt class="col-sm-4">Email</dt><dd class="col-sm-8">{{ user.email }}</dd>
+                <dt class="col-sm-4">Contact</dt><dd class="col-sm-8">{{ user.accountprofile.contact_number }}</dd>
+                <dt class="col-sm-4">Home address</dt><dd class="col-sm-8">{{ user.accountprofile.home_address }}</dd>
+            </dl>
+            <div class="d-flex gap-2 mt-3">
+                <a href="{% url 'account:employee_edit_user_profile' %}" class="btn btn-primary flex-fill">
+                    <i data-lucide="pencil"></i> Edit Profile
+                </a>
+                <button type="button" class="btn btn-outline-warning flex-fill" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                    <i data-lucide="key"></i> Change Password
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{% url 'account:employee_change_password' user.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title">Change Password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Current password</label>
+                            <input name="current_password" type="password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New password</label>
+                            <input name="new_password" type="password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm password</label>
+                            <input name="confirm_password" type="password" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

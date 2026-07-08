@@ -1,0 +1,22 @@
+{% load nav_extras %}
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'employee_portal' %}" href="{% url 'account:employee_portal' user.id %}">
+        <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'list_requests_employee' 'list_completed_requests_employee' 'view_selected_request_employee' 'create_request_employee' %}" href="{% url 'tickets:list_requests_employee' user.id %}">
+        <i data-lucide="receipt"></i> <span>My Requests</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'employee_taken_resources_list_table' %}" href="{% url 'resources:employee_taken_resources_list_table' user.id %}">
+        <i data-lucide="laptop"></i> <span>My Resources</span>
+    </a>
+</li>
+<li class="nav-item app-sidebar__nav-divider"></li>
+<li class="nav-item">
+    <a class="nav-link {% nav_active 'employee_user_profile' 'employee_edit_user_profile' %}" href="{% url 'account:employee_user_profile' user.id %}">
+        <i data-lucide="circle-user"></i> <span>My Profile</span>
+    </a>
+</li>

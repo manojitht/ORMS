@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | My Resources{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="laptop"></i> My Resources</h1>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Asset Id</th>
+                    <th>Device Type</th>
+                    <th>Model</th>
+                    <th>Taken Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for device in resources %}
+                <tr>
+                    <td class="id-code">{{ device.asset_id }}</td>
+                    <td>{{ device.asset_id.resource_category }}</td>
+                    <td>{{ device.asset_id.model_name }}</td>
+                    <td>{{ device.taken_date }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="p-0">
+                    {% include 'includes/empty_state.html' with icon='laptop' title='Nothing assigned yet' subtitle='Resources issued to you will show up here.' %}
+                </td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
