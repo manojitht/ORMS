@@ -54,3 +54,64 @@ document.addEventListener('submit', function (e) {
     btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Please wait…';
   }, 0);
 });
+
+// Top-of-page loading bar (see .page-progress in design-system.css) for
+// full-page navigations and form submits. Every page here is a real
+// server round trip rather than an SPA route change, so the bar just
+// trickles toward 90% and is abandoned when the browser unloads the page
+// for the next one — there is no "request finished" event to hook for a
+// normal navigation, the incoming page's own fresh bar starts at 0% instead.
+(function () {
+  var bar = document.createElement('div');
+  bar.className = 'page-progress';
+  document.addEventListener('DOMContentLoaded', function () {
+    document.body.appendChild(bar);
+  });
+
+  var trickleTimer = null;
+
+  function startProgress() {
+    clearInterval(trickleTimer);
+    bar.classList.add('is-active');
+    bar.style.width = '20%';
+    var width = 20;
+    trickleTimer = setInterval(function () {
+      width += (90 - width) * 0.1;
+      bar.style.width = width + '%';
+    }, 300);
+  }
+
+  // Only reached if the page is restored from bfcache (e.g. the back
+  // button) instead of a fresh load — resets a bar that may have been
+  // left mid-trickle from before the user navigated away.
+  function resetProgress() {
+    clearInterval(trickleTimer);
+    bar.classList.remove('is-active');
+    bar.style.width = '0%';
+  }
+
+  function isPlainLeftClick(e) {
+    return e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+  }
+
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href]');
+    if (!link || !isPlainLeftClick(e)) return;
+    if (link.target && link.target !== '_self') return;
+    if (link.hasAttribute('download') || link.dataset.noProgress !== undefined) return;
+    var href = link.getAttribute('href');
+    if (!href || /^(#|javascript:|mailto:|tel:)/.test(href)) return;
+    if (link.origin !== window.location.origin || link.href === window.location.href) return;
+    startProgress();
+  });
+
+  document.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (!(form instanceof HTMLFormElement) || form.dataset.noProgress !== undefined) return;
+    startProgress();
+  });
+
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) resetProgress();
+  });
+})();

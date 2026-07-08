@@ -6,7 +6,7 @@
  * than only patching Bootstrap's defaults.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap');
 
 :root {
     /* Sky blue ramp — primary */
@@ -49,7 +49,7 @@
     --status-muted-bg: #FFEDD5;
 
     /* Type */
-    --font-ui: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --font-ui: 'Nunito', system-ui, -apple-system, sans-serif;
     --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
 
     /* Elevation / shape */
@@ -762,7 +762,20 @@ a.card:hover, .card--hover:hover {
     margin: 0;
 }
 
+/* The hero above this is only ever as tall as its own content, so on tall
+   viewports .page-content's flex-grow leaves slack space below it. Letting
+   the CTA band absorb that slack (instead of the light page background)
+   keeps the CTA + footer reading as one continuous dark band. */
+.welcome-body .page-content {
+    display: flex;
+    flex-direction: column;
+}
+
 .welcome-cta {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     background: var(--ink-900);
     padding: 4rem 1rem;
     text-align: center;
@@ -1059,4 +1072,28 @@ a.card:hover, .card--hover:hover {
 .app-user-menu__logout:hover {
     background: var(--status-danger-bg) !important;
     color: var(--status-danger) !important;
+}
+
+/* ---------------------------------------------------------------- */
+/* Page progress bar — every navigation here is a full server round  */
+/* trip (no SPA router), so this is the feedback a client-side router */
+/* would otherwise give for free. See script.js for the trigger logic. */
+/* ---------------------------------------------------------------- */
+
+.page-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--sky-500), var(--mustard-500));
+    box-shadow: 0 0 8px rgba(14, 165, 233, .6);
+    z-index: 2000;
+    opacity: 0;
+    transition: width .2s ease-out, opacity .3s ease-in .1s;
+    pointer-events: none;
+}
+.page-progress.is-active {
+    opacity: 1;
+    transition: width .2s ease-out;
 }

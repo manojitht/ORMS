@@ -34,7 +34,7 @@
                     <div class="col-lg-8">
                         <span class="welcome-eyebrow">Office Resources Management System</span>
                         <h1 class="welcome-title">Track every device.<br>Serve every request.<br><span class="text-accent">All in one place.</span></h1>
-                        <p class="welcome-lede">Sukhra keeps departments, teams, and office resources organized &mdash;
+                        <p class="welcome-lede">Sukhra keeps departments, teams, and office resources organized -
                             so managers, IT admins, and superadmins always know who has what.</p>
                         <div class="d-flex justify-content-center">
                             <a href="{% url 'account:login' %}" class="btn btn-primary btn-lg px-4">
@@ -49,7 +49,7 @@
                         <div class="welcome-feature-card">
                             <i data-lucide="laptop"></i>
                             <h3>Resource tracking</h3>
-                            <p>Laptops, accessories, and hardware &mdash; know what's available, taken, or in for
+                            <p>Laptops, accessories, and hardware - know what's available, taken, or in for
                                 configuration at a glance.</p>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                         <div class="welcome-feature-card">
                             <i data-lucide="receipt"></i>
                             <h3>Requests, start to finish</h3>
-                            <p>Managers raise requests, IT admins process and complete them &mdash; with a full history
+                            <p>Managers raise requests, IT admins process and complete them - with a full history
                                 kept for every device.</p>
                         </div>
                     </div>
@@ -76,7 +76,7 @@
         <section class="welcome-cta">
             <div class="container text-center">
                 <h2>New here? Set up your company's workspace</h2>
-                <p>Get your own Sukhra workspace running in a few minutes &mdash; no credit card, no installation.</p>
+                <p>Get your own Sukhra workspace running in a few minutes - no credit card, no installation.</p>
                 <a href="{% url 'companies:signup' %}" class="btn btn-warning btn-lg px-4">
                     Set up your company <i data-lucide="arrow-right"></i>
                 </a>
@@ -85,10 +85,11 @@
     </div>
 
     <footer class="welcome-footer">
-        <p>&copy; Sukhra &mdash; Office Resources Management System</p>
+        <p>&copy; Sukhra - Office Resources Management System</p>
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="{% static 'script.js' %}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             if (window.lucide) lucide.createIcons();

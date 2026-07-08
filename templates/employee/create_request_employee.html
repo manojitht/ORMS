@@ -42,7 +42,7 @@
                     <select name="regarding_resource_taken" class="form-select" disabled>
                         <option value="">--select resource--</option>
                         {% for taken in own_resources_taken %}
-                        <option value="{{ taken.id }}">{{ taken.asset_id }} &mdash; {{ taken.asset_id.model_name }}</option>
+                        <option value="{{ taken.id }}">{{ taken.asset_id }} - {{ taken.asset_id.model_name }}</option>
                         {% endfor %}
                     </select>
                 </div>

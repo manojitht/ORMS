@@ -30,7 +30,7 @@
                 <dt class="col-sm-4">Device type</dt><dd class="col-sm-8">{{ selected_res.resource_category }}</dd>
                 <dt class="col-sm-4">Availability</dt><dd class="col-sm-8">{{ selected_res.resource_availability }}</dd>
                 {% for attr in selected_res.resource_category.attribute_schema %}
-                <dt class="col-sm-4">{{ attr.label }}</dt><dd class="col-sm-8">{{ selected_res.attribute_values|dict_get:attr.key|default:"—" }}</dd>
+                <dt class="col-sm-4">{{ attr.label }}</dt><dd class="col-sm-8">{{ selected_res.attribute_values|dict_get:attr.key|default:"-" }}</dd>
                 {% endfor %}
                 {% if selected_res.warranty_expiry_date %}
                 <dt class="col-sm-4">Warranty/lease expiry</dt>

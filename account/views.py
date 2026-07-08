@@ -43,7 +43,7 @@ def _format_duration_human(td):
     in the view (see e.g. resource_label, is_overdue on Ticket).
     """
     if td is None:
-        return '—'
+        return '-'
     hours = td.total_seconds() / 3600
     if hours < 48:
         return f'{hours:.1f} hrs'

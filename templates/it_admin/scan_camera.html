@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function onScanSuccess(decodedText) {
         if (handled) return;
         handled = true;
-        statusEl.textContent = 'Scanned — redirecting…';
+        statusEl.textContent = 'Scanned - redirecting…';
         scanner.stop().finally(function () {
             window.location.href = decodedText;
         });

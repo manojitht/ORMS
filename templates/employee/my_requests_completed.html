@@ -42,7 +42,7 @@
                             <span class="status-pill status-pill--muted">Cancelled</span>
                         {% endif %}
                     </td>
-                    <td>{{ requests.completed_on|default:'—' }}</td>
+                    <td>{{ requests.completed_on|default:'-' }}</td>
                     <td class="text-center">
                         <a class="btn btn-sm btn-success" href="{% url 'tickets:view_selected_request_employee' requests.id %}">
                             <i data-lucide="folder-open"></i> Open

@@ -4,7 +4,7 @@
 <p style="margin:0 0 16px 0;">Hi {{ get_request.created_for.fullname }},</p>
 <p style="margin:0 0 20px 0;">
 {% if decision == 'approved' %}
-Your manager approved your request for <strong>{{ get_request.resource_label }}</strong> &mdash; it's now been sent to IT for processing.
+Your manager approved your request for <strong>{{ get_request.resource_label }}</strong> - it's now been sent to IT for processing.
 {% else %}
 Your manager denied your request for <strong>{{ get_request.resource_label }}</strong>.
 {% if get_request.request_response %}<br><em>Reason: {{ get_request.request_response }}</em>{% endif %}
