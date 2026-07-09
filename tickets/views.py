@@ -16,6 +16,8 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from sukhra.csv_utils import csv_response
 from notifications.services import notify
+from activity.models import ActivityEntry
+from activity.services import log_activity
 
 
 def _send_ticket_email(subject, template_name, context, recipient_list):
@@ -149,6 +151,11 @@ def create_request(request, userid):
                     link_url=reverse('tickets:view_selected_request_it_admin', args=[ticket.id]),
                     dedupe_key=f'ticket_state:{ticket.id}:{ticket.request_status}',
                 )
+            log_activity(
+                request.user, 'ticket_created',
+                f'{request.user} created request {request_id} for {resource_label}',
+                related_ticket=ticket,
+            )
 
             message_alert.success(request, request_id + ' request is created successfully!')
 
@@ -163,7 +170,8 @@ def create_request(request, userid):
 def view_selected_request(request, reqid):
     get_request_id = Ticket.objects.get(id=reqid)
     get_member_info = Employee.objects.get(peoplesoft_id=get_request_id.created_for)
-    context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, }
+    activity_entries = ActivityEntry.objects.filter(related_ticket=get_request_id)[:50]
+    context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, 'activity_entries': activity_entries, }
     return render(request, 'manager/open_request_page.html', context)
 
 
@@ -171,7 +179,8 @@ def view_selected_request(request, reqid):
 def view_manager_completed_request(request, reqid):
     get_request_id = Ticket.objects.get(id=reqid)
     get_member_info = Employee.objects.get(peoplesoft_id=get_request_id.created_for)
-    context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, }
+    activity_entries = ActivityEntry.objects.filter(related_ticket=get_request_id)[:50]
+    context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, 'activity_entries': activity_entries, }
     return render(request, 'manager/open_completed_request_manager.html', context)
 
 
@@ -224,6 +233,11 @@ def cancel_request(request, reqid, userid):
             link_url=reverse('tickets:view_selected_request_employee', args=[get_request.id]),
             dedupe_key=f'ticket_state:{get_request.id}:{get_request.request_status}',
         )
+    log_activity(
+        request.user, 'ticket_cancelled',
+        f'{request.user} cancelled request {get_request.request_id}',
+        related_ticket=get_request,
+    )
 
     message_alert.success(request, get_request.request_id +  ', was cancelled successfully!')
     return redirect('tickets:list_requests_manager', userid)
@@ -278,6 +292,11 @@ def cancel_request_it_admin(request, reqid, userid):
             link_url=reverse('tickets:view_selected_request_employee', args=[get_request.id]),
             dedupe_key=f'ticket_state:{get_request.id}:{get_request.request_status}',
         )
+    log_activity(
+        request.user, 'ticket_cancelled',
+        f'{request.user} cancelled request {get_request.request_id}',
+        related_ticket=get_request,
+    )
 
     message_alert.success(request, get_request.request_id +  ', was cancelled successfully!')
     return redirect('tickets:list_pending_requests_it_admin', userid)
@@ -317,7 +336,8 @@ def export_it_admin_completed_requests_csv(request, userid):
 def view_selected_request_it_admin(request, reqid):
     get_request_id = Ticket.objects.get(id=reqid)
     get_member_info = Employee.objects.get(peoplesoft_id=get_request_id.created_for)
-    context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, }
+    activity_entries = ActivityEntry.objects.filter(related_ticket=get_request_id)[:50]
+    context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, 'activity_entries': activity_entries, }
     return render(request, 'it_admin/open_request_it_admin_page.html', context)
 
 
@@ -345,6 +365,11 @@ def approve_processing_request(request, reqid, userid):
             link_url=reverse('tickets:view_selected_request_employee', args=[get_request.id]),
             dedupe_key=f'ticket_state:{get_request.id}:{get_request.request_status}',
         )
+    log_activity(
+        request.user, 'ticket_processing_started',
+        f'{request.user} started processing request {get_request.request_id}',
+        related_ticket=get_request,
+    )
 
     message_alert.success(request, get_request.request_id +  ', was approved successfully & assigned to your processing requests tab!')
     return redirect('tickets:list_pending_requests_it_admin', userid)
@@ -368,7 +393,11 @@ def view_selected_processing_request(request, reqid):
         else:
             message_alert.error(request, 'For this request, there is no resource available for this requested resource!')
 
-    context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, 'assign_resource': assign_resource, }
+    activity_entries = ActivityEntry.objects.filter(related_ticket=get_request_id)[:50]
+    context = {
+        'get_request_id': get_request_id, 'get_member_info': get_member_info,
+        'assign_resource': assign_resource, 'activity_entries': activity_entries,
+    }
     return render(request, 'it_admin/open_processing_request.html', context)
 
 
@@ -376,7 +405,8 @@ def view_selected_processing_request(request, reqid):
 def view_selected_completed_request(request, reqid):
     get_request_id = Ticket.objects.get(id=reqid)
     get_member_info = Employee.objects.get(peoplesoft_id=get_request_id.created_for)
-    context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, }
+    activity_entries = ActivityEntry.objects.filter(related_ticket=get_request_id)[:50]
+    context = { 'get_request_id': get_request_id, 'get_member_info': get_member_info, 'activity_entries': activity_entries, }
     return render(request, 'it_admin/open_completed_request.html', context)
 
 
@@ -422,6 +452,11 @@ def complete_processing_request(request, reqid, userid):
                     link_url=reverse('tickets:view_selected_request_employee', args=[update_req.id]),
                     dedupe_key=f'ticket_state:{update_req.id}:{update_req.request_status}',
                 )
+            log_activity(
+                request.user, 'ticket_completed',
+                f'{request.user} completed request {update_req.request_id}',
+                related_ticket=update_req,
+            )
             message_alert.success(request, update_req.request_id + ', was completed successfully!')
         else:
             update_req.asset_id = request.POST['asset_id']
@@ -445,6 +480,11 @@ def complete_processing_request(request, reqid, userid):
                         link_url=reverse('tickets:view_selected_request_employee', args=[update_req.id]),
                         dedupe_key=f'ticket_state:{update_req.id}:{update_req.request_status}',
                     )
+                log_activity(
+                    request.user, 'ticket_completed',
+                    f'{request.user} completed request {update_req.request_id}',
+                    related_ticket=update_req,
+                )
                 message_alert.success(request, update_req.request_id + ', was completed successfully!')
             else:
                 get_resource = Resource.objects.get(asset_id=update_req.asset_id)
@@ -475,6 +515,17 @@ def complete_processing_request(request, reqid, userid):
                             link_url=reverse('tickets:view_selected_request_employee', args=[update_req.id]),
                             dedupe_key=f'ticket_state:{update_req.id}:{update_req.request_status}',
                         )
+                    log_activity(
+                        request.user, 'ticket_completed',
+                        f'{request.user} completed request {update_req.request_id}',
+                        related_ticket=update_req,
+                    )
+                    log_activity(
+                        request.user, 'resource_taken',
+                        f'{get_resource.asset_id} was taken by {update_req.created_for} '
+                        f'(request {update_req.request_id})',
+                        related_resource=get_resource, related_ticket=update_req,
+                    )
 
                     message_alert.success(request, update_req.request_id + ', was completed successfully!')
                 else:
@@ -580,6 +631,11 @@ def create_request_employee(request, userid):
                     link_url=reverse('tickets:list_requests_from_team_manager', args=[manager_account.id]),
                     dedupe_key=f'ticket_state:{ticket.id}:{ticket.request_status}',
                 )
+            log_activity(
+                request.user, 'ticket_created',
+                f'{employee.fullname} submitted request {request_id}',
+                related_ticket=ticket,
+            )
 
             message_alert.success(request, f'{request_id} request submitted -- waiting on your manager\'s approval.')
             return redirect('tickets:list_requests_employee', userid)
@@ -616,7 +672,8 @@ def list_completed_requests_employee(request, userid):
 @login_required(login_url='account:login')
 def view_selected_request_employee(request, reqid):
     get_request_id = Ticket.objects.get(id=reqid, created_ps_id=request.user)
-    context = { 'get_request_id': get_request_id }
+    activity_entries = ActivityEntry.objects.filter(related_ticket=get_request_id)[:50]
+    context = { 'get_request_id': get_request_id, 'activity_entries': activity_entries }
     return render(request, 'employee/open_request_employee.html', context)
 
 
@@ -630,6 +687,11 @@ def cancel_request_employee(request, reqid, userid):
         return redirect('tickets:list_requests_employee', userid)
     get_request.request_status = 'Cancelled'
     get_request.save()
+    log_activity(
+        request.user, 'ticket_cancelled',
+        f'{request.user} cancelled request {get_request.request_id}',
+        related_ticket=get_request,
+    )
     message_alert.success(request, get_request.request_id + ', was cancelled successfully!')
     return redirect('tickets:list_requests_employee', userid)
 
@@ -673,6 +735,11 @@ def approve_employee_request_manager(request, reqid, userid):
             link_url=reverse('tickets:view_selected_request_employee', args=[get_request.id]),
             dedupe_key=f'ticket_state:{get_request.id}:{get_request.request_status}',
         )
+    log_activity(
+        request.user, 'ticket_approved',
+        f'{request.user} approved request {get_request.request_id}',
+        related_ticket=get_request,
+    )
 
     message_alert.success(request, get_request.request_id + ', was approved and sent to IT for processing!')
     return redirect('tickets:list_requests_from_team_manager', userid)
@@ -708,6 +775,11 @@ def deny_employee_request_manager(request, reqid, userid):
             link_url=reverse('tickets:view_selected_request_employee', args=[get_request.id]),
             dedupe_key=f'ticket_state:{get_request.id}:{get_request.request_status}',
         )
+    log_activity(
+        request.user, 'ticket_denied',
+        f'{request.user} denied request {get_request.request_id}',
+        related_ticket=get_request,
+    )
 
     message_alert.success(request, get_request.request_id + ', was denied.')
     return redirect('tickets:list_requests_from_team_manager', userid)

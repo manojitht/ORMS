@@ -17,6 +17,7 @@ from django.urls import reverse
 from sukhra.csv_utils import csv_response
 from sukhra.account_provisioning import generate_temporary_password, send_account_creation_email
 from notifications.services import notify
+from activity.services import log_activity
 
 
 def _provision_employee_account(request, employee):
@@ -244,6 +245,11 @@ def mark_returned(request, resid, memid):
                             'resources:employee_taken_resources_list_table', args=[employee_account.id]),
                         dedupe_key=f'resource_returned:{get_asset.id}',
                     )
+                log_activity(
+                    request.user, 'resource_returned',
+                    f'{update.asset_id} returned by {get_asset.peoplesoft_id}',
+                    related_resource=update,
+                )
 
                 message_alert.success(request, 'Mark returned on the device successfully!')
 
@@ -275,6 +281,11 @@ def mark_returned(request, resid, memid):
                         'resources:employee_taken_resources_list_table', args=[employee_account.id]),
                     dedupe_key=f'resource_returned:{get_asset.id}',
                 )
+            log_activity(
+                request.user, 'resource_returned',
+                f'{update.asset_id} returned by {get_asset.peoplesoft_id} ({reason_notes})',
+                related_resource=update,
+            )
 
             message_alert.success(request, 'Mark returned on the device successfully!')
 

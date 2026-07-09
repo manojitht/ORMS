@@ -41,6 +41,8 @@
             <a href="{% url 'tickets:list_requests_manager' user.id %}" class="btn btn-outline-secondary w-100 mt-3">Back</a>
         </div>
     </div>
+
+    {% include 'includes/activity_timeline.html' with entries=activity_entries %}
     {% endif %}
 </div>
 {% endblock %}

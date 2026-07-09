@@ -1286,6 +1286,52 @@ a.card:hover, .card--hover:hover {
 }
 
 /* ---------------------------------------------------------------- */
+/* Activity timeline — per-resource/per-ticket audit trail            */
+/* ---------------------------------------------------------------- */
+
+.activity-timeline {
+    max-height: 420px;
+    overflow-y: auto;
+}
+.activity-row {
+    display: flex;
+    align-items: flex-start;
+    gap: .65rem;
+    padding: .6rem 0;
+    border-bottom: 1px solid var(--ink-100);
+}
+.activity-row:last-child {
+    border-bottom: none;
+}
+.activity-row__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.activity-row__icon svg {
+    width: 15px;
+    height: 15px;
+}
+.activity-row__body {
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+    min-width: 0;
+}
+.activity-row__summary {
+    font-size: .85rem;
+    color: var(--ink-900);
+}
+.activity-row__meta {
+    font-size: .72rem;
+    color: var(--ink-300);
+}
+
+/* ---------------------------------------------------------------- */
 /* Page progress bar — every navigation here is a full server round  */
 /* trip (no SPA router), so this is the feedback a client-side router */
 /* would otherwise give for free. See script.js for the trigger logic. */

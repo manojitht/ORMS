@@ -240,3 +240,82 @@ class ExportResourcesCsvTests(TestCase):
         response = self.client.get(reverse('resources:export_resources_csv'))
 
         self.assertNotIn('ASSET77099', response.content.decode())
+
+
+class ResourceActivityLogTests(TestCase):
+    def setUp(self):
+        self.it_admin = ITAdminAccountFactory()
+        self.client.force_login(self.it_admin)
+
+    def test_add_resource_page_logs_resource_created(self):
+        category = CategoryFactory(company=self.it_admin.company)
+        self.client.post(reverse('resources:add_resource_page'), {
+            'asset_id': 'ASSET88001', 'model_name': 'ThinkPad X1', 'resource_category': category.id,
+            'resource_availability': 'Available', 'resource_description': 'test',
+            'added_by': 'IT Admin', 'resource_image': make_tiny_gif(),
+        })
+        from activity.models import ActivityEntry
+        self.assertTrue(ActivityEntry.all_objects.filter(
+            action='resource_created', summary__icontains='ASSET88001').exists())
+
+    def test_update_resource_logs_availability_change_in_summary(self):
+        category = CategoryFactory(company=self.it_admin.company)
+        resource = ResourceFactory(
+            company=self.it_admin.company, asset_id='ASSET88002',
+            resource_category=category, resource_availability='Available',
+        )
+        self.client.post(reverse('resources:update_resource', args=[resource.id]), {
+            'asset_id': resource.asset_id, 'model_name': resource.model_name,
+            'resource_category': category.id, 'resource_availability': 'Taken',
+            'resource_description': '', 'added_by': 'IT Admin',
+        })
+        from activity.models import ActivityEntry
+        entry = ActivityEntry.all_objects.filter(action='resource_updated', related_resource=resource).first()
+        self.assertIsNotNone(entry)
+        self.assertIn('availability: Available -> Taken', entry.summary)
+
+    def test_update_resource_omits_availability_note_when_unchanged(self):
+        category = CategoryFactory(company=self.it_admin.company)
+        resource = ResourceFactory(
+            company=self.it_admin.company, asset_id='ASSET88003',
+            resource_category=category, resource_availability='Available',
+        )
+        self.client.post(reverse('resources:update_resource', args=[resource.id]), {
+            'asset_id': resource.asset_id, 'model_name': 'New name', 'resource_category': category.id,
+            'resource_availability': 'Available', 'resource_description': '', 'added_by': 'IT Admin',
+        })
+        from activity.models import ActivityEntry
+        entry = ActivityEntry.all_objects.filter(action='resource_updated', related_resource=resource).first()
+        self.assertIsNotNone(entry)
+        self.assertNotIn('availability:', entry.summary)
+
+    def test_update_resource_omits_warranty_note_when_the_date_is_resubmitted_unchanged(self):
+        # Regression test: warranty_expiry_date starts as a real `date`
+        # object (read from the DB) but the POST value is always a string --
+        # comparing them directly without parsing the POST value first
+        # always reads as "changed", even when it wasn't.
+        category = CategoryFactory(company=self.it_admin.company)
+        resource = ResourceFactory(
+            company=self.it_admin.company, asset_id='ASSET88005',
+            resource_category=category, warranty_expiry_date='2026-07-03',
+        )
+        self.client.post(reverse('resources:update_resource', args=[resource.id]), {
+            'asset_id': resource.asset_id, 'model_name': resource.model_name, 'resource_category': category.id,
+            'resource_availability': resource.resource_availability, 'resource_description': '',
+            'added_by': 'IT Admin', 'warranty_expiry_date': '2026-07-03',
+        })
+        from activity.models import ActivityEntry
+        entry = ActivityEntry.all_objects.filter(action='resource_updated', related_resource=resource).first()
+        self.assertIsNotNone(entry)
+        self.assertNotIn('warranty:', entry.summary)
+
+    def test_delete_resource_logs_before_deleting_and_survives_it(self):
+        resource = ResourceFactory(company=self.it_admin.company, asset_id='ASSET88004')
+        self.client.post(reverse('resources:delete_resource', args=[resource.id]), {'delete_name': 'delete'})
+        from activity.models import ActivityEntry
+        from .models import Resource
+        self.assertFalse(Resource.all_objects.filter(asset_id='ASSET88004').exists())
+        entry = ActivityEntry.all_objects.filter(
+            action='resource_deleted', summary__icontains='ASSET88004').first()
+        self.assertIsNotNone(entry)
+        self.assertIsNone(entry.related_resource)
