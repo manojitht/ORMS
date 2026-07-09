@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sukhra | Notifications{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="page-header"><i data-lucide="bell"></i> Notifications</h1>
+    {% include 'message_alert.html' %}
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Notification</th>
+                    <th>Received</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for notif in page_obj %}
+                <tr class="{% if not notif.is_read %}fw-semibold{% endif %}">
+                    <td><span class="app-notif-row__icon status-pill--{{ notif.color }}"><i data-lucide="{{ notif.icon }}"></i></span></td>
+                    <td>
+                        <a href="{% url 'notifications:open' notif.id %}">{{ notif.title }}</a>
+                        {% if notif.body %}<div class="text-muted small fw-normal">{{ notif.body }}</div>{% endif %}
+                    </td>
+                    <td class="text-muted small">{{ notif.created_on|timesince }} ago</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3" class="p-0">
+                    {% include 'includes/empty_state.html' with icon='bell' title='No notifications yet' subtitle="You'll see ticket updates and alerts here." %}
+                </td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Notifications pages">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+            {% endif %}
+            <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

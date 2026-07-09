@@ -1,0 +1,28 @@
+{% load static %}
+<div class="app-notif-panel__header">
+    <span>Notifications</span>
+    {% if unread_count %}
+    <button type="button" class="btn btn-link btn-sm app-notif-panel__mark-all" data-mark-all-read-url="{% url 'notifications:mark_all_read' %}">Mark all read</button>
+    {% endif %}
+</div>
+
+<div class="app-notif-panel__list">
+    {% for notif in notifications %}
+    <a href="{% url 'notifications:open' notif.id %}" class="app-notif-row{% if not notif.is_read %} app-notif-row--unread{% endif %}">
+        <span class="app-notif-row__icon status-pill--{{ notif.color }}"><i data-lucide="{{ notif.icon }}"></i></span>
+        <span class="app-notif-row__body">
+            <span class="app-notif-row__title">{{ notif.title }}</span>
+            {% if notif.body %}<span class="app-notif-row__desc">{{ notif.body }}</span>{% endif %}
+            <span class="app-notif-row__time">{{ notif.created_on|timesince }} ago</span>
+        </span>
+    </a>
+    {% empty %}
+    {% include 'includes/empty_state.html' with icon='bell' title='No notifications yet' subtitle="You'll see ticket updates and alerts here." %}
+    {% endfor %}
+</div>
+
+{% if notifications %}
+<div class="app-notif-panel__footer">
+    <a href="{% url 'notifications:list_page' %}">View all notifications</a>
+</div>
+{% endif %}

@@ -83,6 +83,15 @@ class SuperAdminAccountFactory(AccountFactory):
     is_staff = True
 
 
+class EmployeeAccountFactory(AccountFactory):
+    """A self-service login (Account.is_employee) linked to its own fresh
+    Employee record -- distinct from EmployeeFactory below, which is the
+    plain Employee model with no portal access of its own.
+    """
+    is_employee = True
+    employee_profile = factory.SubFactory('factories.EmployeeFactory', company=factory.SelfAttribute('..company'))
+
+
 class EmployeeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Employee

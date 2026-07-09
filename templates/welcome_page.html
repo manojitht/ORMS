@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="{% static 'theme-init.js' %}"></script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to Sukhra!</title>
@@ -22,7 +23,10 @@
                 {% include 'includes/logo.html' %}
                 <span>Sukhra</span>
             </span>
-            <a href="{% url 'account:login' %}" class="btn btn-primary">Login</a>
+            <div class="d-flex align-items-center gap-2">
+                {% include 'includes/theme_toggle.html' %}
+                <a href="{% url 'account:login' %}" class="btn btn-primary">Login</a>
+            </div>
         </div>
     </nav>
 

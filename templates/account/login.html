@@ -4,6 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="{% static 'theme-init.js' %}"></script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sukhra | Login</title>
@@ -17,6 +18,7 @@
     <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
 </head>
 <body class="welcome-body">
+    {% include 'includes/theme_toggle.html' with floating=True %}
     <section class="auth-hero d-flex align-items-center justify-content-center">
         <div class="grid-backdrop"></div>
         <div class="login-card">

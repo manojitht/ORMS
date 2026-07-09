@@ -8,12 +8,14 @@ from account.models import Account
 from tickets.models import Ticket
 from team.models import Team
 from django.utils import timezone
+from django.urls import reverse
 import random
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from sukhra.csv_utils import csv_response
+from notifications.services import notify
 
 
 def _send_ticket_email(subject, template_name, context, recipient_list):
@@ -136,6 +138,18 @@ def create_request(request, userid):
                 'department': department,
                 'team': team,
             }, recipient_list)
+
+            it_admin_account = Account.objects.filter(
+                company=request.user.company, peoplesoft_id=assigned_to, is_it_admin=True).first()
+            if it_admin_account:
+                notify(
+                    it_admin_account, 'ticket_created',
+                    title=f'New request {request_id} assigned to you',
+                    body=f'{created_for} needs {resource_label}.',
+                    link_url=reverse('tickets:view_selected_request_it_admin', args=[ticket.id]),
+                    dedupe_key=f'ticket_state:{ticket.id}:{ticket.request_status}',
+                )
+
             message_alert.success(request, request_id + ' request is created successfully!')
 
     generated_request_id = random.randrange(11111111111, 99999999999, 11)
@@ -199,6 +213,18 @@ def cancel_request(request, reqid, userid):
         'resuest_status_r': resuest_status_r,
     }, [get_request.created_for.email,])
     get_request.save()
+
+    employee_account = Account.objects.filter(
+        company=request.user.company, employee_profile=get_request.created_for).first()
+    if employee_account:
+        notify(
+            employee_account, 'ticket_cancelled',
+            title=f'Request {get_request.request_id} was cancelled',
+            body=f'Your manager cancelled this request for {get_request.resource_label}.',
+            link_url=reverse('tickets:view_selected_request_employee', args=[get_request.id]),
+            dedupe_key=f'ticket_state:{get_request.id}:{get_request.request_status}',
+        )
+
     message_alert.success(request, get_request.request_id +  ', was cancelled successfully!')
     return redirect('tickets:list_requests_manager', userid)
 
@@ -241,6 +267,18 @@ def cancel_request_it_admin(request, reqid, userid):
         'resuest_status_r': resuest_status_r,
     }, [get_request.created_for.email,])
     get_request.save()
+
+    employee_account = Account.objects.filter(
+        company=request.user.company, employee_profile=get_request.created_for).first()
+    if employee_account:
+        notify(
+            employee_account, 'ticket_cancelled',
+            title=f'Request {get_request.request_id} was cancelled',
+            body=f'IT cancelled this request for {get_request.resource_label}.',
+            link_url=reverse('tickets:view_selected_request_employee', args=[get_request.id]),
+            dedupe_key=f'ticket_state:{get_request.id}:{get_request.request_status}',
+        )
+
     message_alert.success(request, get_request.request_id +  ', was cancelled successfully!')
     return redirect('tickets:list_pending_requests_it_admin', userid)
 
@@ -297,6 +335,17 @@ def approve_processing_request(request, reqid, userid):
     }, [get_request.created_for.email,])
     get_request.save()
 
+    employee_account = Account.objects.filter(
+        company=request.user.company, employee_profile=get_request.created_for).first()
+    if employee_account:
+        notify(
+            employee_account, 'ticket_processing',
+            title=f'Request {get_request.request_id} is now processing',
+            body=f'IT started processing your request for {get_request.resource_label}.',
+            link_url=reverse('tickets:view_selected_request_employee', args=[get_request.id]),
+            dedupe_key=f'ticket_state:{get_request.id}:{get_request.request_status}',
+        )
+
     message_alert.success(request, get_request.request_id +  ', was approved successfully & assigned to your processing requests tab!')
     return redirect('tickets:list_pending_requests_it_admin', userid)
 
@@ -343,6 +392,9 @@ def complete_processing_request(request, reqid, userid):
         resuest_status_r = "completed"
         update_req.completed_on = timezone.now()
 
+        employee_account = Account.objects.filter(
+            company=request.user.company, employee_profile=update_req.created_for).first()
+
         if update_req.request_category == 'Support':
             resource_taken = update_req.regarding_resource_taken
             resource = resource_taken.asset_id
@@ -362,6 +414,14 @@ def complete_processing_request(request, reqid, userid):
                 'resource': resource,
                 'resource_attributes': resource_attributes,
             }, [update_req.created_for.email,])
+            if employee_account:
+                notify(
+                    employee_account, 'ticket_completed',
+                    title=f'Request {update_req.request_id} was completed',
+                    body=f'{resource.resource_category} request has been completed.',
+                    link_url=reverse('tickets:view_selected_request_employee', args=[update_req.id]),
+                    dedupe_key=f'ticket_state:{update_req.id}:{update_req.request_status}',
+                )
             message_alert.success(request, update_req.request_id + ', was completed successfully!')
         else:
             update_req.asset_id = request.POST['asset_id']
@@ -377,6 +437,14 @@ def complete_processing_request(request, reqid, userid):
                     'update_req': update_req,
                     'resuest_status_r': resuest_status_r,
                 }, [update_req.created_for.email,])
+                if employee_account:
+                    notify(
+                        employee_account, 'ticket_completed',
+                        title=f'Request {update_req.request_id} was completed',
+                        body=f'{category.resource_category} request has been completed.',
+                        link_url=reverse('tickets:view_selected_request_employee', args=[update_req.id]),
+                        dedupe_key=f'ticket_state:{update_req.id}:{update_req.request_status}',
+                    )
                 message_alert.success(request, update_req.request_id + ', was completed successfully!')
             else:
                 get_resource = Resource.objects.get(asset_id=update_req.asset_id)
@@ -398,6 +466,15 @@ def complete_processing_request(request, reqid, userid):
                         'update_req': update_req,
                         'resuest_status_r': resuest_status_r,
                     }, [update_req.created_for.email,])
+
+                    if employee_account:
+                        notify(
+                            employee_account, 'ticket_completed',
+                            title=f'Request {update_req.request_id} was completed',
+                            body=f'{category.resource_category} request has been completed.',
+                            link_url=reverse('tickets:view_selected_request_employee', args=[update_req.id]),
+                            dedupe_key=f'ticket_state:{update_req.id}:{update_req.request_status}',
+                        )
 
                     message_alert.success(request, update_req.request_id + ', was completed successfully!')
                 else:
@@ -495,6 +572,14 @@ def create_request_employee(request, userid):
                 _send_ticket_email(mail_head_subject, 'request_needs_manager_approval_email.html', {
                     'ticket': ticket, 'manager_account': manager_account,
                 }, [manager_account.email])
+            if manager_account:
+                notify(
+                    manager_account, 'ticket_approval_needed',
+                    title=f'Approval needed: {ticket.request_id}',
+                    body=f'{employee.fullname} submitted a new request.',
+                    link_url=reverse('tickets:list_requests_from_team_manager', args=[manager_account.id]),
+                    dedupe_key=f'ticket_state:{ticket.id}:{ticket.request_status}',
+                )
 
             message_alert.success(request, f'{request_id} request submitted -- waiting on your manager\'s approval.')
             return redirect('tickets:list_requests_employee', userid)
@@ -580,6 +665,14 @@ def approve_employee_request_manager(request, reqid, userid):
         _send_ticket_email(mail_head_subject, 'request_manager_decision_email.html', {
             'get_request': get_request, 'decision': 'approved',
         }, [employee_account.email])
+    if employee_account:
+        notify(
+            employee_account, 'ticket_approved',
+            title=f'Request {get_request.request_id} was approved',
+            body='Your manager approved this request -- it\'s now with IT.',
+            link_url=reverse('tickets:view_selected_request_employee', args=[get_request.id]),
+            dedupe_key=f'ticket_state:{get_request.id}:{get_request.request_status}',
+        )
 
     message_alert.success(request, get_request.request_id + ', was approved and sent to IT for processing!')
     return redirect('tickets:list_requests_from_team_manager', userid)
@@ -607,6 +700,14 @@ def deny_employee_request_manager(request, reqid, userid):
         _send_ticket_email(mail_head_subject, 'request_manager_decision_email.html', {
             'get_request': get_request, 'decision': 'denied',
         }, [employee_account.email])
+    if employee_account:
+        notify(
+            employee_account, 'ticket_denied',
+            title=f'Request {get_request.request_id} was denied',
+            body='Your manager denied this request.',
+            link_url=reverse('tickets:view_selected_request_employee', args=[get_request.id]),
+            dedupe_key=f'ticket_state:{get_request.id}:{get_request.request_status}',
+        )
 
     message_alert.success(request, get_request.request_id + ', was denied.')
     return redirect('tickets:list_requests_from_team_manager', userid)

@@ -4,6 +4,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="{% static 'theme-init.js' %}"></script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sukhra{% endblock %}</title>
@@ -91,6 +92,16 @@
                 </button>
                 <div class="app-topbar__breadcrumb">{% block breadcrumb %}{% endblock %}</div>
                 <div class="app-topbar__spacer"></div>
+                {% include 'includes/theme_toggle.html' %}
+                <div class="dropdown app-notif-menu">
+                    <button class="btn app-topbar__toggle app-notif-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-notif-toggle>
+                        <i data-lucide="bell"></i>
+                        <span class="app-notif-badge d-none" data-notif-badge>0</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end app-notif-menu__menu" data-notif-panel>
+                        <div class="app-notif-panel__loading">Loading...</div>
+                    </div>
+                </div>
                 <div class="dropdown app-user-menu">
                     <button class="btn app-user-menu__toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         {% include 'includes/avatar.html' with name=user.first_name size=32 %}
@@ -125,6 +136,14 @@
 
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    {% if user.is_authenticated %}
+    <script>
+        window.NOTIF_URLS = {
+            unreadCount: "{% url 'notifications:unread_count' %}",
+            panel: "{% url 'notifications:panel' %}"
+        };
+    </script>
+    {% endif %}
     <script src="{% static 'script.js' %}"></script>
     {% block extra_scripts %}{% endblock %}
 </body>

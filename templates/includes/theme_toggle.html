@@ -1,0 +1,11 @@
+{% comment %}
+Usage: {% include 'includes/theme_toggle.html' %} inside existing chrome
+(topbar/navbar), or {% include 'includes/theme_toggle.html' with floating=True %}
+on pages with no navbar to anchor to. Icon shown is driven by CSS reading
+<html data-bs-theme> -- see .theme-toggle rules in design-system.css --
+the click handler itself lives in script.js.
+{% endcomment %}
+<button type="button" class="btn app-topbar__toggle theme-toggle{% if floating %} theme-toggle--floating{% endif %}" data-theme-toggle aria-label="Toggle dark mode">
+    <i data-lucide="moon" class="theme-toggle__icon theme-toggle__icon--dark"></i>
+    <i data-lucide="sun" class="theme-toggle__icon theme-toggle__icon--light"></i>
+</button>
