@@ -3,9 +3,11 @@ from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import NoReverseMatch, reverse
 
+from companies.context import set_current_company
 from factories import (
     CategoryFactory,
     CompanyFactory,
+    EmployeeAccountFactory,
     ITAdminAccountFactory,
     ManagerAccountFactory,
     EmployeeFactory,
@@ -15,6 +17,7 @@ from factories import (
     TicketFactory,
 )
 
+from notifications.models import Notification
 from resources.models import Resource, ResourceTaken
 from tickets.models import Ticket
 
@@ -237,3 +240,121 @@ class ExportCompletedRequestsCsvTests(TestCase):
         )
 
         self.assertNotIn('REQ770098', response.content.decode())
+
+
+class TicketLifecycleNotificationTests(TestCase):
+    """Confirms the in-app notification hooks alongside each existing email
+    send actually fire for the right recipient -- one assertion per trigger
+    point, not a re-test of the underlying ticket transition itself (already
+    covered above/elsewhere).
+    """
+
+    def test_create_request_employee_notifies_the_manager(self):
+        manager = ManagerAccountFactory()
+        employee = EmployeeFactory(company=manager.company, manager_peoplesoft_id=manager.peoplesoft_id)
+        employee_account = EmployeeAccountFactory(company=manager.company, employee_profile=employee)
+        category = CategoryFactory(company=manager.company)
+        set_current_company(manager.company)
+        self.client.force_login(employee_account)
+
+        self.client.post(
+            reverse('tickets:create_request_employee', args=[employee_account.id]),
+            {'request_id': 'REQ800001', 'request_category': 'Request new',
+             'requested_category': category.id, 'request_decription': 'Need a laptop'},
+        )
+
+        self.assertTrue(Notification.all_objects.filter(
+            recipient=manager, kind='ticket_approval_needed').exists())
+
+    def test_approve_employee_request_manager_notifies_the_employee(self):
+        manager = ManagerAccountFactory()
+        employee = EmployeeFactory(company=manager.company, manager_peoplesoft_id=manager.peoplesoft_id)
+        employee_account = EmployeeAccountFactory(company=manager.company, employee_profile=employee)
+        ticket = TicketFactory(
+            company=manager.company, created_for=employee, request_status='Pending Manager Approval')
+        set_current_company(manager.company)
+        self.client.force_login(manager)
+
+        self.client.get(reverse('tickets:approve_employee_request_manager', args=[ticket.id, manager.id]))
+
+        self.assertTrue(Notification.all_objects.filter(
+            recipient=employee_account, kind='ticket_approved').exists())
+
+    def test_deny_employee_request_manager_notifies_the_employee(self):
+        manager = ManagerAccountFactory()
+        employee = EmployeeFactory(company=manager.company, manager_peoplesoft_id=manager.peoplesoft_id)
+        employee_account = EmployeeAccountFactory(company=manager.company, employee_profile=employee)
+        ticket = TicketFactory(
+            company=manager.company, created_for=employee, request_status='Pending Manager Approval')
+        set_current_company(manager.company)
+        self.client.force_login(manager)
+
+        self.client.get(reverse('tickets:deny_employee_request_manager', args=[ticket.id, manager.id]))
+
+        self.assertTrue(Notification.all_objects.filter(
+            recipient=employee_account, kind='ticket_denied').exists())
+
+    def test_cancel_request_notifies_the_employee_when_they_have_portal_access(self):
+        manager = ManagerAccountFactory()
+        employee = EmployeeFactory(company=manager.company)
+        employee_account = EmployeeAccountFactory(company=manager.company, employee_profile=employee)
+        ticket = TicketFactory(
+            company=manager.company, created_for=employee, created_ps_id=manager.peoplesoft_id)
+        set_current_company(manager.company)
+        self.client.force_login(manager)
+
+        self.client.get(reverse('tickets:cancel_request', args=[ticket.id, manager.id]))
+
+        self.assertTrue(Notification.all_objects.filter(
+            recipient=employee_account, kind='ticket_cancelled').exists())
+
+    def test_cancel_request_does_not_error_when_employee_has_no_portal_access(self):
+        manager = ManagerAccountFactory()
+        employee = EmployeeFactory(company=manager.company)  # no linked Account
+        ticket = TicketFactory(
+            company=manager.company, created_for=employee, created_ps_id=manager.peoplesoft_id)
+        set_current_company(manager.company)
+        self.client.force_login(manager)
+
+        response = self.client.get(reverse('tickets:cancel_request', args=[ticket.id, manager.id]))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Notification.all_objects.filter(kind='ticket_cancelled').exists())
+
+    def test_approve_processing_request_notifies_the_employee(self):
+        it_admin = ITAdminAccountFactory()
+        employee = EmployeeFactory(company=it_admin.company)
+        employee_account = EmployeeAccountFactory(company=it_admin.company, employee_profile=employee)
+        ticket = TicketFactory(
+            company=it_admin.company, created_for=employee, request_status='Pending',
+            assigned_to=it_admin.peoplesoft_id,
+        )
+        set_current_company(it_admin.company)
+        self.client.force_login(it_admin)
+
+        self.client.get(reverse('tickets:approve_processing_request', args=[ticket.id, it_admin.id]))
+
+        self.assertTrue(Notification.all_objects.filter(
+            recipient=employee_account, kind='ticket_processing').exists())
+
+    def test_complete_processing_request_notifies_the_employee(self):
+        it_admin = ITAdminAccountFactory()
+        employee = EmployeeFactory(company=it_admin.company)
+        employee_account = EmployeeAccountFactory(company=it_admin.company, employee_profile=employee)
+        category = CategoryFactory(company=it_admin.company)
+        resource = ResourceFactory(
+            company=it_admin.company, resource_category=category, resource_availability='Available')
+        ticket = TicketFactory(
+            company=it_admin.company, created_for=employee, requested_category=category,
+            request_category='Request new', request_status='Processing', assigned_to=it_admin.peoplesoft_id,
+        )
+        set_current_company(it_admin.company)
+        self.client.force_login(it_admin)
+
+        self.client.post(
+            reverse('tickets:complete_processing_request', args=[ticket.id, it_admin.id]),
+            {'asset_id': resource.asset_id, 'request_response': 'Here you go'},
+        )
+
+        self.assertTrue(Notification.all_objects.filter(
+            recipient=employee_account, kind='ticket_completed').exists())

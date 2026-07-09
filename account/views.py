@@ -23,6 +23,7 @@ from team.models import Team
 
 from sukhra.csv_utils import csv_response
 from sukhra.account_provisioning import generate_temporary_password, send_account_creation_email
+from notifications.services import sync_sla_overdue_notifications, sync_warranty_notifications
 
 from .forms import LoginUsers
 from .models import Account, AccountProfile
@@ -215,6 +216,12 @@ def superadmin_portal(request):
     open_tickets = Ticket.objects.filter(is_active=True).exclude(request_status__in=['Completed', 'Cancelled'])
     overdue_requests_count = sum(1 for t in open_tickets if t.is_overdue)
 
+    # SLA-overdue notifications are synced from it_admin_portal instead (each
+    # ticket has exactly one assigned_to IT admin, the correct recipient) --
+    # warranty alerts have no owning IT admin, so they're the one ambient
+    # notification superadmin's own dashboard visit also broadcasts.
+    sync_warranty_notifications(company)
+
     context = {
         'get_total_managers_count': get_total_managers_count,
         'get_total_administrators_count': get_total_administrators_count,
@@ -259,9 +266,12 @@ def it_admin_portal(request, userid):
     avg_resolution_time = Ticket.objects.filter(
         assigned_to=account, is_active=True, completed_on__isnull=False, processing_started_on__isnull=False
     ).aggregate(avg=Avg(ExpressionWrapper(F('completed_on') - F('processing_started_on'), output_field=DurationField())))['avg']
-    open_tickets = Ticket.objects.filter(assigned_to=account, is_active=True).exclude(
-        request_status__in=['Completed', 'Cancelled'])
+    open_tickets = list(Ticket.objects.filter(assigned_to=account, is_active=True).exclude(
+        request_status__in=['Completed', 'Cancelled']))
     overdue_requests_count = sum(1 for t in open_tickets if t.is_overdue)
+
+    sync_sla_overdue_notifications(account, open_tickets)
+    sync_warranty_notifications(request.user.company)
 
     context = {
         'completed_requests_count': completed_requests_count,

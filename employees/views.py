@@ -13,8 +13,10 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 from sukhra.csv_utils import csv_response
 from sukhra.account_provisioning import generate_temporary_password, send_account_creation_email
+from notifications.services import notify
 
 
 def _provision_employee_account(request, employee):
@@ -230,6 +232,19 @@ def mark_returned(request, resid, memid):
                 email = EmailMultiAlternatives(mail_head_subject, text_body, settings.EMAIL_HOST_USER, [get_asset.peoplesoft_id.email,])
                 email.attach_alternative(html_body, 'text/html')
                 email.send()
+
+                employee_account = Account.objects.filter(
+                    company=request.user.company, employee_profile=get_asset.peoplesoft_id).first()
+                if employee_account:
+                    notify(
+                        employee_account, 'resource_returned',
+                        title=f'{update.asset_id} marked returned',
+                        body='Your device has been marked as returned.',
+                        link_url=reverse(
+                            'resources:employee_taken_resources_list_table', args=[employee_account.id]),
+                        dedupe_key=f'resource_returned:{get_asset.id}',
+                    )
+
                 message_alert.success(request, 'Mark returned on the device successfully!')
 
         elif reason_notes == 'Resource Damaged' or reason_notes == 'Facing Software Issue':
@@ -248,6 +263,19 @@ def mark_returned(request, resid, memid):
             email = EmailMultiAlternatives(mail_head_subject, text_body, settings.EMAIL_HOST_USER, [get_asset.peoplesoft_id.email,])
             email.attach_alternative(html_body, 'text/html')
             email.send()
+
+            employee_account = Account.objects.filter(
+                company=request.user.company, employee_profile=get_asset.peoplesoft_id).first()
+            if employee_account:
+                notify(
+                    employee_account, 'resource_returned',
+                    title=f'{update.asset_id} marked returned',
+                    body='Your device has been marked as returned for repair/configuration.',
+                    link_url=reverse(
+                        'resources:employee_taken_resources_list_table', args=[employee_account.id]),
+                    dedupe_key=f'resource_returned:{get_asset.id}',
+                )
+
             message_alert.success(request, 'Mark returned on the device successfully!')
 
         elif reason_notes == '-------------':
