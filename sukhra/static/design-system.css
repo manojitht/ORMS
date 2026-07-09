@@ -35,6 +35,22 @@
     --ink-100: #EEF3F8;
     --ink-50:  #F6F9FC;
     --white:   #FFFFFF;
+    /* Sidebar / CTA band / footer are deliberately always-dark decorative
+       surfaces, not themed page content -- kept on a fixed token (rather
+       than var(--ink-900), which dark mode below redefines) so they don't
+       change shade when the theme toggles. */
+    --surface-fixed-dark: #0F1B2A;
+    /* Pale sky-tinted surface used as a background across a non-trivial
+       area (unread notification rows, sticky table headers, dropdown-item
+       hover) -- a separate token rather than var(--sky-50)/var(--sky-100)
+       directly, since the sky ramp itself stays constant across themes but
+       these specific highlight roles need to dim in dark mode instead of
+       sitting as a bright patch on a dark surface. (Small icon-chip accents
+       elsewhere intentionally keep the raw sky tokens -- those read fine
+       unchanged, as already confirmed visually.) */
+    --surface-highlight: var(--sky-50);
+    --surface-highlight-strong: var(--sky-100);
+    --text-on-highlight: var(--sky-700);
 
     /* Semantic status (distinct from the decorative accents above) */
     --status-good: #15803D;
@@ -88,6 +104,64 @@
     --bs-link-color-rgb: 2, 132, 199;
     --bs-link-hover-color: var(--sky-700);
     --bs-link-hover-color-rgb: 3, 105, 161;
+}
+
+/* Dark mode -- reuses Bootstrap 5.3's own [data-bs-theme] attribute so its
+   native components (forms, dropdowns, modals, tables) re-theme themselves
+   for free; this block only needs to cover this project's own tokens.
+   Redefining the ink ramp itself (rather than patching individual component
+   rules) works because every existing usage of --ink-* in this file is
+   already exactly a themeable text/surface/border role -- the only
+   exceptions (sidebar/CTA/footer) were moved to --surface-fixed-dark above,
+   which is deliberately NOT overridden here. Sky/mustard stay constant --
+   brand accents, already proven to read fine against a dark surface (the
+   sidebar is dark in light mode today). */
+[data-bs-theme="dark"] {
+    --ink-50:  #0B1220;
+    --ink-100: #0F1826;
+    --ink-150: #1E2A3F;
+    --ink-300: #4B5A70;
+    --ink-500: #9DACC0;
+    --ink-700: #C7D2E0;
+    --ink-900: #EDF2F8;
+    /* Card/toast/topbar surface -- one step lighter than the page background
+       for depth. This token has no other callers today (see the repointed
+       hardcoded #fff rules below), so redefining it is safe. */
+    --white: #131D2E;
+
+    --status-good: #4ADE80;
+    --status-good-bg: rgba(74, 222, 128, .14);
+    --status-danger: #F87171;
+    --status-danger-bg: rgba(248, 113, 113, .14);
+    --status-info: #38BDF8;
+    --status-info-bg: rgba(56, 189, 248, .14);
+    --status-warn: #FBBF24;
+    --status-warn-bg: rgba(251, 191, 36, .14);
+    --status-muted: #FB923C;
+    --status-muted-bg: rgba(251, 146, 60, .14);
+
+    --surface-highlight: rgba(56, 189, 248, .12);
+    --surface-highlight-strong: rgba(56, 189, 248, .2);
+    --text-on-highlight: #7DD3FC;
+    /* Only other consumer of --sky-900 (.table thead th's text) already
+       gets its own direct dark override above (--bs-primary-text-emphasis),
+       so redefining it here has exactly one effect: the sticky table
+       header label stays legible against --surface-highlight. */
+    --sky-900: #BAE6FD;
+
+    /* Bootstrap's own subtle-bg/text-emphasis pairs (used by .alert-primary/
+       .alert-warning on the four dashboards' welcome banners) still need a
+       dark-specific tint -- unlike small accent usages (icons, buttons),
+       a full-width pale sky-100/mustard-100 surface reads as a jarring
+       bright patch against a dark page. */
+    --bs-primary-bg-subtle: rgba(56, 189, 248, .14);
+    --bs-primary-text-emphasis: #7DD3FC;
+    --bs-warning-bg-subtle: rgba(251, 191, 36, .14);
+    --bs-warning-text-emphasis: #FBBF24;
+
+    --bs-body-bg: var(--ink-50);
+    --bs-body-color: var(--ink-900);
+    --bs-border-color: var(--ink-150);
 }
 
 /* ---------------------------------------------------------------- */
@@ -289,7 +363,7 @@ a.card:hover, .card--hover:hover {
     position: sticky;
     top: 0;
     z-index: 5;
-    background-color: var(--sky-50);
+    background-color: var(--surface-highlight);
     color: var(--sky-900);
     border-bottom-width: 1px;
     font-weight: 600;
@@ -314,7 +388,7 @@ a.card:hover, .card--hover:hover {
     transition: background-color .1s ease, border-color .1s ease;
 }
 .table-hover > tbody > tr:hover {
-    --bs-table-hover-bg: var(--sky-50);
+    --bs-table-hover-bg: var(--surface-highlight);
     border-left-color: var(--sky-500);
 }
 
@@ -442,7 +516,7 @@ a.card:hover, .card--hover:hover {
 .toast {
     min-width: 320px;
     max-width: 380px;
-    background: #fff;
+    background: var(--white);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
     border-left: 4px solid var(--ink-300);
@@ -580,7 +654,7 @@ a.card:hover, .card--hover:hover {
 /* ---------------------------------------------------------------- */
 
 .site-navbar {
-    background-color: #fff;
+    background-color: var(--white);
     border-bottom: 1px solid var(--ink-150);
     box-shadow: var(--shadow-xs);
     padding-top: .45rem;
@@ -615,8 +689,8 @@ a.card:hover, .card--hover:hover {
     margin: 0 .1rem;
 }
 .site-navbar .nav-link:hover {
-    background-color: var(--sky-50);
-    color: var(--sky-700);
+    background-color: var(--surface-highlight);
+    color: var(--text-on-highlight);
 }
 .site-navbar .nav-link.active {
     background-color: var(--sky-500);
@@ -731,7 +805,7 @@ a.card:hover, .card--hover:hover {
 .welcome-feature-card {
     height: 100%;
     padding: 1.5rem;
-    background: #fff;
+    background: var(--white);
     border: 1px solid var(--ink-150);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xs);
@@ -776,7 +850,7 @@ a.card:hover, .card--hover:hover {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: var(--ink-900);
+    background: var(--surface-fixed-dark);
     padding: 4rem 1rem;
     text-align: center;
 }
@@ -793,7 +867,7 @@ a.card:hover, .card--hover:hover {
 .welcome-footer {
     text-align: center;
     padding: 1.5rem 0 2rem;
-    background: var(--ink-900);
+    background: var(--surface-fixed-dark);
     border-top: 1px solid rgba(255, 255, 255, .08);
     color: var(--ink-300);
     font-size: .85rem;
@@ -825,7 +899,7 @@ a.card:hover, .card--hover:hover {
 .login-card {
     width: 100%;
     max-width: 420px;
-    background: #fff;
+    background: var(--white);
     border: 1px solid var(--ink-150);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
@@ -871,7 +945,7 @@ a.card:hover, .card--hover:hover {
     top: 0;
     left: 0;
     bottom: 0;
-    background: var(--ink-900);
+    background: var(--surface-fixed-dark);
     color: var(--ink-300);
     z-index: 1030;
     overflow-y: auto;
@@ -953,7 +1027,7 @@ a.card:hover, .card--hover:hover {
    container differs between the fixed rail (>=lg) and this mobile panel. */
 .app-sidebar-offcanvas {
     width: 260px;
-    background: var(--ink-900);
+    background: var(--surface-fixed-dark);
     color: var(--ink-300);
 }
 .app-sidebar-offcanvas .offcanvas-header {
@@ -968,7 +1042,7 @@ a.card:hover, .card--hover:hover {
     display: flex;
     align-items: center;
     gap: .75rem;
-    background: #fff;
+    background: var(--white);
     border-bottom: 1px solid var(--ink-150);
     box-shadow: var(--shadow-xs);
     padding: .6rem 1.25rem;
@@ -996,6 +1070,28 @@ a.card:hover, .card--hover:hover {
     width: 19px;
     height: 19px;
 }
+
+/* Dark-mode toggle -- which of the two icons is visible is driven purely by
+   CSS reading <html data-bs-theme>, no JS needed for the icon swap itself. */
+.theme-toggle__icon--light {
+    display: none;
+}
+[data-bs-theme="dark"] .theme-toggle__icon--dark {
+    display: none;
+}
+[data-bs-theme="dark"] .theme-toggle__icon--light {
+    display: block;
+}
+.theme-toggle--floating {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    background: var(--white);
+    border: 1px solid var(--ink-150);
+    box-shadow: var(--shadow-sm);
+}
+
 .app-topbar__breadcrumb {
     font-size: .82rem;
     color: var(--ink-500);
@@ -1066,12 +1162,127 @@ a.card:hover, .card--hover:hover {
     height: 16px;
 }
 .app-user-menu__menu .dropdown-item:hover {
-    background: var(--sky-50);
-    color: var(--sky-700);
+    background: var(--surface-highlight);
+    color: var(--text-on-highlight);
 }
 .app-user-menu__logout:hover {
     background: var(--status-danger-bg) !important;
     color: var(--status-danger) !important;
+}
+
+/* ---------------------------------------------------------------- */
+/* Notification bell -- topbar toggle + dropdown panel               */
+/* ---------------------------------------------------------------- */
+
+.app-notif-toggle {
+    position: relative;
+}
+.app-notif-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--status-danger);
+    color: #fff;
+    font-size: .65rem;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: center;
+}
+.app-notif-menu__menu {
+    width: 360px;
+    max-width: calc(100vw - 2rem);
+    padding: 0;
+    border: 1px solid var(--ink-150);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+.app-notif-panel__loading {
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--ink-500);
+    font-size: .85rem;
+}
+.app-notif-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .75rem 1rem;
+    border-bottom: 1px solid var(--ink-150);
+    font-weight: 600;
+    font-size: .85rem;
+    color: var(--ink-900);
+}
+.app-notif-panel__mark-all {
+    padding: 0;
+    font-size: .78rem;
+    text-decoration: none;
+}
+.app-notif-panel__list {
+    max-height: 360px;
+    overflow-y: auto;
+}
+.app-notif-row {
+    display: flex;
+    align-items: flex-start;
+    gap: .65rem;
+    padding: .7rem 1rem;
+    border-bottom: 1px solid var(--ink-100);
+    text-decoration: none;
+    color: inherit;
+}
+.app-notif-row:hover {
+    background: var(--ink-50);
+}
+.app-notif-row--unread {
+    background: var(--surface-highlight);
+}
+.app-notif-row--unread:hover {
+    background: var(--surface-highlight-strong);
+}
+.app-notif-row__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.app-notif-row__icon svg {
+    width: 15px;
+    height: 15px;
+}
+.app-notif-row__body {
+    display: flex;
+    flex-direction: column;
+    gap: .1rem;
+    min-width: 0;
+}
+.app-notif-row__title {
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--ink-900);
+}
+.app-notif-row__desc {
+    font-size: .8rem;
+    color: var(--ink-500);
+}
+.app-notif-row__time {
+    font-size: .72rem;
+    color: var(--ink-300);
+}
+.app-notif-panel__footer {
+    padding: .6rem 1rem;
+    text-align: center;
+    border-top: 1px solid var(--ink-150);
+}
+.app-notif-panel__footer a {
+    font-size: .82rem;
 }
 
 /* ---------------------------------------------------------------- */
