@@ -14,7 +14,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
-from sukhra.csv_utils import csv_response
+from arivom.csv_utils import csv_response
 from notifications.services import notify
 from activity.models import ActivityEntry
 from activity.services import log_activity

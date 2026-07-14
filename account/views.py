@@ -21,8 +21,8 @@ from tickets.models import Ticket
 from resources.models import Category, Resource, ResourceTaken, WARRANTY_ALERT_WINDOW_DAYS
 from team.models import Team
 
-from sukhra.csv_utils import csv_response
-from sukhra.account_provisioning import generate_temporary_password, send_account_creation_email
+from arivom.csv_utils import csv_response
+from arivom.account_provisioning import generate_temporary_password, send_account_creation_email
 from notifications.services import sync_sla_overdue_notifications, sync_warranty_notifications
 
 from .forms import LoginUsers
@@ -672,7 +672,7 @@ def forgot_password(request):
         }
         text_body = render_to_string('account/reset_password_email.html', context)
         html_body = render_to_string('account/emails/reset_password_email.html', context)
-        email_message = EmailMultiAlternatives('Sukhra Reset Password Link', text_body, to=[email])
+        email_message = EmailMultiAlternatives('Arivom Reset Password Link', text_body, to=[email])
         email_message.attach_alternative(html_body, 'text/html')
         email_message.send()
         message_alert.success(request, 'Reset password link has been sent to your email successfully!')

@@ -15,7 +15,7 @@ from django.contrib import messages as message_alert
 from account.models import Account
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from sukhra.csv_utils import csv_response
+from arivom.csv_utils import csv_response
 from activity.models import ActivityEntry
 from activity.services import log_activity
 

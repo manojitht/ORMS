@@ -7,12 +7,12 @@
     <script src="{% static 'theme-init.js' %}"></script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Sukhra{% endblock %}</title>
+    <title>{% block title %}Arivom{% endblock %}</title>
 
     <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'design-system.css' %}">
 
-    <!-- Favicons of Sukhra -->
+    <!-- Favicons of Arivom -->
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}">
@@ -43,7 +43,7 @@
             <a class="app-sidebar__brand" href="{{ brand_url }}">
                 {% include 'includes/logo.html' %}
                 <span class="app-sidebar__brand-text">
-                    Sukhra
+                    Arivom
                     <span class="app-sidebar__brand-role">{{ user.role }}</span>
                 </span>
             </a>
@@ -64,7 +64,7 @@
             <div class="offcanvas-header">
                 <a class="app-sidebar__brand" href="{{ brand_url }}" id="sidebarOffcanvasLabel">
                     {% include 'includes/logo.html' %}
-                    <span class="app-sidebar__brand-text">Sukhra</span>
+                    <span class="app-sidebar__brand-text">Arivom</span>
                 </a>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
@@ -128,7 +128,7 @@
 
             {% if user.is_authenticated %}
             <footer class="app-footer">
-                <p>&copy; {% now "Y" %} Sukhra - Office Resources Management System</p>
+                <p>&copy; {% now "Y" %} Arivom - Office Resources Management System</p>
             </footer>
             {% endif %}
         </div>

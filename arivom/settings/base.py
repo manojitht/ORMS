@@ -1,5 +1,5 @@
 """
-Django settings for Sukhra project.
+Django settings for Arivom project.
 
 Settings shared by all environments. Environment-specific settings
 (dev.py, prod.py) import from this module and override as needed.
@@ -57,7 +57,7 @@ SESSION_EXPIRE_SECONDS = 3600
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 SESSION_TIMEOUT_REDIRECT = 'account:login'
 
-ROOT_URLCONF = 'sukhra.urls'
+ROOT_URLCONF = 'arivom.urls'
 
 TEMPLATES = [
     {
@@ -75,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'sukhra.wsgi.application'
+WSGI_APPLICATION = 'arivom.wsgi.application'
 
 AUTH_USER_MODEL = 'account.Account'
 
@@ -126,7 +126,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
-    BASE_DIR / 'sukhra' / 'static',
+    BASE_DIR / 'arivom' / 'static',
 ]
 
 # media files (storage of images)

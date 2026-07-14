@@ -1,5 +1,5 @@
 /*
- * Sukhra design system — sky blue / mustard yellow / white.
+ * Arivom design system — sky blue / mustard yellow / white.
  * One stylesheet: tokens -> base/reset -> layout -> components -> pages.
  * Loaded after bootstrap.min.css. Retheme's Bootstrap where it's cheap
  * (CSS variables) and writes real component CSS everywhere else, rather

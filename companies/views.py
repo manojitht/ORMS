@@ -51,5 +51,5 @@ def signup(request):
             company=company, password=password,
         )
 
-    message_alert.success(request, f'Welcome to Sukhra, {company_name}! You can log in now.')
+    message_alert.success(request, f'Welcome to Arivom, {company_name}! You can log in now.')
     return redirect('account:login')

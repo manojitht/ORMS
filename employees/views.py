@@ -14,8 +14,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from sukhra.csv_utils import csv_response
-from sukhra.account_provisioning import generate_temporary_password, send_account_creation_email
+from arivom.csv_utils import csv_response
+from arivom.account_provisioning import generate_temporary_password, send_account_creation_email
 from notifications.services import notify
 from activity.services import log_activity
 
