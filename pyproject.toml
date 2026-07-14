@@ -1,7 +1,7 @@
 [project]
-name = "sukhra"
+name = "arivom"
 version = "0.1.0"
-description = "Sukhra — office resources & ticket management, built for multiple companies"
+description = "Arivom — office resources & ticket management, built for multiple companies"
 requires-python = ">=3.11,<3.12"
 dependencies = [
     "django>=4.2,<4.3",
@@ -31,5 +31,5 @@ line-length = 110
 select = ["F", "E"]
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "sukhra.settings.dev"
+DJANGO_SETTINGS_MODULE = "arivom.settings.dev"
 python_files = ["tests.py", "test_*.py"]

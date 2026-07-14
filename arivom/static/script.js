@@ -211,7 +211,7 @@ document.addEventListener('click', function (e) {
   if (!toggle) return;
   var current = document.documentElement.getAttribute('data-bs-theme');
   var next = current === 'dark' ? 'light' : 'dark';
-  localStorage.setItem('sukhraTheme', next);
+  localStorage.setItem('arivomTheme', next);
   document.documentElement.setAttribute('data-bs-theme', next);
   location.reload();
 });

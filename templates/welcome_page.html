@@ -6,11 +6,11 @@
     <script src="{% static 'theme-init.js' %}"></script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Sukhra!</title>
+    <title>Welcome to Arivom!</title>
     <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'design-system.css' %}">
 
-    <!-- Favicons of Sukhra -->
+    <!-- Favicons of Arivom -->
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicons/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicons/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicons/favicon-16x16.png' %}">
@@ -21,7 +21,7 @@
         <div class="container-fluid px-4">
             <span class="navbar-brand mb-0">
                 {% include 'includes/logo.html' %}
-                <span>Sukhra</span>
+                <span>Arivom</span>
             </span>
             <div class="d-flex align-items-center gap-2">
                 {% include 'includes/theme_toggle.html' %}
@@ -38,11 +38,11 @@
                     <div class="col-lg-8">
                         <span class="welcome-eyebrow">Office Resources Management System</span>
                         <h1 class="welcome-title">Track every device.<br>Serve every request.<br><span class="text-accent">All in one place.</span></h1>
-                        <p class="welcome-lede">Sukhra keeps departments, teams, and office resources organized -
+                        <p class="welcome-lede">Arivom keeps departments, teams, and office resources organized -
                             so managers, IT admins, and superadmins always know who has what.</p>
                         <div class="d-flex justify-content-center">
                             <a href="{% url 'account:login' %}" class="btn btn-primary btn-lg px-4">
-                                Login to Sukhra <i data-lucide="arrow-right"></i>
+                                Login to Arivom <i data-lucide="arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -80,7 +80,7 @@
         <section class="welcome-cta">
             <div class="container text-center">
                 <h2>New here? Set up your company's workspace</h2>
-                <p>Get your own Sukhra workspace running in a few minutes - no credit card, no installation.</p>
+                <p>Get your own Arivom workspace running in a few minutes - no credit card, no installation.</p>
                 <a href="{% url 'companies:signup' %}" class="btn btn-warning btn-lg px-4">
                     Set up your company <i data-lucide="arrow-right"></i>
                 </a>
@@ -89,7 +89,7 @@
     </div>
 
     <footer class="welcome-footer">
-        <p>&copy; Sukhra - Office Resources Management System</p>
+        <p>&copy; Arivom - Office Resources Management System</p>
     </footer>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>

@@ -3,13 +3,13 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-sukhra}
-      POSTGRES_USER: ${POSTGRES_USER:-sukhra}
+      POSTGRES_DB: ${POSTGRES_DB:-arivom}
+      POSTGRES_USER: ${POSTGRES_USER:-arivom}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sukhra}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-arivom}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -19,8 +19,8 @@ services:
     restart: unless-stopped
     env_file: .env
     environment:
-      DJANGO_SETTINGS_MODULE: sukhra.settings.prod
-      DATABASE_URL: postgres://${POSTGRES_USER:-sukhra}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-sukhra}
+      DJANGO_SETTINGS_MODULE: arivom.settings.prod
+      DATABASE_URL: postgres://${POSTGRES_USER:-arivom}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-arivom}
     volumes:
       - static_files:/app/staticfiles
       - media_files:/app/media

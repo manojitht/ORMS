@@ -2,7 +2,7 @@
 {% load static %}
 {% load resource_extras %}
 
-{% block title %}Sukhra | Completed Request{% endblock %}
+{% block title %}Arivom | Completed Request{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
@@ -42,6 +42,8 @@
             <a href="{% url 'tickets:list_completed_requests_it_admin' user.id %}" class="btn btn-outline-secondary w-100 mt-3">Back</a>
         </div>
     </div>
+
+    {% include 'includes/activity_timeline.html' with entries=activity_entries %}
     {% endif %}
 </div>
 {% endblock %}

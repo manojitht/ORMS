@@ -2,7 +2,7 @@
 {% load static %}
 {% load resource_extras %}
 
-{% block title %}Sukhra | View Resource{% endblock %}
+{% block title %}Arivom | View Resource{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
@@ -70,6 +70,8 @@
             </div>
         </div>
     </div>
+
+    {% include 'includes/activity_timeline.html' with entries=activity_entries %}
 
     <div class="modal fade" id="deleteResourceModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">

@@ -33,7 +33,7 @@ def send_account_creation_email(request, user):
         }
         text_body = render_to_string('account/account_confirmation_email.html', context)
         html_body = render_to_string('account/emails/account_confirmation_email.html', context)
-        email = EmailMultiAlternatives('Sukhra account creation', text_body, to=[user.email])
+        email = EmailMultiAlternatives('Arivom account creation', text_body, to=[user.email])
         email.attach_alternative(html_body, 'text/html')
         email.send()
         return True
