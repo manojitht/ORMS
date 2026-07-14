@@ -17,6 +17,7 @@ from factories import (
     TicketFactory,
 )
 
+from activity.models import ActivityEntry
 from notifications.models import Notification
 from resources.models import Resource, ResourceTaken
 from tickets.models import Ticket
@@ -358,3 +359,97 @@ class TicketLifecycleNotificationTests(TestCase):
 
         self.assertTrue(Notification.all_objects.filter(
             recipient=employee_account, kind='ticket_completed').exists())
+
+
+class TicketLifecycleActivityLogTests(TestCase):
+    """Confirms the audit-trail hooks alongside each existing notify() call
+    actually fire -- one assertion per trigger point, mirroring
+    TicketLifecycleNotificationTests above. Uses ActivityEntry.all_objects
+    (not the tenant-scoped default manager) for the same reason those tests
+    do: CurrentCompanyMiddleware resets the company context back to None in
+    a finally block once the request/response cycle completes.
+    """
+
+    def test_create_request_employee_logs_ticket_created(self):
+        manager = ManagerAccountFactory()
+        employee = EmployeeFactory(company=manager.company, manager_peoplesoft_id=manager.peoplesoft_id)
+        employee_account = EmployeeAccountFactory(company=manager.company, employee_profile=employee)
+        category = CategoryFactory(company=manager.company)
+        set_current_company(manager.company)
+        self.client.force_login(employee_account)
+
+        self.client.post(
+            reverse('tickets:create_request_employee', args=[employee_account.id]),
+            {'request_id': 'REQ810001', 'request_category': 'Request new',
+             'requested_category': category.id, 'request_decription': 'Need a laptop'},
+        )
+
+        self.assertTrue(ActivityEntry.all_objects.filter(
+            action='ticket_created', summary__icontains='REQ810001').exists())
+
+    def test_approve_employee_request_manager_logs_ticket_approved(self):
+        manager = ManagerAccountFactory()
+        employee = EmployeeFactory(company=manager.company, manager_peoplesoft_id=manager.peoplesoft_id)
+        ticket = TicketFactory(
+            company=manager.company, created_for=employee, request_status='Pending Manager Approval')
+        set_current_company(manager.company)
+        self.client.force_login(manager)
+
+        self.client.get(reverse('tickets:approve_employee_request_manager', args=[ticket.id, manager.id]))
+
+        self.assertTrue(ActivityEntry.all_objects.filter(
+            action='ticket_approved', related_ticket=ticket).exists())
+
+    def test_deny_employee_request_manager_logs_ticket_denied(self):
+        manager = ManagerAccountFactory()
+        employee = EmployeeFactory(company=manager.company, manager_peoplesoft_id=manager.peoplesoft_id)
+        ticket = TicketFactory(
+            company=manager.company, created_for=employee, request_status='Pending Manager Approval')
+        set_current_company(manager.company)
+        self.client.force_login(manager)
+
+        self.client.get(reverse('tickets:deny_employee_request_manager', args=[ticket.id, manager.id]))
+
+        self.assertTrue(ActivityEntry.all_objects.filter(
+            action='ticket_denied', related_ticket=ticket).exists())
+
+    def test_cancel_request_employee_logs_ticket_cancelled_even_with_no_notification(self):
+        # cancel_request_employee sends no email/notification today (self-
+        # cancel) -- the activity log should still record it regardless.
+        manager = ManagerAccountFactory()
+        employee_account = EmployeeAccountFactory(company=manager.company)
+        ticket = TicketFactory(
+            company=manager.company, created_ps_id=employee_account.peoplesoft_id,
+            request_status='Pending Manager Approval',
+        )
+        set_current_company(manager.company)
+        self.client.force_login(employee_account)
+
+        self.client.get(reverse('tickets:cancel_request_employee', args=[ticket.id, employee_account.id]))
+
+        self.assertTrue(ActivityEntry.all_objects.filter(
+            action='ticket_cancelled', related_ticket=ticket).exists())
+
+    def test_complete_processing_request_with_resource_allocation_logs_both_events(self):
+        it_admin = ITAdminAccountFactory()
+        employee = EmployeeFactory(company=it_admin.company)
+        category = CategoryFactory(company=it_admin.company)
+        resource = ResourceFactory(
+            company=it_admin.company, resource_category=category, resource_availability='Available')
+        ticket = TicketFactory(
+            company=it_admin.company, created_for=employee, requested_category=category,
+            request_category='Request new', request_status='Processing', assigned_to=it_admin.peoplesoft_id,
+        )
+        set_current_company(it_admin.company)
+        self.client.force_login(it_admin)
+
+        self.client.post(
+            reverse('tickets:complete_processing_request', args=[ticket.id, it_admin.id]),
+            {'asset_id': resource.asset_id, 'request_response': 'Here you go'},
+        )
+
+        self.assertTrue(ActivityEntry.all_objects.filter(
+            action='ticket_completed', related_ticket=ticket).exists())
+        self.assertTrue(ActivityEntry.all_objects.filter(
+            action='resource_taken', related_resource__asset_id=resource.asset_id,
+            related_ticket=ticket).exists())

@@ -3,7 +3,7 @@ FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DJANGO_SETTINGS_MODULE=sukhra.settings.prod
+    DJANGO_SETTINGS_MODULE=arivom.settings.prod
 
 # libpq5 for psycopg (Postgres) at runtime. gosu to drop from root to
 # appuser in the entrypoint, after fixing up volume-mount ownership.
@@ -34,4 +34,4 @@ RUN useradd --create-home --uid 1000 appuser \
 EXPOSE 8000
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
-CMD ["gunicorn", "sukhra.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+CMD ["gunicorn", "arivom.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]

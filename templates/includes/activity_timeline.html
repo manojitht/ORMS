@@ -1,0 +1,23 @@
+{% comment %}
+Usage: {% include 'includes/activity_timeline.html' with entries=activity_entries %}
+`entries` is any iterable of activity.models.ActivityEntry, newest-first
+(the model's own Meta.ordering already guarantees this).
+{% endcomment %}
+<div class="card form-card mt-4">
+    <div class="card-body p-4">
+        <h6 class="form-section-label">Activity</h6>
+        <div class="activity-timeline">
+            {% for entry in entries %}
+            <div class="activity-row">
+                <span class="activity-row__icon status-pill--{{ entry.color }}"><i data-lucide="{{ entry.icon }}"></i></span>
+                <span class="activity-row__body">
+                    <span class="activity-row__summary">{{ entry.summary }}</span>
+                    <span class="activity-row__meta">{{ entry.actor|default:"System" }} &middot; {{ entry.created_on|timesince }} ago</span>
+                </span>
+            </div>
+            {% empty %}
+            <p class="text-muted small mb-0">No activity recorded yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>

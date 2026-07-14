@@ -1,16 +1,16 @@
-# Sukhra
+# Arivom
 
 Multi-tenant office resource & IT ticket management — track who has what, manage
 requests from creation to completion, and keep every company's data completely
 isolated from every other company's, all in one app.
 
-Sukhra started as a single-company internal tool (formerly "ORMS" — Office
+Arivom started as a single-company internal tool (formerly "ORMS" — Office
 Resources Management System) and has since been generalized into a real
 multi-tenant product: any company can sign up, configure its own resource
 categories and custom attributes, and run its own IT asset lifecycle
 independently of every other tenant on the same install.
 
-Beyond the core ticket/resource loop, Sukhra also covers: bulk CSV import of
+Beyond the core ticket/resource loop, Arivom also covers: bulk CSV import of
 resources, warranty/lease expiry alerts, QR/barcode asset tagging for
 scan-to-issue/return, SLA response/resolution-time tracking with overdue
 flags, and an employee self-service portal (raise your own requests, see your
@@ -32,7 +32,7 @@ own gear) gated behind manager approval before IT ever sees them.
 
 ### Roles
 
-Sukhra has four roles per company, each with its own dashboard:
+Arivom has four roles per company, each with its own dashboard:
 
 - **Superadmin** — owns the org: departments, teams, and user accounts
   (creates Manager and IT Administrator logins). Sees org-wide charts (org
@@ -208,7 +208,7 @@ actual shape (CRUD-heavy, form-driven, no mobile client today).
 ## Design system
 
 All design tokens (color, spacing, radius, shadow) and component CSS live in
-one file: `sukhra/static/design-system.css`, loaded after the vendored `bootstrap.min.css`
+one file: `arivom/static/design-system.css`, loaded after the vendored `bootstrap.min.css`
 and retheming it via Bootstrap's own CSS custom properties (`--bs-primary`,
 `--bs-body-font-size`, etc.) wherever that's cheap, with real component rules
 everywhere else. Palette: sky blue / mustard yellow / white, with a dark-navy
@@ -230,7 +230,7 @@ sidebar for contrast.
   defaults.
 - **Icons: Lucide, not Boxicons.** Every icon in the app is a real inline SVG
   via `<i data-lucide="icon-name"></i>` + `lucide.createIcons()` (called once
-  on `DOMContentLoaded` in `sukhra/static/script.js`), not an icon font —
+  on `DOMContentLoaded` in `arivom/static/script.js`), not an icon font —
   crisper at small sizes and one consistent stroke style everywhere, instead
   of mixing outline/solid variants. When adding a new icon, check the name
   exists at [lucide.dev/icons](https://lucide.dev/icons) first — a
@@ -326,7 +326,7 @@ checks "does this person have portal access yet".
   `create_manager`/`create_IT_admin`) and reuses the same activation-email
   flow every other role already goes through. The temp-password generator
   and activation-email sender were pulled out into
-  `sukhra/account_provisioning.py` so both `account/views.py` and
+  `arivom/account_provisioning.py` so both `account/views.py` and
   `employees/views.py` share one implementation.
 - **Offboarding**: hard-deleting an `Employee` with a linked `Account`
   deactivates that `Account` first (`is_active=False`) — `employee_profile`
@@ -341,7 +341,7 @@ checks "does this person have portal access yet".
 
 ### Settings
 
-Split by environment (`sukhra/settings/{base,dev,prod}.py`), driven by
+Split by environment (`arivom/settings/{base,dev,prod}.py`), driven by
 `django-environ`. `dev.py` defaults to SQLite + console email backend with
 zero required env vars; `prod.py` requires `DATABASE_URL` /
 `DJANGO_ALLOWED_HOSTS` / SMTP credentials and turns on Django's `SECURE_*`
@@ -350,7 +350,7 @@ hardening flags.
 ## Project structure
 
 ```
-sukhra/                  # Django project package (settings, root urls, static/, csv_utils.py, account_provisioning.py)
+arivom/                  # Django project package (settings, root urls, static/, csv_utils.py, account_provisioning.py)
 account/                 # Auth, login, dashboards, add/edit users (incl. self-service Employee accounts)
 companies/               # Company model, TenantModel/TenantManager, signup flow
 department/  team/       # Org structure

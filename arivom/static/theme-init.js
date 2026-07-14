@@ -3,7 +3,7 @@
 // early in <head> -- not deferred, not in script.js (which loads at the end
 // of <body>, long after first paint).
 (function () {
-  var saved = localStorage.getItem('sukhraTheme');
+  var saved = localStorage.getItem('arivomTheme');
   var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   document.documentElement.setAttribute('data-bs-theme', theme);
 })();

@@ -5,6 +5,7 @@ import json
 import qrcode
 from datetime import date, timedelta
 from django.shortcuts import render,redirect
+from django.utils.dateparse import parse_date
 from django.http import HttpResponse
 from django.urls import reverse
 import random
@@ -14,7 +15,9 @@ from django.contrib import messages as message_alert
 from account.models import Account
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from sukhra.csv_utils import csv_response
+from arivom.csv_utils import csv_response
+from activity.models import ActivityEntry
+from activity.services import log_activity
 
 RESOURCE_IMPORT_FIXED_COLUMNS = ('Asset Id', 'Model Name', 'Resource Type', 'Availability', 'Description', 'Added By')
 
@@ -138,10 +141,15 @@ def import_resources_csv(request):
                     if value:
                         attribute_values[key] = value
 
-                Resource.objects.create(
+                created_resource = Resource.objects.create(
                     asset_id=asset_id, model_name=model_name, resource_category=category,
                     attribute_values=attribute_values, resource_availability=availability,
                     resource_description=description, added_by=added_by,
+                )
+                log_activity(
+                    request.user, 'resource_created',
+                    f'{request.user} imported {asset_id} via CSV',
+                    related_resource=created_resource,
                 )
                 imported_count += 1
             except Exception as exc:
@@ -219,6 +227,11 @@ def add_resource_page(request):
             resource_availability=resource_availability, warranty_expiry_date=warranty_expiry_date,
             resource_description=resource_description, added_by=added_by, resource_image=resource_image)
             resource.save()
+            log_activity(
+                request.user, 'resource_created',
+                f'{request.user} added {asset_id}',
+                related_resource=resource,
+            )
             message_alert.success(request, asset_id + ' is added successfully!')
             return redirect('resources:resources_listings_page')
 
@@ -239,6 +252,9 @@ def update_resource(request, resid):
     update_res = Resource.objects.get(id=resid)
 
     if request.method == 'POST':
+        old_availability = update_res.resource_availability
+        old_warranty = update_res.warranty_expiry_date
+
         if len(request.FILES) != 0:
             if len(update_res.resource_image) > 0:
                 os.remove(update_res.resource_image.path)
@@ -249,10 +265,21 @@ def update_resource(request, resid):
         update_res.resource_category = category
         update_res.attribute_values = _parse_attribute_values_from_post(request.POST, category)
         update_res.resource_availability = request.POST['resource_availability']
-        update_res.warranty_expiry_date = request.POST.get('warranty_expiry_date') or None
+        # Parsed to a real date (not left as the raw POST string) so the
+        # before/after comparison below isn't comparing a date to a string,
+        # which would always read as "changed" even when it wasn't.
+        update_res.warranty_expiry_date = parse_date(request.POST.get('warranty_expiry_date') or '')
         update_res.resource_description = request.POST['resource_description']
         update_res.added_by = request.POST['added_by']
         update_res.save()
+
+        summary = f'{request.user} updated {update_res.asset_id}'
+        if old_availability != update_res.resource_availability:
+            summary += f' (availability: {old_availability} -> {update_res.resource_availability})'
+        if old_warranty != update_res.warranty_expiry_date:
+            summary += f' (warranty: {old_warranty} -> {update_res.warranty_expiry_date})'
+        log_activity(request.user, 'resource_updated', summary, related_resource=update_res)
+
         message_alert.success(request, 'Resource details of ' + update_res.asset_id + ' was updated successfully!')
     return redirect('resources:resources_listings_page')
 
@@ -269,6 +296,11 @@ def restore_device(request, resid):
     restoring_device = Resource.objects.get(id=resid)
     restoring_device.is_active = True
     restoring_device.save()
+    log_activity(
+        request.user, 'resource_restored',
+        f'{request.user} restored {restoring_device.asset_id}',
+        related_resource=restoring_device,
+    )
     message_alert.success(request, 'Device restored successfully!')
     return redirect('resources:resource_deletion_history')
 
@@ -276,6 +308,14 @@ def restore_device(request, resid):
 @login_required(login_url='account:login')
 def permanent_delete_device(request, resid):
     delete_device = Resource.objects.get(id=resid)
+    # Logged before the delete, not after -- an entry created against an
+    # already-deleted PK works silently on SQLite (no FK enforcement) but
+    # raises IntegrityError on Postgres.
+    log_activity(
+        request.user, 'resource_deleted',
+        f'{request.user} permanently deleted {delete_device.asset_id}',
+        related_resource=delete_device,
+    )
     delete_device.delete()
     message_alert.success(request, 'Device permanently deleted successfully!')
     return redirect('resources:resource_deletion_history')
@@ -341,7 +381,8 @@ def expiring_resources_page(request):
 @login_required(login_url='account:login')
 def view_resource(request, resid):
     selected_res = Resource.objects.get(id=resid)
-    context = { 'selected_res': selected_res, }
+    activity_entries = ActivityEntry.objects.filter(related_resource=selected_res)[:50]
+    context = { 'selected_res': selected_res, 'activity_entries': activity_entries, }
     return render(request, 'it_admin/view_resource_page.html', context)
 
 
@@ -471,6 +512,12 @@ def delete_resource(request, resid):
         delete_name = request.POST['delete_name']
         if delete_name == 'delete':
             deleting_res = Resource.objects.get(id=resid)
+            # Logged before the delete -- see permanent_delete_device's comment above.
+            log_activity(
+                request.user, 'resource_deleted',
+                f'{request.user} deleted {deleting_res.asset_id}',
+                related_resource=deleting_res,
+            )
             deleting_res.delete()
             message_alert.success(request, deleting_res.asset_id + ' - Resource was deleted successfully!')
     return redirect('resources:resources_listings_page')

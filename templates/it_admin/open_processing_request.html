@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Sukhra | Processing Request{% endblock %}
+{% block title %}Arivom | Processing Request{% endblock %}
 
 {% block content %}
 <div class="container-fluid px-4">
@@ -59,6 +59,8 @@
             </form>
         </div>
     </div>
+
+    {% include 'includes/activity_timeline.html' with entries=activity_entries %}
     {% endif %}
 </div>
 {% endblock %}
